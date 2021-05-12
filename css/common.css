@@ -1,0 +1,97 @@
+.status-bar{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+}
+.sold-out{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	background: rgba(0, 0, 0, 0.5);
+	color: #fff;
+	width: 80px;
+	height:80px;
+	line-height: 80px;
+	border-radius: 50%;
+	text-align: center;
+	transform: translate(-50%,-50%);
+	font-size: 14px;
+
+}
+[v-cloak]{
+	display: none;
+}
+
+.tanchuang-box{
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 10;
+}
+.tanchuang-mask{
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.5);
+}
+.tanchuang-content{
+	position: absolute;
+	left: 50%;
+	right: 0;
+	top: 50%;
+	z-index:5;
+	width: 80%;
+	border-radius: 5px;
+	transform: translate(-50%,-50%);
+}
+.tanchuang-content-text{
+	background: #fff;
+}
+.tanchuang-content-title{
+	padding: 10px 0;
+	font-size: 24px;
+	font-weight: 700;
+	color: #333;
+	border-bottom: 1px solid #f5f5f5;
+	text-align: center;
+}
+.tanchuang-content-msg{
+	min-height: 50px;
+	padding: 20px 10px;
+	color: #333;
+	line-height: 1.5;
+	font-size: 18px;
+	text-align: center;
+}
+.tanchuang-content-button{
+	border-top: 1px solid #f5f5f5;
+	padding: 15px 0;
+	text-align: center;
+	background: #4d85f9;
+	color: #fff;
+	font-size: 18px;
+	border-radius: 0 0 5px 5px;
+}
+.tanchuang-content-img{
+	width: 100%;
+	border-radius: 5px;
+}
+.message-count{
+	position: absolute;
+	top: -10px;
+	right:20px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	background: red;
+	color: #fff;
+	border-radius: 50%;
+}

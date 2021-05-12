@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>七彩首页</title>
+    <link rel="stylesheet" href="../css/swiper.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/flexible_css.js"></script>
+    <script src="../script/flexible.js"></script>
+    <script src="../script/jquery-1.8.3.min.js"></script>
+  </head>
+  <body>
+    
+    <div class="s_tit s_titk">
+      <div class="s_titnr gg">
+        <div class="s_titz"><img class="s_tittx" src="../image/tx.png"></div>
+        <div class="s_titm">
+          <form action="" class="sc_tjbd">
+            <input type="text" class="sc_search" placeholder="请输入搜索关键字">
+            <img class="sc_fdj" src="../image/fdj.png">
+          </form>
+        </div>
+        <div class="s_tity">
+          <div class="s_tityz"><img class="s_tityzt" src="../image/syrw.png"></div>
+          <div class="s_tityy">
+            <img class="s_tityyt" src="../image/syxx.png">
+            <div class="s_tityd"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+    $(window).on("scroll",function(){
+    //判断向下滑动的距离
+    if($(window).scrollTop()>=30){
+    //将顶部导航栏固定
+    $(".s_titk").addClass("qbj");
+    }else{
+    $(".s_titk").removeClass("qbj");
+    }
+    });
+    </script>
+    <section class="wk">
+      
+      <!-- 轮播图 -->
+      <div class="inban">
+        
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="../image/banner1.png"></div>
+            <div class="swiper-slide"><img src="../image/banner1.png"></div>
+          </div>
+          <!-- Add Pagination -->
+          <div class="swiper-pagination"></div>
+        </div>
+        <script src="../script/swiper.min.js"></script>
+        <script>
+        var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        loop: true,
+        autoplay:true,
+        observer:true,
+        pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        },
+        navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+        },
+        });
+        </script>
+      </div>
+      <!-- 公告 -->
+      <div class="gg">
+        <div class="xwgg">
+          <div class="lb"><img class="gggdt" src="../image/gglb.png"></div>
+          <div class="ggnr f28">受疫情管控政策影响，发货延迟敬请谅解</div>
+          <div class="gggd"><img  src="../image/hjt.png"></div>
+        </div>
+      </div>
+      <!-- 主导航 -->
+      <div class="in_zdh">
+        <div class="in_zdhli">
+          <img class="in_cpfl" src="../image/qctb.png">
+          <div class="f24 in_zdhwz">七彩</div>
+        </div>
+        <div class="in_zdhli">
+          <img class="in_cpfl" src="../image/jftb.png">
+          <div  class="f24 in_zdhwz">积分</div>
+        </div>
+        <div class="in_zdhli">
+          <img class="in_cpfl" src="../image/zbtb.png">
+          <div  class="f24 in_zdhwz">直播</div>
+        </div>
+        <div class="in_zdhli">
+          <img class="in_cpfl" src="../image/xytb.png">
+          <div  class="f24 in_zdhwz">学院</div>
+        </div>
+        <div class="in_zdhli">
+          <img class="in_cpfl" src="../image/dfwtb.png">
+          <div  class="f24 in_zdhwz">大富翁</div>
+        </div>
+      </div>
+      <!--积分商品-->
+      <div class="sc_tmhh gg">
+        <div class="in_jfsck">
+          <div class="sc_tmhh_bt">
+            <div class="sc_tmhh_btz f32">积分商品</div>
+            <div class="sc_tmhh_bty f24">查看更多 <img class="sc_tmhhjt" src="../image/bjt.png"></div>
+          </div>
+          <div class="sc_tmhh_nr">
+            <div class="sc_tmhh_li">
+              <img class="sc_tmhh_lit" src="../image/cpt.png">
+              <div class="sc_tmhh_liwz f28 ">缤纷田园树莓一2箱500g…</div>
+              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
+            </div>
+            <div class="sc_tmhh_li">
+              <img class="sc_tmhh_lit" src="../image/cpt.png">
+              <div class="sc_tmhh_liwz f28">缤纷田园树莓一2箱500g…</div>
+              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
+            </div>
+            <div class="sc_tmhh_li">
+              <img class="sc_tmhh_lit" src="../image/cpt.png">
+              <div class="sc_tmhh_liwz f28">缤纷田园树莓一2箱500g…</div>
+              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 优选好货 -->
+      <div class="in_yx">
+        <div class="in_yxs">
+          <div class="in_ysbt gg">
+            <div class="in_ysbtz f34">短视频</div>
+            <div class="in_ysbty qhsz">更多<img class="hjt" src="../image/hjt.png"></div>
+          </div>
+        </div>
+        <div class="in_yxx">
+          <div class="gg in_yxxnr">
+            <div class="in_yxli">
+              <img class="in_yxlit" src="../image/dsptp.png">
+              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
+              <div class="in_yxlijg f22 qhsz">10万人已学</div>
+            </div>
+            <div class="in_yxli">
+              <img class="in_yxlit" src="../image/dsptp.png">
+              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
+              <div class="in_yxlijg f22 qhsz">10万人已学</div>
+            </div>
+            <div class="in_yxli">
+              <img class="in_yxlit" src="../image/dsptp.png">
+              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
+              <div class="in_yxlijg f22 qhsz">10万人已学</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>
