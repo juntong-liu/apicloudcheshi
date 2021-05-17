@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>登录</title>
+    <script type="text/javascript" src="../script/common.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+
+<body>
+  <div id="app" v-cloak>
+    <!-- 微信登录 开始 -->
+    <div class="wx-login" v-show="loginType=='wechat'">
+      <div class="wx-logospcing"></div>
+      <div class="wx-login-logo"><img src="../icon/logo.png"></div>
+      <div class="wx-login-btn" @click="wechatLogin()">
+        <img src="../icon/wx-wx.png" class="wx-login-wximg">微信登录
+      </div>
+      <div class="wx-login-zc">
+        <div class="wx-login-newzc" @click="loginType='mobile'">账号登录</div>
+        <div class="wx-login-zcxy">登录注册即表示同意<span class="wx-login-zcxyxx">《用户隐私协议》</span></div>
+      </div>
+    </div>
+    <!-- 微信登录 结束 -->
+    <div class="denglu" v-if="loginType=='mobile'">
+        <div class="dengluk">
+            <div class="login_hy">您好，</div>
+            <div class="login_qt qhsz f24"><span class="login_zc">建议您使用微信登录</span></div>
+            <form class="login-form">
+                <div class="input-content">
+
+                    <div class="reset-3">
+                        <input class="reset-input f30" type="number" v-model="mobile" ref="mobile" autocomplete="off" placeholder="请输入手机号">
+                    </div>
+                    <div class="reset-3">
+                        <input class="reset-input f30" type="text" autocomplete="off" v-model="pwd" ref="pwd" placeholder="请输入登录密码">
+                    </div>
+                </div>
+                <div style="text-align: center">
+                    <div  class="enter-btn" @click="mobileLogin()">登录</div>
+                </div>
+                <div class="lo_qt f28">
+                    <div class="lo_yhzc" @click="interfaceRegister()">用户注册</div>
+                    <div class="lo_yhsx">|</div>
+                    <div class="lo_yhzc" @click="interfaceForgetPwd()">忘记密码</div>
+                </div>
+
+                <div class="login-conn-dl-zc" v-if="installed" @click="wechatLogin()">
+                  <img src="../icon/wechat.png"><br>
+                  微信登录
+                </div>
+
+            </form>
+        </div>
+      </div>
+
+
+
+    <!-- 手机号登录 结束 -->
+  </div>
+</body>
+<script type="text/javascript">
+  apiLoad=function(callback){
+    wxPlus = api.require('wxPlus');
+    var vm=new Vue({
+      el:"#app",
+      data(){
+        return {
+          loginType:'mobile',
+          installed:true,
+          successCallbackEvent:api.pageParam.successCallbackEvent,
+          loading:false,
+          mobile:'',
+          pwd:''
+        }
+      },
+      methods:{
+        _loginSuccess(res){
+          setToken(res.token);
+          if(this.successCallbackEvent){
+            api.sendEvent({
+                name: this.successCallbackEvent
+            });
+          }
+        },
+        wechatLogin(){
+          wxPlus.auth({}, function(ret, err) {
+            if(ret.status){
+              wxPlus.getToken({
+                  code: ret.code
+              }, function(ret, err) {
+                  if (ret.status) {
+                    let param={
+                      token:ret.accessToken,
+                      openid:ret.openId
+                    }
+
+
+                    ajax('ud.login.wechat_login',param,'post').then(res=>{
+                      vm._loginSuccess(res);
+                    })
+
+                  } else {
+                      fnAlert("Token获取失败："+err.code);
+                  }
+              });
+            }else{
+              fnAlert('授权失败 code:'+err.code);
+            }
+          });
+        },
+        mobileLogin(){
+          if(!checkMobile(this.mobile)){
+            toast('请输入11位手机号码');
+            this.$refs.mobile.focus();
+            return;
+          }
+          if(!this.pwd){
+            toast('请输入登录密码');
+            this.$refs.pwd.focus();
+            return;
+          }
+          ajax('ud.login.login',{mobile:this.mobile,pwd:this.pwd},'post').then(res=>{
+            this._loginSuccess(res);
+          })
+        },
+        init(){
+          wxPlus.isInstalled(function(ret, err) {
+              if (!ret.installed) {
+                this.installed=false;
+                this.loginType='mobile';
+              }
+          }.bind(this));
+        }
+      },
+      mounted(){
+        this.init();
+      }
+    });
+  }
+</script>
+
+</html>

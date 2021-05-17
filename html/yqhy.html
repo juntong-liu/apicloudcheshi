@@ -5,37 +5,176 @@
     <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>邀请好友</title>
-    <link rel="stylesheet" href="../css/swiper.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    
+    <script src="../script/common.js"></script>
+    <script src="../script/qrCode.min.js"></script>
+
   </head>
   <body >
-    
-    <div class="r_tit xhx">
-      <div class="r_titnr s_titnr gg">
-        <div class="r_titl">
-          <img class="r_titltp" src="../image/hfh.png">
-          
-        </div>
-        <div class="r_titm f36">邀请好友</div>
-        <div class="r_titr f28">邀请说明</div>
+    <canvas id="canvas" width="300" height="300" style="display:none;"></canvas>
+    <canvas id="canvas_thumb" width="300" height="300" style="display:none;"></canvas>
+    <div style="background-color: #f8f8f8; min-height: 100%;" id="app" v-cloak>
+      <div class="yqhynr"  v-for="(ewm,idx) in ewm_list">
+          <canvas :id="('canvas_')+idx" style="width:100%;"></canvas>
       </div>
-    </div>
-    <div class="kong"></div>
-    <div style="background-color: #f8f8f8; min-height: 100%; ">
-      <div class="yqhynr">
-        <img class="yqhynrt" src="../image/yqhy.jpg">
-        <div class="yqhy_xg">
-          <div class="yqhy_ewm"><img class="yqhy_ewmt" src="../image/ewm.jpg"></div>
-          <div class="yqhy_ewmwz f28">8tj908</div>
-        </div>
-      </div>
-      <div class="yqhybtn f30">
+      <div class="yqhybtn f30" @click="show=true">
         立即分享
       </div>
-      
+      <share @type="fnShareType" :show="show"></share>
+
     </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var wxPlus = api.require('wxPlus');
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              avatar:'',
+              nickname:'',
+              percent:2,
+              id:'',
+              ewm_list:[],
+              show:false
+            }
+          },
+          methods:{
+            fnShareType(type){
+              this.show=false;
+              if(type=='cancel'){return;}
+              //开始分享
+              var canvas_thumb=$api.byId('canvas_thumb');
+              var thumb_widht=600;
+              var canvas=$api.byId('canvas_0');
+              var percent=canvas.width/thumb_widht;
+              var thumb_height=parseInt(canvas.height/percent);
+              canvas_thumb.width=thumb_widht;
+              canvas_thumb.height=thumb_height;
+
+              var context = canvas_thumb.getContext("2d");
+
+              context.drawImage(canvas ,0 ,0 , thumb_widht , thumb_height);
+              canvasToImage(canvas_thumb,function(thumb_url){
+                wxPlus.shareImage({
+                  scene:type,
+                  thumb:thumb_url,
+                  contentUrl:thumb_url
+                },function(ret,err){
+                  vm.fnShareBox();
+                  if (!ret.status) {
+                    alert(err.code);
+                  }
+                });
+
+              })
+            },
+            init(){
+
+              ajax('ud.member.ewm',{type:'share'}).then(res=>{
+                QrCodeWithLogo.toCanvas({
+                  canvas: document.getElementById('canvas'),
+                  content:root+'ud.account.download&mid='+res.id,
+                  width: 600
+                })
+                this.ewm_list=res.ewm_list;
+                this.avatar=this.tImage(res.avatar);
+                this.nickname=res.nickname;
+                this.id=res.id;
+                setTimeout(function () {
+                  vm.initEwm();
+                }, 30);
+              })
+            },
+            initEwm(){
+              for(let idx=0;idx<this.ewm_list.length;idx++){
+                let item=this.ewm_list[idx];
+                api.imageCache({
+                    url: this.tImage(item.bg),
+                    tag:JSON.stringify({data:item.data,idx:idx}),
+                    thumbnail:false
+                }, function(ret, err){
+                    if(ret.tag){
+                      ret.tag=JSON.parse(ret.tag)
+                    }
+                    this.initImage(ret.url,ret.tag);
+                }.bind(this));
+              }
+
+
+            },
+            initImage:function(url,data){
+              let ewm=document.getElementById('canvas');
+              let img=new Image();
+              let idx=data.idx;
+              img.src=url;
+              img.onload=function(){
+                let width=this.width;
+                let height=this.height;
+                let canvas = document.getElementById('canvas_'+idx);
+                canvas.width = width;
+                canvas.height = height;
+
+                let context = canvas.getContext("2d");
+                context.drawImage(img , 0 , 0 , width , height)
+                for(let i=0;i<data.data.length;i++){
+                  let obj=data.data[i];
+                  if(obj.type=='head'){
+                    vm.fnDrawImage(context,vm.avatar,obj)
+                  }
+                  if(obj.type=='qr'){
+                    vm.fnDrawDom(context,ewm,obj);
+                  }
+                  if(obj.type=='nickname'){
+                    vm.fnFillText(context,vm.nickname,obj);
+                  }
+                  if(obj.type=='img'){
+                    vm.fnDrawImage(context,obj.src,obj)
+                  }
+                  if(obj.type=='text'){
+                    vm.fnFillText(context,obj.text,obj);
+                  }
+                  if(obj.type=='id'){
+                    vm.fnFillText(context,vm.id,obj);
+                  }
+                }
+              }
+            },
+            fnDrawImage(context,url,data){
+              url=this.tImage(url);
+              api.imageCache({
+                  url: url
+              }, function(ret, err){
+                let img=new Image();
+                img.src=ret.url;
+                img.onload=function(){
+                  vm.fnDrawDom(context,img,data);
+                }
+              });
+            },
+            fnFillText(context,text,data){
+              let left=parseInt(data.left)*this.percent;
+              let top=parseInt(data.top)*this.percent;
+              let width=parseInt(data.width)*this.percent;
+              let height=parseInt(data.height)*this.percent;
+              let size=parseInt(data.size)*this.percent;
+              context.fillStyle=data.color;
+              context.textAlign='center';
+              context.font = size+"px Arial";
+              context.fillText(text,left,top);
+            },
+            fnDrawDom(context,dom,data){
+              let left=parseInt(data.left)*this.percent;
+              let top=parseInt(data.top)*this.percent;
+              let width=parseInt(data.width)*this.percent;
+              let height=parseInt(data.height)*this.percent;
+              context.drawImage(dom ,left ,top , width , height)
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+      }
+    </script>
   </body>
 </html>

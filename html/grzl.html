@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>UD</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <style media="screen">
+      .thyyy{flex: none;}
+    </style>
+  </head>
+
+  <body>
+
+
+    <section class="bsbj" id="app" v-cloak>
+      <div class="thyy gg f28">
+        <div class="thyyz">头像</div>
+        <div class="thyyy" @click="fnSelectAvatar">
+          <img class="grtx" :src="tImage(info.avatar)">
+          <img class="jtdx" src="../icon/jt.png">
+        </div>
+      </div>
+      <div class="thyy gg f28">
+        <div class="thyyz">昵称</div>
+        <div class="thyyy">
+          <input class="hsz grnc" v-model="info.nickname" style="text-align:right;">
+          <img class="jtdx" src="../icon/jt.png">
+        </div>
+      </div>
+      <div class="thyy gg f28">
+        <div class="thyyz">当前级别</div>
+        <div class="thyyy hsz">{{info.level_name}}</div>
+      </div>
+      <div class="thyy gg f28">
+        <div class="thyyz">电话</div>
+        <div class="thyyy hsz">
+          <span class="hsz grnc">{{info.mobile}}</span>
+          <img class="jtdx" src="../icon/jt.png">
+        </div>
+      </div>
+      <div class="tjan f30 gg" @click="submit()">保存</div>
+    </section>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              info:{
+                level:{}
+              }
+            }
+          },
+          methods:{
+            init:function(){
+              ajax('ud.member.info').then(res=>{
+                this.info=res;
+              })
+            },
+            submit:function(){
+              if(!this.info.nickname){
+                toast('请输入昵称');
+                return;
+              }
+              ajax('ud.member.saveInfo',this.info).then(res=>{
+                toast(res);
+                api.sendEvent({
+                    name: 'reload-user-info',
+                });
+                setTimeout(function () {
+                  api.closeWin();
+                }, 1000);
+              });
+            },
+            fnSelectAvatar:function(){
+              api.getPicture({
+                  sourceType: 'library',
+                  encodingType: 'jpg',
+                  mediaValue: 'pic',
+                  destinationType: 'url',
+                  allowEdit: true,
+                  quality: 100,
+                  targetWidth: 800,
+                  saveToPhotoAlbum: false
+              }, function(ret, err){
+                  if(ret.data){
+                    uploadFile('ud.uploader',function(res){
+                      this.info.avatar=res[0].filename;
+                    }.bind(this),[ret.data])
+                  }
+              }.bind(this));
+
+            }
+          },
+          mounted:function(){
+            this.init();
+          }
+        });
+      }
+    </script>
+
+
+
+
+  </body>
+</html>

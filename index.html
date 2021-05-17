@@ -6,16 +6,108 @@
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>首页</title>
+    <script src="./script/api.js" charset="utf-8"></script>
+    <script src="./script/common.js" charset="utf-8"></script>
+    <script src="./script/vue.js" charset="utf-8"></script>
+    <script src="./script/vue_common.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./script/flexible.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/style.css" />
-    <script type="text/javascript" src="./script/api.js"></script>
+    <script type="text/javascript" src="./script/tab.js"></script>
+    <script type="text/javascript" src="./script/md5.js"></script>
 
 <body>
+  <div class="footer" id='app'>
+    <div class="footerli" v-for="(foot,idx) in footer" @click="fnTab(idx)">
+      <img class="footerlitp" :src="foot.active_icon" v-if="idx==tab">
+      <img class="footerlitp" :src="foot.default_icon" v-else>
+      <div class="footerliwz" :class="{foot_xzwz:idx==tab}">{{foot.name}}</div>
+    </div>
 
+  </div>
 </body>
 
 <script type="text/javascript">
+  apiLoad=function(){
+    api.removeLaunchView({
+        animation: {
+            type: 'fade',
+            duration: 500
+        }
+    });
+    api.setFullScreen({
+        fullScreen: false
+    });
+
+    api.requestPermission({
+        list:['storage'],
+        code:1
+    }, function(ret, err){
+
+    });
+    api.addEventListener({
+        name: 'reload-user-info'
+    }, function(ret, err){
+        ajax('ud.member').then(res=>{})
+    });
+    api.setStatusBarStyle({
+        style: 'light'
+    });
+    var vm=new Vue({
+      el:"#app",
+      data(){
+        return {
+          footer:indexFooter,
+          tab:0,
+          group_name:'root'
+        }
+      },
+      methods:{
+        fnTab(tab){
+          if(tab==1){
+            this.interfaceQcsc();
+            return;
+          }
+          this.tab=tab;
+          api.setFrameGroupIndex({
+              name: this.group_name,
+              index: tab,
+              scroll: true
+          });
+        }
+      },
+      mounted(){
+        let footer_height=$api.dom('.footer').offsetHeight;
+        api.openFrameGroup ({
+            name: this.group_name,
+            background: '#fff',
+            scrollEnabled: false,
+            rect: {
+                 x: 0,
+                 y: 0,
+                 w: 'auto',
+                 h:api.winHeight-footer_height
+            },
+            index:this.tab,
+            preload:0,
+            frames:this.footer
+        }, function(ret, err){
+          // vm.interfaceQcsc();
+          // login();
+          // vm.interfaceRegister();
+          // vm.interfaceForgetPwd();
+          // vm.interfaceSet();
+          // vm.fnMyAddress();
+          // vm.fnAddress();
+          // vm.interfaceSetPaypwd();
+          // vm.interfaceYqhy();
+        });
 
 
+      }
+    });
+
+
+  }
 </script>
 
 </html>

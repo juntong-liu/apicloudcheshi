@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>收货地址</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+
+  </head>
+
+  <body>
+    <div class="bsbj" id="app" v-cloak>
+      <div class="shdzxx gg">
+        <ul>
+          <li v-for="item in list" >
+            <div class="shdzzl" @click="fnSelect(item);">
+              <p class="khxmdh f30">
+                <span class="khxm">{{item.realname}}</span>{{item.mobile}}
+                <span class="mrdz" v-if="item.isdefault==1">默认</span>
+              </p>
+              <p class="f28 shdz">收货地址：{{item.province}} {{item.city}} {{item.area}} {{item.address}}</p>
+            </div>
+            <div class="shdzzr" @click="fnAddress(item.id,account);"><img src="../icon/bjdz.png"></div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiready=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              list:[],
+              account:api.pageParam.account
+            }
+          },
+          methods:{
+            fnSelect:function(obj){
+              if(api.pageParam.listen){
+                api.sendEvent({
+                    name: api.pageParam.listen,
+                    extra: obj
+                });
+                setTimeout(function () {
+                  api.closeWin();
+                }, 100);
+              }
+            },
+            init:function(){
+              ajax('ud.address',{account:this.account}).then(res=>{
+                this.list=res?res:[];
+              })
+            }
+          },
+          created:function(){
+            this.init();
+            api.addEventListener({
+                name: 'user-address-change'
+            }, function(ret, err){
+                this.init();
+            }.bind(this));
+
+            api.addEventListener({
+                name:'navitembtn'
+            },function(ret, err){
+              if(ret.type=='left'){
+                api.closeWin();
+              }
+              if(ret.type=='right'){
+                this.fnAddress(0,vm.account);
+              }
+            }.bind(this));
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

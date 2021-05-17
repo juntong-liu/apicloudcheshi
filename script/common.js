@@ -8,8 +8,6 @@ document.write('<script src="../script/vue_components.js"></script>');
 document.write('<script type="text/javascript" src="../script/jquery.min.js"></script>');
 document.write('<script type="text/javascript" src="../script/jquery.js"></script>');
 
-document.write('<link rel="stylesheet" href="../css/style_ud.css">');
-document.write('<link rel="stylesheet" href="../css/style.css">');
 document.write('<link rel="stylesheet" href="../css/common.css">');
 document.write('<script type="text/javascript" src="../script/pwdInput.js"></script>');
 document.write('<link rel="stylesheet" href="../css/pwdInput.css">');
@@ -21,7 +19,7 @@ document.write('<link rel="stylesheet" href="../script/cityPicker/CityPicker.css
 
 
 
-var root_url = "http://app.cnyaoqianshu.com";
+var root_url = "http://app.dongqichengcl.com";
 var root = root_url + "/app/index.php?i=1&c=entry&m=ewei_shopv2&do=mobile&r=";
 
 function mobile_url(url){
@@ -378,57 +376,6 @@ function httpRes(ret, err, resolve,reject, url, param,method="get",showProgress=
 
   }
 
-}
-//微信授权
-function wechatAuth(callback=null){
-  if(typeof(wxPlus)=='undefined'||!wxPlus){
-    wxPlus = api.require('wxPlus');
-  }
-  wxPlus.isInstalled(function(ret, err) {
-      if (!ret.installed) {
-          fnAlert('当前设备未安装微信客户端');
-          return;
-      }
-      //调起授权界面
-      wxPlus.auth({}, function(ret, err) {
-        if(ret.status){
-          wxPlus.getToken({
-              code: ret.code
-          }, function(ret, err) {
-              if (ret.status) {
-                var token=ret.accessToken;
-                wxPlus.getUserInfo({
-                  accessToken: ret.accessToken,
-                  openId: ret.openId
-                }, function(ret, err) {
-                  if (ret.status) {
-                    var temp={
-                        app_openid:ret.openid,
-                        nickname:ret.nickname,
-                        headimgurl:ret.headimgurl,
-                        unionid:ret.unionid,
-                        accesstoken:token
-                    }
-                      get('other.member.saveWechatMemberInfo',function(res){
-                        toast(res);
-                        if(typeof(callback)=='function'){
-                          callback();
-                        }
-                      },temp)
-
-                  } else {
-                      fnAlert("获取用户信息失败："+err.code);
-                  }
-                });
-              } else {
-                  fnAlert("Token获取失败："+err.code);
-              }
-          });
-        }else{
-          fnAlert('授权失败 code:'+err.code);
-        }
-      });
-  });
 }
 
 

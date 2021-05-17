@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文章</title>
+    <script src="../script/common.js" charset="utf-8"></script>
+    <style media="screen">
+      video{width: 100% !important;height: 100% !important;}
+      html,body{
+        background: #fff;
+        padding: 10px;
+      }
+      .article_title{
+        font-size: 24px;
+        margin: 5px 0;
+      }
+      .article_time{
+        color: #999;
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      .article_content{
+
+      }
+    </style>
+</head>
+<body>
+  <div id="app"  v-cloak>
+    <div class="article_title">{{detail.article_title}}</div>
+    <div class="article_time">
+      {{detail.article_date_v}}  {{detail.article_mp}}
+    </div>
+    <div v-html="detail.article_content">
+
+    </div>
+  </div>
+  <script type="text/javascript">
+  apiLoad=function(){
+    var vm=new Vue({
+      el:"#app",
+      data(){
+        return {
+          id:api.pageParam.id,
+          detail:{}
+        }
+      },
+      methods:{
+        init(){
+          ajax('ud.articleDetail',{id:this.id}).then(res=>{
+            this.detail=res;
+          });
+        }
+      },
+      mounted(){
+        this.init();
+      }
+    });
+
+
+  }
+
+  </script>
+</body>
+</html>

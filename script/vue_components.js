@@ -1,5 +1,152 @@
 if(typeof(Vue)=="function"){
+  Vue.component('share',{
+    template:
+    `
+    <div>
+      <div class="share-body-mask" @click="fnShareType('cancel')"></div>
+      <div class="share-content">
+        <div class="share-body-title">分享到</div>
+        <div class="share-box">
+          <div class="share-item" @click="fnShareType('session')">
+            <img src="../icon/wxhy1.png" class="img">
+            <div class="share-title">微信好友</div>
+          </div>
+          <div class="share-item" @click="fnShareType('timeline')">
+            <img src="../icon/wxpyq1.png" class="img">
+            <div class="share-title">微信朋友圈</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    `,
+    methods:{
+      fnShareType(type){
+        this.$emit('type',type)
+      }
+    },
+    props:{
+      show:{
+        type:Boolean,
+        default:false
+      }
+    },
+    watch:{
+      show(v){
+
+        if(v){
+          $api.dom('.share-body-mask').style.display='block';
+        }else{
+          $api.dom('.share-body-mask').style.display='none';
+        }
+        $(".share-content").slideToggle(200);
+
+
+      }
+    }
+
+  })
   //组件
+  Vue.component('status-bar',{
+    template:
+    `
+    <div>
+      <div :style="{height:height,background:bg}" class="status-bar"></div>
+      <div :style="{height:height,background:bg}"></div>
+    </div>
+    `,
+    props:{
+      bg:{
+        default:String,
+        default:'rgba(0,0,0,0)'
+      }
+    },
+    data(){
+      return{
+        height:"undefined" == typeof(api)?'30px':api.safeArea.top+'px'
+      }
+    }
+  })
+  Vue.component('title-bar',{
+    template:
+    `
+    <div>
+      <div class="r_tit xhx faqtit title-bar" :style="{color:color,background:bg}">
+        <status-bar ></status-bar>
+        <div class="r_titnr s_titnr gg">
+          <slot name="left"></slot>
+          <div class="r_titm f36">{{title}}</div>
+          <slot name="right"></slot>
+        </div>
+      </div>
+      <div :style="{height:height}"></div>
+    </div>
+    `,
+    props:{
+      bg:{
+        type:String,
+        default:'rgba(0,0,0,0)'
+      },
+      title:{
+        default:String,
+        default:''
+      },
+      color:{
+        type:String,
+        default:'#fff'
+      }
+    },
+    data(){
+      return {
+        height:0
+      }
+    },
+    mounted(){
+      this.height=$api.dom('.title-bar').offsetHeight+'px';
+    }
+  })
+  Vue.component('top-bar',{
+    template:
+    `
+    <div>
+      <div class="s_tit s_titk" :style="{background:bg}">
+        <status-bar :bg="bg"></status-bar>
+        <div class="s_titnr gg">
+          <div class="s_titz">
+            <img class="s_tittx" src="../image/tx.png">
+          </div>
+          <div class="s_titm">
+            <form action="" class="sc_tjbd">
+              <input type="text" class="sc_search" placeholder="请输入搜索关键字" readonly>
+              <img class="sc_fdj" src="../image/fdj.png">
+            </form>
+          </div>
+          <div class="s_tity">
+            <div class="s_tityz"><img class="s_tityzt" src="../image/syrw.png"></div>
+            <div class="s_tityy">
+              <img class="s_tityyt" src="../image/syxx.png">
+              <div class="s_tityd"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :style="{height:height}"></div>
+    </div>
+    `,
+    props:{
+      bg:{
+        default:String,
+        default:''
+      }
+    },
+    data(){
+      return{
+        height:0
+      }
+    },
+    mounted(){
+      this.height=($api.dom('.s_tit').offsetHeight-1)+'px';
+    }
+  })
 
   Vue.component('select-area',{
     template:

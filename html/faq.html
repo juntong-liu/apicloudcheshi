@@ -5,22 +5,14 @@
     <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>发圈</title>
-    <link rel="stylesheet" href="../css/swiper.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    
+    <script src="../script/common.js"></script>
+
+
   </head>
   <body>
-    <div class="hsbgk">
-      <div class="r_tit xhx faqtit">
-        <div class="r_titnr s_titnr gg">
-          <div class="r_titl"></div>
-          <div class="r_titm f36">发圈</div>
-          <div class="r_titr"></div>
-        </div>
-      </div>
-      <div class="kong"></div>
+    <div class="hsbgk" id="app" v-cloak>
+      <title-bar title='发圈' bg="#f04343"></title-bar>
       <div class="gg">
         <div class="faq_li">
           <div class="faq_lis">
@@ -55,4 +47,22 @@
       </div>
     </div>
   </body>
+  <script type="text/javascript">
+    apiLoad=function(callback){
+      var vm=new Vue({
+        el:"#app",
+        data(){
+          return {
+
+          }
+        },
+        methods:{
+          init(){}
+        },
+        mounted(){
+          this.init();
+        }
+      });
+    }
+  </script>
 </html>

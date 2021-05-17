@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>收货地址</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <section class="bsbj">
+        <div class="s_mrznr gg">
+          <ul>
+            <li>
+              <p class="f28">收货人</p>
+              <input class="dz-input f28 hsz" type="text" v-model="detail.realname"  placeholder="请输入姓名">
+            </li>
+
+            <li>
+              <p class="f28">手机号码</p>
+              <input class="dz-input f28 hsz" type="number" v-model="detail.mobile"  placeholder="请输入手机号">
+
+            </li>
+          </ul>
+
+        </div>
+      </section>
+      <section class="bsbj gx">
+        <div class="thyy gg f28">
+          <div class="thyyz">所在地区</div>
+          <div class="thyyy" @click="fnSelectArea">
+            <span style="flex:1;text-align:right;margin-right:10px;" v-if="detail.province">{{cityArea}}</span>
+            <span style="flex:1;text-align:right;margin-right:10px;" v-else>选择所在省市区</span>
+            <img class="jtdx" src="../icon/jt.png">
+          </div>
+        </div>
+        <div class="thyy gg f28">
+          <div class="thyyz">详细地址</div>
+          <input class="dz-input f28 hsz" type="text"  placeholder="街道、门牌号等" v-model="detail.address">
+        </div>
+        <div class="thyy gg f28">
+          <p>
+            <span class=" f28">设为默认地址</span>
+          </p>
+          <div class="t_z2" @click="fnSetDefault">
+            <span  :class="{xzzt:detail.isdefault>0}"></span>
+          </div>
+        </div>
+      </section>
+      <div class="tjan f30 gg" @click="fnSubmit">保存</div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              cityList:[],
+              id:0,
+              detail:{
+                province:'',
+                city:'',
+                area:'',
+                address:'',
+                isdefault:0,
+                realname:'',
+                mobile:'',
+                actives:[0,0,0]
+              },
+              account:api.pageParam.account
+            }
+          },
+          computed:{
+            cityArea(){
+              return this.detail.province+" "+this.detail.city+" "+this.detail.area
+            }
+          },
+          methods:{
+            init:function(){
+              this.cityList=getCityList();
+              if(this.id>0){
+                //获取信息
+
+                ajax('ud.address.detail',{id:this.id,account:this.account}).then(res=>{
+                  this.detail=res;
+                  let actives=[0,0,0];
+                  if(this.detail.province){
+                    actives=getActives(this.cityList,this.cityArea)
+                  }
+                  this.actives=actives;
+                })
+              }
+            },
+            fnSetDefault:function(){
+              this.detail.isdefault=this.detail.isdefault==0?1:0;
+            },
+            fnSubmit:function(){
+              if(!this.detail.realname){
+                toast('请输入姓名');
+                return;
+              }
+              if(!this.detail.mobile){
+                toast('请输入手机号');
+                return;
+              }
+              if(!this.detail.province){
+                toast('请选择地区');
+                return;
+              }
+              if(!this.detail.address){
+                toast('请输入详细地址');
+                return;
+              }
+              if(this.account){
+                this.detail.account=this.account;
+              }
+              ajax('ud.address.submit',this.detail).then(res=>{
+                toast(res.msg);
+                this.fnDataChange();
+              });
+            },
+            fnDataChange:function(){
+              api.sendEvent({
+                  name: 'user-address-change'
+              });
+              setTimeout(function () {
+                api.closeWin();
+              }, 1000);
+            },
+            fnSelectArea:function(){
+              fnCityPicker(this.cityList,this.actives,function(ret){
+                this.actives=ret.actives;
+                this.detail.province=ret.text1;
+                this.detail.city=ret.text2;
+                this.detail.area=ret.text3;
+              }.bind(this));
+            }
+          },
+          created:function(){
+            this.id=api.pageParam.id?api.pageParam.id:0;
+
+            this.init();
+            api.addEventListener({
+                name:'navitembtn'
+            },function(ret, err){
+              if(ret.type=='left'){
+                api.closeWin();
+              }
+              if(ret.type=="right"){
+                fnConfirm('确定删除该收货地址么？',function(){
+                  ajax('ud.address.delete',{id:vm.id}).then(res=>{
+                    toast(res);
+                    vm.fnDataChange();
+                  });
+                })
+              }
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>账户设置</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <section class="bsbj">
+        <div class="thyy gg f28" @click="interfaceZl()">
+            <div class="thyyz" style="flex:1">个人资料</div>
+            <div class="thyyy" style="flex:none;"><img class="jtdx" src="../icon/jt.png"></div>
+        </div>
+        <div class="thyy gg f28" @click="fnMyAddress()">
+            <div class="thyyz" style="flex:1">收货地址管理</div>
+            <div class="thyyy" style="flex:none;"><img class="jtdx" src="../icon/jt.png"></div>
+        </div>
+        <div class="thyy gg f28" @click="interfaceBindMobile()">
+            <div class="thyyz" style="flex:1">绑定手机号</div>
+            <div class="thyyy" style="flex:none;">
+              <span class="hsz" style="margin-right:5px;">{{userInfo.mobile}}</span>
+              <img class="jtdx" src="../icon/jt.png">
+            </div>
+        </div>
+        <div class="thyy gg f28" v-if="userInfo.unbind==1" @click="fnBindWechat()">
+            <div class="thyyz" style="flex:1">绑定微信号</div>
+            <div class="thyyy" style="flex:none;">
+              <img class="jtdx" src="../icon/jt.png">
+            </div>
+        </div>
+        <div class="thyy gg f28" @click="interfaceSetPaypwd()">
+            <div class="thyyz" style="flex:1">设置/修改支付密码</div>
+            <div class="thyyy" style="flex:none;"><img class="jtdx" src="../icon/jt.png"></div>
+        </div>
+
+        <div class="thyy gg f28">
+            <div class="thyyz">推荐人</div>
+            <div class="thyyy hsz">{{userInfo.yqr}}</div>
+        </div>
+        <div class="thyy gg f28" @click="fnUpdateLevel()">
+            <div class="thyyz">版本</div>
+            <div class="thyyy hsz">{{version}}</div>
+        </div>
+      </section>
+      <div class="tjan f30 gg" @click="fnLogout()">退出登录</div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              userInfo:{},
+              version:api.version
+            }
+          },
+          methods:{
+            init:function(){
+              ajax('ud.member').then(res=>{
+                this.userInfo=res;
+              })
+            },
+            fnLogout:function(){
+              setCache('token','');
+              toast('退出成功');
+              api.sendEvent({
+                  name: 'reload-user-info'
+              });
+
+              setTimeout(function () {
+                api.closeWin();
+              }, 1000);
+            }
+          },
+          created:function(){
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
+
+
+
+  </body>
+</html>

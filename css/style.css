@@ -166,6 +166,7 @@ input[type="range"]::-webkit-slider-thumb {
 	position: fixed;
 	width: 100%;
 	z-index: 9999;
+	padding-bottom: 10px;
 }
 
 .s_tittx {
@@ -250,10 +251,13 @@ input[type="range"]::-webkit-slider-thumb {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	margin: 0.4rem 0px;
+	align-items: center;
+	height: 20px;
 }
 
 .gggdt {
 	height: 0.48rem;
+
 }
 
 .ggnr {
@@ -267,10 +271,13 @@ input[type="range"]::-webkit-slider-thumb {
 
 .gggd {
 	text-align: right;
+	display: flex;
+	align-items: center;
 }
 
 .gggd img {
 	height: 0.29rem;
+	margin-left: 2px;
 }
 
 /* 首页主导航按钮 */
@@ -520,8 +527,8 @@ input[type="range"]::-webkit-slider-thumb {
 .r_tit {
 	position: fixed;
 	width: 100%;
-	background-color: #fff;
 	z-index: 9999;
+	top: 0;
 }
 
 .r_titm {
@@ -652,10 +659,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* 发圈页面*/
-.faqtit {
-	background: #f04343;
-	color: #fff;
-}
 
 .hsbgk {
 	min-height: 100%;
@@ -798,7 +801,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .lo_qt {
-	margin-top: 0.53rem;
+	margin: 1rem 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1411,7 +1414,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .wd_bg {
 	background: url(../image/wdbg.png) no-repeat;
-	background-size: 100% auto;
+	background-size: 100% 100%;
 	background-position: center bottom;
 	padding-bottom: 1.2rem;
 }
@@ -1428,6 +1431,7 @@ input[type="range"]::-webkit-slider-thumb {
 	height: 0.4rem;
 	line-height: 0.4rem;
 	color: #d7b999;
+	padding: 0 10px;
 }
 
 .wd_gr {

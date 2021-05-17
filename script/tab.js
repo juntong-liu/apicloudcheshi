@@ -1,32 +1,32 @@
 let indexFooter=[
   {
     name:'首页',
-    active_icon:'./image/fmenu01-dq.png',
-    default_icon:'./image/fmenu01.png',
+    active_icon:'./image/fsyh.png',
+    default_icon:'./image/fsy.png',
     url:'widget://html/index.html'
   },
   {
-    name:'团购',
-    active_icon:'./image/fmenu02-dq.png',
-    default_icon:'./image/fmenu02.png',
-    url:'widget://html/tuangou.html'
+    name:'七彩生活',
+    active_icon:'./image/qcshtbh.png',
+    default_icon:'./image/qcshtb.png',
+    url:'widget://html/qcsc.html'
   },
   {
-    name:'财富',
-    active_icon:'./image/fmenu03-dq.png',
-    default_icon:'./image/fmenu03.png',
-    url:'widget://html/caifu.html'
+    name:'尊享',
+    active_icon:'./image/zxtbh.png',
+    default_icon:'./image/zxtb.png',
+    url:'widget://html/zx.html'
   },
   {
-    name:'交易',
-    active_icon:'./image/fmenu04-dq.png',
-    default_icon:'./image/fmenu04.png',
-    url:'widget://html/jiaoyi.html'
+    name:'发圈',
+    active_icon:'./image/fqtbh.png',
+    default_icon:'./image/fqtb.png',
+    url:'widget://html/faq.html'
   },
   {
     name:'我的',
-    active_icon:'./image/fmenu05-dq.png',
-    default_icon:'./image/fmenu05.png',
-    url:'widget://html/mine.html'
+    active_icon:'./image/fwdh.png',
+    default_icon:'./image/fwd.png',
+    url:'widget://html/wd.html'
   }
 ];

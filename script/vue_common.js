@@ -1,10 +1,5 @@
 if(typeof(Vue)=="function"){
 
-  Vue.prototype.setStatusBar=function(color='#fff'){
-    let height=api.safeArea.top;
-    return '<div class="status-bar" style="height:'+height+'px;background:'+color+'"></div><div style="height:'+height+'px;"></div>'
-
-  }
   Vue.prototype.BigNumber=function(d){
     math.config({number: 'BigNumber'});
     return math.evaluate(d);
@@ -45,7 +40,7 @@ if(typeof(Vue)=="function"){
     }
     return count;
   }
-  Vue.prototype.tImage=function(url,default_image='../image/logo.png'){
+  Vue.prototype.tImage=function(url,default_image='../icon/logo.png'){
     if(url){
       if(url.indexOf('attachment')!=-1){
         return this.tUrl(url);
@@ -226,18 +221,18 @@ if(typeof(Vue)=="function"){
     }
   }
   Vue.prototype.interfaceRegister=function(){
-    openWhiteWin('register','新用户注册',{temp:'sms_reg'})
+    openWhiteWin('register','注册',{temp:'sms_reg'})
   }
   Vue.prototype.interfaceForgetPwd=function(){
     openWhiteWin('register','忘记密码',{temp:'sms_forget'});
   }
 
   Vue.prototype.interfaceBindMobile=function(){
-    openWhiteWin('reset-pwd','绑定手机号',{temp:'sms_reg'});
+    openWhiteWin('bind-mobile','绑定手机号',{temp:'sms_reg'});
   }
   Vue.prototype.interfaceSetPaypwd=function(){
     //设置支付密码
-    openWhiteWin('pay-pwd','设置支付密码',{temp:'sms_reg'});
+    openWhiteWin('set-paypwd','设置支付密码');
   }
 
   //我的订单
@@ -353,8 +348,8 @@ if(typeof(Vue)=="function"){
   }
 
   Vue.prototype.interfaceYqhy=function(){
-    openBaseWin('yqhy0','邀请好友',{},{
-        iconPath: 'widget://icon/zf2.png'
+    openBaseWin('yqhy','邀请好友',{},{
+        text: '邀请说明'
     });
   }
   Vue.prototype.interfaceKtdl=function(){
@@ -501,6 +496,41 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
         if (!ret.update) {
             fnAlert('已是最新版本');
         }
+    });
+  }
+  Vue.prototype.interfaceQcsc=function(){
+    openWhiteWin('qcsc','七彩商城',{},{iconPath: 'widget://icon/fdj3.png'});
+  }
+  Vue.prototype.fnBindWechat=function(){
+    wxPlus = api.require('wxPlus');
+    wxPlus.isInstalled(function(ret, err) {
+        if (!ret.installed) {
+            fnAlert('当前设备未安装微信客户端');
+            return;
+        }
+        wxPlus.auth({}, function(ret, err) {
+          if(ret.status){
+            wxPlus.getToken({
+                code: ret.code
+            }, function(ret, err) {
+                if (ret.status) {
+                  let param={
+                    token:ret.accessToken,
+                    openid:ret.openId
+                  }
+                  ajax('ud.member.bindWechat',param,'post').then(res=>{
+                    toast(res);
+                    reloadUserInfo();
+                  })
+
+                } else {
+                    fnAlert("Token获取失败："+err.code);
+                }
+            });
+          }else{
+            fnAlert('授权失败 code:'+err.code);
+          }
+        });
     });
   }
 

@@ -95,3 +95,78 @@
 	color: #fff;
 	border-radius: 50%;
 }
+
+/*微信登录*/
+.wx-login{ position: fixed; left: 0; right: 0; top: 0; bottom: 0;}
+.wx-logospcing{ height: 4.0rem; }
+.wx-login-logo{ width: 2.16rem; height: 2.16rem; margin: 0 auto; }
+.wx-login-logo img{ width: 100%; height: 100%; display: block; }
+.wx-login-btn{ display: flex; align-items: center; justify-content: center;background-image: linear-gradient(to right, #ff6446, #f04343); width: 80%; margin: 4.0rem auto 1.33rem; height: 1.33rem; font-size: 0.43rem; color: #fff; border-radius: 0.67rem;  }
+.wx-login-wximg{ width: 0.53rem; height: 0.53rem; display: block; padding-right: 0.13rem; }
+
+.wx-login-zc{ margin-top: 7.33rem; }
+.wx-login-newzc{ font-size: 0.37rem; color: #2e3440; text-align: center; }
+.wx-login-zcxy{ font-size: 0.32rem; color: #ccd3e1; text-align: center; padding-top: 0.27rem; }
+.wx-login-zcxyxx{ color: #888f9f; font-size: 0.32rem; font-weight: bold; }
+
+.login-conn-dl-zc{ font-size: 0.37rem; color: #939393; text-align: center;}
+
+.login-conn-dl-zc img{
+	margin: 10px 0;
+	width: 50px;
+	height: 50px;
+}
+
+
+.share-body {
+
+}
+
+.share-body-mask{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+.share-content{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 2;
+	background: #fff;
+	border-radius: 0.21rem 0.21rem 0 0;
+	display: none;
+}
+.share-body-title{
+
+	margin-top: 20px;
+	height: 20px;
+	line-height: 20px;
+	font-size: 14px;
+	font-weight: 700;
+	text-align: center;
+}
+
+
+.share-box{
+	display: flex;
+	padding: 10px;
+}
+.share-item{
+	flex: 1;
+	text-align: center;
+	line-height: 1.5;
+
+}
+.share-item .img{
+	width: 40px;
+}
+.share-item .share-title{
+	text-align: center;
+	margin-top: 10px;
+}

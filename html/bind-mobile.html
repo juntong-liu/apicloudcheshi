@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>注册</title>
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <script src="../script/common.js"></script>
+
+  </head>
+
+  <body>
+    <div class="denglu" id="app" v-cloak>
+      <div class="dengluk">
+        <div class="register_hy">
+          <span>绑定手机号</span>
+        </div>
+        <form class="login-form">
+          <div class="input-content">
+            <div class="reset-3">
+              <input class="reg-input" ref="mobile" type="number" v-model="mobile" autocomplete="off" placeholder="请输入手机号">
+            </div>
+            <div class="reset-3 reg_yzm">
+
+              <input class="reg-input" ref="code" type="number" autocomplete="off" placeholder="请输入验证码" v-model='code'>
+              <div class="reg_yzmk f28 lsz" @click="get_code">{{code_text}}</div>
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div class="enter-btn" @click="fnSub()">确定</div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              mobile:'',
+              code:'',
+              code_text:'获取验证码',
+              getCoding:false,
+              get_code_interval:0,
+              time:60,
+              temp:api.pageParam.temp
+            }
+          },
+          methods:{
+            get_code:function(){
+  						if(!checkMobile(this.mobile)){
+  							toast('请输入11位手机号码');
+                this.$refs.mobile.focus();
+  							return ;
+  						}
+              if(this.getCoding){
+                toast('请'+this.time+"s后再发送");
+                return;
+              }
+              this.getCoding=true;
+              ajax('ud.member.get_code',{temp:'sms_change',mobile:this.mobile}).then(res=>{
+                this.code_text=this.time+"s";
+                this.get_code_interval=setInterval(function(){
+                  if(this.time<=1){
+                    this.time=60;
+                    this.code_text='获取验证码';
+                    clearInterval(this.get_code_interval);
+                    this.get_code_interval=0;
+                    this.getCoding=false;
+                  }else{
+                    this.time-=1;
+                    this.code_text=this.time+"s";
+                  }
+
+                }.bind(this),1000)
+              })
+
+  					},
+
+            fnSub:function(){
+  						if(!checkMobile(this.mobile)){
+  							toast('请输入11位手机号码');
+                this.$refs.mobile.focus();
+  							return ;
+  						}
+  						if(!this.code){
+  							toast('请输入验证码');
+                this.$refs.code.focus();
+  							return;
+  						}
+
+
+  						var postData={
+  							mobile:this.mobile,
+  							code:this.code,
+  						}
+  						ajax('ud.member.bindMobile',postData,'post').then(res=>{
+                toast(res);
+                reloadUserInfo();
+  							setTimeout(function () {
+  								api.closeWin();
+  							}, 1000);
+              })
+  					}
+          },
+          mounted(){
+
+          }
+        });
+      }
+    </script>
+
+  </body>
+</html>
