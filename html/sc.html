@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商城底部</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/common.js"></script>
+    <script src="../script/tab.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+  <div class="footer">
+    <div class="footerli" v-for="(foot,idx) in footer" @click="fnTab(idx)">
+      <img class="footerlitp" :src="foot.active_icon" v-if="idx==tab">
+      <img class="footerlitp" :src="foot.default_icon" v-else>
+      <div class="footerliwz" :class="{foot_xzwz:idx==tab}">{{foot.name}}</div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+apiLoad=function(callback){
+  var vm=new Vue({
+    el:"#app",
+    data(){
+      return {
+        footer:scFooter,
+        tab:api.pageParam.tab,
+        group_name:'root'
+      }
+    },
+    methods:{
+      fnTab(tab){
+        this.tab=tab;
+        api.setFrameGroupIndex({
+            name: this.group_name,
+            index: tab,
+            scroll: true
+        });
+      }
+    },
+    mounted(){
+      let footer_height=$api.dom('.footer').offsetHeight;
+      api.openFrameGroup ({
+          name: this.group_name,
+          background: '#fff',
+          scrollEnabled: false,
+          rect: {
+               x: 0,
+               y: api.pageParam.top_height,
+               w: 'auto',
+               h:api.winHeight-footer_height
+          },
+          index:this.tab,
+          preload:0,
+          frames:this.footer
+      }, function(ret, err){
+
+      });
+
+
+    }
+  });
+  callback(vm);
+}
+
+</script>
+</body>
+</html>

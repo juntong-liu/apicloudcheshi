@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>订单详情</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style type="text/css">
+      html{ background: #fff!important; }
+      .px16{
+        font-size: 16px;
+        padding:0;
+      }
+      .px14{
+        font-size: 14px;
+        float: right;
+      }
+      .bt-bottom{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <section>
+        <div class="ddzt f36">
+          <div v-if="order.status==0">
+            <p v-if="order.paytype==3">货到付款，等待发货</p>
+            <p v-else>等待付款</p>
+          </div>
+          <div v-else-if="order.status==1">
+            <p v-if="order.sendtype>0">部分商品已发货</p>
+            <p v-else-if="order.refundid==0">买家已付款</p>
+            <span v-if="order.ccard">(充值中)</span>
+          </div>
+          <div v-else-if="order.status==2&&order.refundid==0">
+            <p >卖家已发货</p>
+          </div>
+          <div v-else-if="order.status==3">
+            <p v-if="order.ptjs==1">
+              <span v-if="order.js_status==1">寄售完成</span>
+              <span v-else>寄售中</span>
+            </p>
+            <p v-else>交易完成</p>
+            <span v-if="order.ccard">(充值完成)</span>
+          </div>
+          <div v-else-if="order.status==-1">
+            <p>交易关闭</p>
+          </div>
+          <div v-if="order.refundstate>0&&order.refundstate!=3">
+            ({{order.status==1?'申请退款':'申请售后'}}中)
+          </div>
+          <div v-if="order.refundid!=0">
+            {{refund.status==-1?('卖家拒绝'+order['status'] ==1?'退款':'售后'):''}}
+          </div>
+          <div style="margin-top:5px;font-size:14px;">
+            订单金额：<span v-if="order.ispackage&&order.ispackage!=0">(套餐总价)</span>￥{{order.goodsprice}}
+          </div>
+
+
+
+        </div>
+        <div class="refuse_reason f28" v-if="order.refundid!=0&&refund['reply']&&refund['status']==-1">拒绝原因：{{refund.reply}}</div>
+        <div class="gwdz_nr gg" v-if="address">
+          <div class="t_dzt">
+            <img src="../icon/dwz.png">
+          </div>
+          <div class="t_dznr">
+            <p class="f28"><span>收件人：</span><span>{{address.realname}}</span><span  class="t_xm">{{address.mobile}}</span></p>
+            <div class="shdz f28">收货地址：{{address.province}} {{address.city}} {{address.area}} {{address.address}}</div>
+          </div>
+
+        </div>
+        <div v-if="order['status'] > 1 && order['sendtype']==0  &&order['city_express_state']==0">
+          <div class="hgx"></div>
+          <div class="gwdz_nr gg" @click="fnOrderWl(order.id)">
+            <div class="t_dzt">
+              <img src="../icon/kd2.png">
+            </div>
+            <div class="t_dznr" v-if="express">
+              <p class="f28"><span style="color:#ff5555">{{express.step}}</span></p>
+              <div class="shdz f28">{{express.time}}</div>
+            </div>
+            <div class="t_dznr" v-else>
+              <p class="f28"><span>快递公司：{{order.expresscom}}</span></p>
+              <div class="shdz f28">快递单号：{{order.expresssn}}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="hgx"></div>
+      <section>
+        <div class="ddxq gg">
+          <div class="ddxqs" v-for="g in goods">
+            <div class="ddxqsp">
+              <img :src="tImage(g.thumb)">
+            </div>
+            <div class="ddxqsnr">
+              <div class="ddcpbt f28">
+                <p class="ddxqbt">{{g.title}}</p>
+                <p class="ddxqjg">¥ {{parseFloat(g.price/g.total)}}</p>
+              </div>
+              <div class="ddcpgg f22">
+                <p><span class="ddcpys" v-if="g.optiontitle">{{g.optiontitle}}</span></p>
+                <p class="ddcpsl">X{{g.total}}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+      <div class="hgx"></div>
+      <div class="ddxx f24 gg" style="padding: 0.17rem 0;">
+        <p class="px16">商品小计<span v-if="order.ispackage!=0">(套餐总价)</span><span style="float:right" class="px14">{{order.goodsprice}}</span></p>
+        <p class="px16">运费<span class="px14">￥{{order.dispatchprice}}</span></p>
+
+        <p class="px16" v-if="order.ud_price">U豆抵扣<span class="px14">-￥{{order.ud_price}}</span></p>
+        <p class="px16" v-if="order.lotterydiscountprice>0">抽奖优惠<span class="px14">-￥{{order.lotterydiscountprice}}</span></p>
+        <p class="px16" v-if="order.deductenough>0">满额立减<span class="px14">-￥{{order.deductenough}}</span></p>
+        <p class="px16" v-if="order.couponprice>0">优惠券优惠<span class="px14">-￥{{order.couponprice}}</span></p>
+        <p class="px16" v-if="order.buyagainprice>0">重复购买优惠<span class="px14">-￥{{order.buyagainprice}}</span></p>
+        <p class="px16" v-if="order.discountprice>0">会员优惠<span class="px14">-￥{{order.discountprice}}</span></p>
+        <p class="px16" v-if="order.isdiscountprice>0">促销优惠<span class="px14">-￥{{order.isdiscountprice}}</span></p>
+        <p class="px16" v-if="order.deductprice>0">积分抵扣<span class="px14">-￥{{order.deductprice}}</span></p>
+        <p class="px16" v-if="order.deductcredit2>0">余额折扣<span class="px14">-￥{{order.deductcredit2}}</span></p>
+        <p class="px16" v-if="order.seckilldiscountprice>0">秒杀优惠<span class="px14">-￥{{order.seckilldiscountprice}}</span></p>
+        <p class="px16" v-if="order.use_ug>0">浆果<span class="px14">+{{order.use_ug}}</span></p>
+        <p class="px16" v-else>实付费<span v-if="order.isnewstore==0">(含运费)</span>：<span class="px14">￥{{order.price}}</span></p>
+      </div>
+
+      <div class="refuse_reason f28" v-if="order.remark">买家备注：{{refund.remark}}</div>
+
+      <div class="hgx"></div>
+      <div class="ddxx f24 gg">
+        <p>订单编号：{{order.ordersn}}</p>
+        <p>下单时间：{{date("Y-m-d H:i:s",order.createtime)}}</p>
+        <p v-if="order.status>=1&&order.paytime>0">支付时间：{{date("Y-m-d H:i:s",order.paytime)}}</p>
+        <p v-if="order['status']>=2 || (order['status']>=1 && order['sendtype']>0)">发货时间：{{date("Y-m-d H:i:s",order.sendtime)}}</p>
+        <p v-if="order.status==3">完成时间：{{date("Y-m-d H:i:s",order.finishtime)}}</p>
+      </div>
+      <div style="height:100px;"></div>
+      <div class="bt-bottom">
+        <div class="ddan f26" v-if="order.userdeleted==0">
+          <span class="span" v-if="order.status==3 || order.status==-1" @click="fnOrderDelete(order.id,1)">删除订单</span>
+          <span class="span" v-if="order.status==3 && order.iscomment==1" @click="fnOrderComment(order.id,1)">追加评价</span>
+          <span class="span" v-if="order.status==3 && order.iscomment==0" @click="fnOrderComment(order.id,0)">评价</span>
+          <span class="span" v-if="order.status>1 && order.addressid>0 && order.iscycelbuy == 0 " @click="fnOrderWl(order.id)">查看物流</span>
+          <span class="span" v-if="order.status==2 && order.iscycelbuy == 0" @click="fnOrderFinish(order.id)">确认收货</span>
+          <span class="span" v-if="order.canrefund && order.iscycelbuy == 0&&order.refundstate!=3" >
+            <span v-if="order.refundstate=='0'" @click="fnOrderSh(order.id,'申请退款')">申请退款</span>
+            <span v-else @click="fnOrderSh(order.id,'查看进度')">查看进度</span>
+          </span>
+          <span class="span" v-if="order.refundstate>0&&refund.status!=5&&order.refundstate!=3" @click="fnOrderShCancel(order.id)">取消申请</span>
+          <span v-if="order.status==0">
+            <span class="span" @click="fnOrderCancel">取消订单</span>
+            <span class="zyan span" v-if="order.paytype!=3" @click="interfaceOrderPay(order.id)">付款</span>
+          </span>
+        </div>
+        <div class="ddan f26" v-else>
+          <span class="span" v-if="order.status==3 || order.status==-1" @click="fnOrderDelete(order.id,2)">彻底删除订单</span>
+          <span class="span" v-if="order.status==3" @click="fnOrderDelete(order.id,0)">恢复订单</span>
+        </div>
+      </li>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              id:api.pageParam.id,
+              order:{},
+              refund:{},
+              address:null,
+              express:null,
+              goods:[],
+              log:null
+            }
+          },
+          methods:{
+            init:function(){
+              ajax('ud.order.detail',{id:this.id}).then(res=>{
+                this.order=res.order;
+                this.refund=res.refund;
+                this.address=res.address;
+                this.express=res.express;
+                this.goods=res.goods;
+                this.log=res.log;
+              });
+            },
+            fnOrderShCancel:function(){
+              fnConfirm('确定取消申请么？',function(){
+                get('ud.refund.cancel',function(res){
+                  toast(res);
+                  vm.init();
+                },{id:vm.id})
+              })
+            }
+
+          },
+          mounted:function(){
+            this.init();
+            api.addEventListener({
+                name:'reload-order-list'
+            },function(ret, err){
+              vm.init();
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

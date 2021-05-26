@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>我的订单</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+  </head>
+
+  <body>
+    <div id="app" v-cloak >
+      <div class="u_tit">
+        <div class="m_titnr gg">
+          <div class="ubt2">
+            <div class="left" onclick="api.closeWin();"><img src="../icon/hfh.png" style="height: 0.68rem;"></div>
+            <div>我的订单</div>
+            <div class="right" @click="fnTab(5)" :class="{p_xz:tab===5}" v-show="type!=1">回收站</div>
+          </div>
+        </div>
+      </div>
+      <div class="kong"></div>
+      <div class="xtb" v-show="type!=1">
+        <ul>
+          <li @click="fnTab('')"><span :class="{x_xz:tab===''}">全部</span></li>
+          <li @click="fnTab(0)"><span :class="{x_xz:tab===0}">待付款</span></li>
+          <li @click="fnTab(1)"><span :class="{x_xz:tab===1}">待发货</span></li>
+          <li @click="fnTab(2)"><span :class="{x_xz:tab===2}">待收货</span></li>
+          <li @click="fnTab(3)"><span :class="{x_xz:tab===3}">待评价</span></li>
+        </ul>
+      </div>
+      <div class="kong1" v-show="type!=1"></div>
+      <div class="wddd">
+        <ul>
+          <li v-for="item in list">
+            <div @click="fnOrderDetail(item.id)">
+              <div class="wddd_bt" style="padding:10px 0;margin-bottom:0;">
+                <div class="wddd_btz">
+                  <span class="f28">订单编号:{{item.ordersn}}</span>
+                </div>
+                <div class="f28 color666" :class="fnClass(item.statusstr)"> {{item.statusstr}}</div>
+              </div>
+              <div v-for="shop in item.goods" style="margin-bottom:5px;">
+                <div class="wddd_bt" style="border-bottom:none;">
+                  <div class="wddd_btz">
+                    <img src="../icon/dptb.png">
+                    <span class="f28 dd_dpmz">{{shop.shopname}}</span>
+                  </div>
+                </div>
+                <div class="ddxqs" v-for="goods in shop.goods">
+                  <div class="ddxqsp">
+                    <img :src="tImage(goods.thumb)">
+                  </div>
+                  <div class="ddxqsnr">
+                    <div class="ddcpbt f28">
+                      <p class="ddxqbt">{{goods.title}}</p>
+                      <p class="ddxqjg">¥ {{goods.price}}</p>
+                    </div>
+                    <div class="ddcpgg f22">
+                      <p v-if="goods.optiontitle">
+                        <span class="ddcpys">{{goods.optiontitle}}</span>
+                      </p>
+                      <p class="ddcpsl">X{{goods.total}}</p>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="ddxqx f28">
+                  <span class="ddxqxjs">共{{item.goods.length}}件商品</span>
+                  <span style="color:red;">实付：¥{{item.price}}</span>
+                </div>
+
+              </div>
+            </div>
+            <div class="ddan f26" v-if="item.userdeleted==0">
+              <span class="span" v-if="(item.status==3&&item.ptjs!=1) || item.status==-1" @click="fnOrderDelete(item.id,1)">删除订单</span>
+              <span class="span" v-if="item.status==3 && item.iscomment==1" @click="fnOrderComment(item.id,1)">追加评价</span>
+              <span class="span" v-if="item.status==3 && item.iscomment==0&&item.ptjs!=1" @click="fnOrderComment(item.id,0)">评价</span>
+              <span class="span" v-if="item.status>1 && item.addressid>0 && item.iscycelbuy == 0 &&item.ptjs!=1" @click="fnOrderWl(item.id)">查看物流</span>
+              <span class="span" v-if="item.status==2 && item.iscycelbuy == 0" @click="fnOrderFinish(item.id)">确认收货</span>
+              <span class="span" v-if="item.canrefund && item.iscycelbuy == 0&&item.status==1">申请退款</span>
+              <span class="span" v-if="item.canrefund && item.iscycelbuy == 0&&item.status!=1">申请售后</span>
+              <span v-if="item.status==0">
+                <span class="span" @click="fnOrderCancel(item.id)">取消订单</span>
+                <span class="zyan span" v-if="item.paytype!=3" @click="interfaceOrderPay(item.id)">付款</span>
+              </span>
+            </div>
+            <div class="ddan f26" v-else>
+              <span class="span" v-if="item.status==3 || item.status==-1" @click="fnOrderDelete(item.id,2)">彻底删除订单</span>
+              <span class="span" v-if="item.status==3" @click="fnOrderDelete(item.id,0)">恢复订单</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+      <div class="is_end" v-show="list.length>0&&isEnd">没有更多了</div>
+      <div class="empty-box" v-show="list.length==0&&isEnd">暂无数据</div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        $api.fixStatusBar($api.dom('.u_tit'));
+        $api.fixStatusBar($api.dom('.kong'));
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              tab:api.pageParam.tab,
+              type:api.pageParam.type,
+              list:[],
+              page:1,
+              isEnd:false,
+              isLoading:false,
+              deduct:api.pageParam.deduct
+            }
+          },
+          methods:{
+            fnClass:function(str){
+              return {
+                wddd_dfh:str=='待发货',
+                wddd_dpj:(str=='待评价'||str=="交易完成")
+              }
+            },
+            fnTab:function(tab){
+              this.tab=tab;
+              this.fnRefresh();
+            },
+            init:function(){
+              this.fnRefresh();
+            },
+            fnRefresh:function(){
+              this.list=[];
+              this.isEnd=false;
+              this.page=1;
+              this.fnList();
+            },
+            fnList:function(){
+              if(this.isLoading||this.isEnd){
+                return;
+              }
+              this.isLoading=true;
+              ajax('ud.order.get_list',{status:this.tab,page:this.page,type:this.type}).then(res=>{
+                this.list=merge_list(this.list,res.list);
+                this.isEnd=res.isEnd;
+                this.page+=1;
+                this.isLoading=false;
+              })
+            }
+          },
+          created:function(){
+            this.init();
+            api.addEventListener({
+                name: 'reload-order-list'
+            }, function(ret, err){
+                this.fnRefresh();
+            }.bind(this));
+            scrollToBottom(function(){
+              this.fnList();
+            }.bind(this))
+
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

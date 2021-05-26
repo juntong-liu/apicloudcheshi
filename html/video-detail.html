@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"  content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>视频详情</title>
+    <script src="../script/common.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+    html,body{
+      background: #000;
+    }
+    .video-box{
+      right: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      background: #000;
+      position: fixed;
+    }
+    .video-box video{
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      transform: translate(0,-50%);
+    }
+    .video-box-top{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 0;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+      background:-webkit-linear-gradient(
+        rgba(0,0,0,1),
+        rgba(0,0,0,0)
+      );
+    }
+    .video-box-title{
+      flex: 1;
+      color: #fff;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+    .video-box-close{
+      width:30px;
+      height: 30px;
+      margin: 0 10px;
+    }
+    .video-box-close img{
+      width: 100%;
+      height: 100%;
+    }
+
+    </style>
+</head>
+<body>
+
+<div id="app" v-cloak >
+  <div class="video-box">
+    <div class="video-box-top" :style="fnTopStyle" v-show="paused&&!isFullScreen">
+      <div class="video-box-close" @click="fnClose()">
+        <img src="../icon/back-white.png">
+      </div>
+      <div class="video-box-title">
+        {{detail.title}}
+      </div>
+    </div>
+    <video id="video" v-if="detail.id>0" @canplay="fnLoad($event)" @play="fnPlay($event)" @pause="fnPause($event)" :src="tImage(detail.video_url)" :poster="tImage(detail.poster_url)" controls="controls" loop="loop" @webkitfullscreenchange="fullscreen"></video>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+
+
+apiLoad=function(callback){
+  var vm=new Vue({
+    el:"#app",
+    data:function(){
+      return {
+        id:api.pageParam.id,
+        detail:{},
+        isFullScreen:false,
+        width:0,
+        heigh:0,
+        videoDom:null,
+        paused:true
+      }
+    },
+    computed:{
+      fnTopStyle(){
+        return{
+          top:api.safeArea.top+'px'
+        }
+      }
+    },
+    methods:{
+      fnPlay(event){
+        this.paused=false;
+      },
+      fnPause(event){
+        this.paused=true;
+      },
+      fnLoad(event){
+        var videoDom=$api.dom('#video');
+        this.videoDom=videoDom;
+        this.width=videoDom.offsetWidth;
+        this.heigh=videoDom.offsetHeight;
+        videoDom.webkitRequestFullscreen();
+      },
+      fullscreen(){
+        if(this.width<this.heigh)return;
+
+        if(this.isFullScreen){
+          //全屏状态
+          api.setScreenOrientation({
+              orientation: 'portrait_up'
+          });
+        }else{
+          api.setScreenOrientation({
+              orientation: 'landscape_left'
+          });
+        }
+        this.isFullScreen=!this.isFullScreen;
+
+      },
+      fnClose(){
+        if(this.isFullScreen){
+          this.videoDom.webkitExitFullscreen();
+        }else{
+          api.closeWin();
+        }
+      },
+      init:function(){
+        ajax('ud.video.detail',{id:this.id}).then(res=>{
+
+          this.detail=res;
+        })
+      }
+    },
+    created:function(){
+      this.init();
+      api.addEventListener({
+          name: 'keyback'
+      }, function(ret, err){
+          vm.fnClose();
+      });
+
+    }
+  });
+
+}
+
+</script>
+</body>
+</html>

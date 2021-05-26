@@ -36,7 +36,7 @@ if(typeof(Vue)=="function"){
       return 0;
     }
     if(count>=10000){
-      return (count/10000).toFixed(1)+'w';
+      return parseFloat((count/10000).toFixed(1))+'w';
     }
     return count;
   }
@@ -209,7 +209,7 @@ if(typeof(Vue)=="function"){
     openWhiteWin('shdz','我的收货地址',{listen:listen,account:account},{text:'添加'});
   }
   Vue.prototype.interfaceWdGs=function(){
-    openWhiteWin('wodeguoshu','我的果树');
+    openWhiteWin('wdgs','我的果树');
   }
 
   //添加/编辑收货地址
@@ -235,9 +235,10 @@ if(typeof(Vue)=="function"){
     openWhiteWin('set-paypwd','设置支付密码');
   }
 
-  //我的订单
-  Vue.prototype.interfaceWddd=function(tab=0){
-    openNotTabWin('wddd',{tab:tab});
+  //我的订单 //type=1 平台寄售 2积分订单
+
+  Vue.prototype.interfaceWddd=function(tab=0,type=0){
+    openNotTabWin('wddd',{tab:tab,type:type});
   }
   //交易中心
   Vue.prototype.interfaceJiaoYi=function(){
@@ -254,20 +255,23 @@ if(typeof(Vue)=="function"){
     if(!interface){
       return;
     }
-    // console.log(interface);
-    eval('Vue.prototype.'+interface);
+    eval('Vue.prototype.'+interface.replace(/&#039;/g, "'").replace(/&quot;/g, "'"));
+  }
+  Vue.prototype.toast=function(msg='开发中'){
+    toast(msg);
   }
   //文章详情
   Vue.prototype.interfaceArticle=function(id,title='详情'){
     openWhiteWin('article',title,{id:id});
   }
-  Vue.prototype.interfaceNews=function(type=14){
+  Vue.prototype.interfaceNews=function(type=0){
     if(type==1){
       openWhiteWin('news','短视频',{type:type});
     }else if(type==2){
-      openWhiteWin('news','基地新闻',{type:type});
-    }else{
       openWhiteWin('news','系统公告',{type:type});
+    }else{
+      openWhiteWin('news','全部内容',{type:type});
+
     }
   }
   Vue.prototype.fnDayToWeek=function(year,month,day) {
@@ -322,7 +326,10 @@ if(typeof(Vue)=="function"){
   }
 
   Vue.prototype.interfaceCredit3Log=function(){
-    openWhiteWin('credit-log','LDG明细',{credit_type:'credit3'});
+    openWhiteWin('credit-log','七彩券明细',{credit_type:'credit3'});
+  }
+  Vue.prototype.interfaceCredit6Log=function(){
+    openWhiteWin('credit-log','果子明细',{credit_type:'credit6'});
   }
 
   Vue.prototype.interfaceXjcz=function(){
@@ -359,7 +366,7 @@ if(typeof(Vue)=="function"){
     openWhiteWin('zcjs','宗祠建设');
   }
   Vue.prototype.interfaceQb=function(){
-    openBaseWin('qb','我的钱包');
+    openWhiteWin('qb','我的钱包');
   }
   Vue.prototype.interfaceZz=function(id=""){
     openWhiteWin('zz','转账',{id:id},{iconPath:"widget://icon/hjl2.png"});
@@ -392,7 +399,7 @@ if(typeof(Vue)=="function"){
   }
 
   //取消订单
-  Vue.prototype.fnOrderCancel=function(id){
+Vue.prototype.fnOrderCancel=function(id){
     var buttons=['不想买了','信息填写错误，重新拍','同城见面交易','其他原因'];
     selectAction(buttons,true).then(res=>{
       fnConfirm('确定取消该订单么？',function(){
@@ -402,18 +409,7 @@ if(typeof(Vue)=="function"){
         })
       })
     })
-  }
-  Vue.prototype.fnOrderCd=function(id){
-    var buttons=['不想买了','信息填写错误，重新拍','同城见面交易','其他原因'];
-    selectAction(buttons,true).then(res=>{
-      fnConfirm('确定取消该订单么？',function(){
-        ajax('ud.orderOp.chedan',{id:id,remark:res}).then(ret=>{
-          toast(ret);
-          orderRelaodEvent();
-        })
-      })
-    })
-  }
+}
 
   //删除订单
 Vue.prototype.fnOrderDelete=function(id,userdeleted){
@@ -498,8 +494,8 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
         }
     });
   }
-  Vue.prototype.interfaceQcsc=function(){
-    openWhiteWin('qcsc','七彩商城',{},{iconPath: 'widget://icon/fdj3.png'});
+  Vue.prototype.interfaceQcsc=function(tab=0){
+    openNotTabWin('sc',{tab:tab});
   }
   Vue.prototype.fnBindWechat=function(){
     wxPlus = api.require('wxPlus');
@@ -533,6 +529,30 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
         });
     });
   }
+  //学院派
+  Vue.prototype.interfaceXyp=function(){
+    openWhiteWin('sxy','学院派');
+  }
+  Vue.prototype.interfaceVideoDetail=function(id){
+    openNotTabWin('video-detail',{id:id});
+  }
+  Vue.prototype.interfaceQcq=function(){
+    openWhiteWin('qcq','七彩券')
+  }
 
+  Vue.prototype.fnSelectQcq=function(){
+      //选择七彩券
+      openWhiteWin('select-qcq','选择七彩券')
+  }
+  Vue.prototype.interfaceUpgrade=function(){
+    openNotTabWin('vip')
+  }
+  Vue.prototype.interfaceDfw=function(){
+    openWhiteWin('china','大富翁');
+  }
+  //七彩森林
+  Vue.prototype.interfaceQcsl=function(){
+    openWin('qcsl','七彩森林')
+  }
 
 }

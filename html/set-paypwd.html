@@ -15,13 +15,13 @@
     <div class="denglu" id="app" v-cloak>
       <div class="dengluk">
         <div class="register_hy">
-          <span v-if="temp=='sms_reg'">欢迎注册</span>
-          <span v-if="temp=='sms_forget'">找回密码</span>
+          <span>设置支付密码</span>
+
         </div>
         <form class="login-form">
           <div class="input-content">
             <div class="reset-3">
-              <input class="reg-input" ref="mobile" type="number" v-model="mobile" autocomplete="off" placeholder="请输入手机号">
+              <input class="reg-input" ref="mobile" type="number" v-model="userInfo.mobile" autocomplete="off" placeholder="请输入手机号">
             </div>
             <div class="reset-3 reg_yzm">
 
@@ -41,7 +41,7 @@
       </div>
     </div>
     <script type="text/javascript">
-      apiLoad=function(){
+      apiLoad=function(callback){
         var vm=new Vue({
           el:"#app",
           data(){
@@ -53,22 +53,25 @@
               getCoding:false,
               get_code_interval:0,
               time:60,
-              temp:'sms_change'
+              temp:'sms_change',
+              userInfo:getUserInfo()
             }
           },
           methods:{
             get_code:function(){
-  						if(!checkMobile(this.mobile)){
-  							toast('请输入11位手机号码');
-                this.$refs.mobile.focus();
-  							return ;
-  						}
+              if(!this.userInfo.mobile){
+                fnConfirm('您还未绑定手机号，请先绑定手机号',function(){
+                  vm.interfaceBindMobile();
+                });
+                return;
+              }
+
               if(this.getCoding){
                 toast('请'+this.time+"s后再发送");
                 return;
               }
               this.getCoding=true;
-              ajax('ud.member.get_code',{temp:this.temp,mobile:this.mobile}).then(res=>{
+              ajax('ud.member.get_code',{temp:this.temp,mobile:this.userInfo.mobile}).then(res=>{
                 this.code_text=this.time+"s";
                 this.get_code_interval=setInterval(function(){
                   if(this.time<=1){
@@ -88,11 +91,7 @@
   					},
 
             fnSub:function(){
-  						if(!checkMobile(this.mobile)){
-  							toast('请输入11位手机号码');
-                this.$refs.mobile.focus();
-  							return ;
-  						}
+
   						if(!this.code){
   							toast('请输入验证码');
                 this.$refs.code.focus();
@@ -105,7 +104,7 @@
   						}
 
   						var postData={
-  							mobile:this.mobile,
+  							mobile:this.userInfo.mobile,
   							code:this.code,
   							pwd1:this.pwd,
   							pwd2:this.pwd
@@ -119,9 +118,15 @@
   					}
           },
           mounted(){
+            if(!this.userInfo.mobile){
+              fnConfirm('您还未绑定手机号，请先绑定手机号',function(){
+                vm.interfaceBindMobile();
+              });
+            }
 
           }
         });
+        callback(vm);
       }
     </script>
 

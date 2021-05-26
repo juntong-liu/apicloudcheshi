@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>余额提现</title>
+
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style>
+      .tx{
+        margin-top: 10px;
+        font-size: 14px;
+        color: #999;
+      }
+      .tx-item{
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <div class="xjtx">
+        <div class="xjtxnr gg">
+          <div class="xjtxs f28">提现金额</div>
+          <div class="xjtxx"><span>¥</span>
+            <input class="xjtx-input f28" type="number"  placeholder="请输入金额" v-model="credit">
+          </div>
+          <div class="xjtxye hsz f24">当前可用余额{{parseFloat(info.credit)}}元，<span class="zsz" @click="fnAll">全部提现</span></div>
+        </div>
+      </div>
+      <div class="czfs gg f28">请选择提现方式</div>
+      <div class="zffs">
+        <div class="zffs_nr gg">
+          <ul>
+
+            <li @click="fnSelectType('0')" v-if="type_array[0]"><p><img src="../icon/wxzf.png"><span class="zffswz f28">提现到微信</span></p>
+              <div class="t_z2"><span :class="{xzzt:applytype==0}"></span></div>
+            </li>
+            <li @click="fnSelectType('2')" v-if="type_array[2]"><p><img src="../icon/zfb.png"><span class="zffswz f28">提现到支付宝</span></p>
+              <div class="t_z2"><span :class="{xzzt:applytype==2}"></span></div>
+            </li>
+            <li @click="fnSelectType('3')" v-if="type_array[3]"><p><img src="../icon/yinhangka.png"><span class="zffswz f28">提现到银行卡</span></p>
+              <div class="t_z2"><span :class="{xzzt:applytype==3}"></span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <section class="bsbj" style="margin-top:10px;">
+
+        <div class="z_znr gg" v-show="applytype==2">
+          <ul>
+            <li>
+              <p style="width:1.8rem;"  class="f28">姓名</p>
+              <input class="zz-input" v-model="realname" type="text"  placeholder="请填写姓名">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">账号</p>
+              <input class="zz-input"  v-model="alipay" type="text"  placeholder="请填支付宝账号">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">确认账号</p>
+              <input class="zz-input" v-model="alipay1" type="text"  placeholder="请确认账号">
+            </li>
+
+          </ul>
+        </div>
+        <div class="z_znr gg" v-show="applytype==3">
+          <ul>
+            <li>
+              <p style="width:1.8rem;"  class="f28">姓名</p>
+              <input class="zz-input" v-model="realname" type="text"  placeholder="请填写姓名">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">银行</p>
+              <input class="zz-input" v-model="bankname" type="text"  placeholder="请填写银行">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">银行卡号</p>
+              <input class="zz-input" v-model="bankcard" type="text"  placeholder="请填写银行卡号">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">确认账号</p>
+              <input class="zz-input" v-model="bankcard1" type="text"  placeholder="请确认账号">
+            </li>
+
+          </ul>
+        </div>
+      </section>
+      <div class="gg tx" v-show="info.withdrawmoney>0">
+        最小提现金额为 ￥{{info.withdrawmoney}}
+      </div>
+      <div class="tjsq f30 gg" @click="fnSubmit">提现</div>
+      <div class="gg tx" v-if="info.withdrawcharge>0">
+        <div> 详细说明</div>
+        <div class="tx-item">提现手续费为 {{info.withdrawcharge}}%</div>
+        <div class="tx-item">本次提现将扣除手续费￥{{sxf}}</div>
+        <div class="tx-item">本次提现实际到账金额￥{{credit-sxf}}</div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              info:{},
+              credit:'',
+              applytype:'3',
+              type_array:{},
+              banklist:[],
+
+              sxf:'',
+
+              realname:'',
+              alipay:'',
+              alipay1:'',
+
+              bankcard:'',
+              bankcard1:'',
+              bankname:'',
+
+            }
+          },
+          watch:{
+            credit:function(val){
+              this.sxf=parseFloat(val*this.info.withdrawcharge/100);
+            }
+          },
+          methods:{
+
+            fnAll:function(){
+              this.credit=this.info.credit;
+            },
+            fnSelectType:function(type){
+              this.applytype=type;
+            },
+            init:function(){
+              ajax('ud.withdraw').then(res=>{
+                this.info=res;
+                this.type_array=res.type_array;
+                this.banklist=res.banklist;
+                for(var i in this.type_array){
+                  if(this.type_array[i].checked==1){
+                    this.applytype=i;
+                  }
+                }
+                if(res.last_data){
+                  this.realname=res.last_data.realname;
+                  this.alipay=res.last_data.alipay;
+                  this.alipay1=res.last_data.alipay;
+                  this.bankname=res.last_data.bankname;
+                  this.bankcard=res.last_data.bankcard;
+                  this.bankcard1=res.last_data.bankcard;
+
+                }
+              })
+            },
+            fnSubmit:function(){
+              var money=parseFloat(this.credit);
+              if(!money||money<=0){
+                toast('请输入提现金额');
+                return;
+              }
+              if(this.money<this.info.withdrawmoney){
+                toast('最低提现金额为'+this.info.withdrawmoney);
+                return;
+              }
+              if(this.applytype===''){
+                toast('请选择提现方式');
+              }
+              if(this.applytype==2){
+                //支付宝支付
+                if(!this.realname){
+                  toast('请填写姓名');
+                  return;
+                }
+                if(!this.alipay){
+                  toast('请填写支付宝帐号');
+                  return;
+                }
+                if(!this.alipay1){
+                  toast('请填写确认帐号');
+                  return;
+                }
+                if(this.alipay1!=this.alipay){
+                  toast('支付宝帐号与确认帐号不一致');
+                  return;
+                }
+              }
+              if(this.applytype==3){
+                if(!this.realname){
+                  toast('请填写姓名');
+                  return;
+                }
+                if(!this.bankcard){
+                  toast('请填写银行卡号');
+                  return;
+                }
+                if(!this.bankcard1){
+                  toast('请填写确认卡号');
+                  return;
+                }
+                if(this.bankcard!=this.bankcard1){
+                  toast('银行卡号与确认卡号不一致');
+                  return;
+                }
+                if(!this.bankname){
+                  toast('请选择提现银行');
+                  return;
+                }
+              }
+              var param={
+                applytype: this.applytype,
+                realname: this.realname,
+                alipay: this.alipay,
+                alipay1: this.alipay1,
+                bankname: this.bankname,
+                bankcard: this.bankcard,
+                bankcard1: this.bankcard1,
+                money: this.credit
+              }
+              ajax('ud.withdraw.submit',param,'post').then(res=>{
+                toast(res);
+                reloadUserInfo();
+                setTimeout(function () {
+                  api.closeWin();
+                }.bind(this), 1000);
+              });
+
+            },
+            rightClick(){
+              this.interfaceTxLog();
+            }
+
+
+          },
+          created:function(){
+            this.init();
+
+          }
+        });
+        callback(vm);
+      }
+    </script>
+
+  </body>
+</html>

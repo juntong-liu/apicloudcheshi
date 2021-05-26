@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>购物车</title>
+
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style>
+      .jiesuan{
+        background: #999 !important;
+      }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+      <status-bar bg="#fff"></status-bar>
+      <div class="u_tit">
+          <div class="m_titnr gg">
+              <div class="skm">
+                  <div class="u_fh skmz" onclick="api.closeWin();">
+                    <img src="../icon/hfh.png">
+                  </div>
+                  <div class="u_bt">购物车</div>
+                  <div class="g_gl skmy f32" @click="showGl=!showGl">管理</div>
+                  <br class="clear">
+              </div>
+          </div>
+      </div>
+      <div class="kong"></div>
+
+      <div class="gwc" v-for="(item,idx) in merch">
+          <div class="gwcnr gg">
+              <div class="gwdp">
+                  <div class="g_yq" @click="fnSelectShop(item,idx)">
+                    <span :class="{xzzt:merch_user[idx] && merch_user[idx].selectedall}"></span>
+                  </div>
+                  <div class="g_dptb">
+                    <img src="../icon/dptb.png">
+                  </div>
+                  <div class="g_dpmz f28">
+                    {{merch_user[idx].merchname?merch_user[idx].merchname:'自营商品'}}
+                  </div>
+                  <div class="g_jt" style="float:right;"><img src="../icon/jt.png"></div>
+              </div>
+              <div class="gwcp" v-for=" goods in item" >
+                  <div class="g_yq" @click="fnSelect(goods.id,parseInt(goods.selected))">
+                    <span :class="{xzzt:goods.selected==1}"></span>
+                  </div>
+                  <div class="g_wcy">
+                      <div class="g_wct">
+                        <img :src="tImage(goods.thumb)">
+                        <span class="g_wct-baodan" v-if="goods.js_type==1">报单产品</span>
+                      </div>
+                      <div class="g_wcwz">
+                          <p class="f28">{{goods.title}}</p>
+                          <span class="f22 guige" v-if="goods.optiontitle">{{goods.optiontitle}}</span>
+                          <div class="g_wcx">
+                              <div class="g_jg">¥ {{goods.marketprice}}</div>
+                              <div class="g_an">
+                                <span class="jian" @click="fnSetNum(goods.id,goods.optionid,parseInt(goods.total)-1)">-</span>
+                                <span class="shuzi">{{goods.total}}</span>
+                                <span class="jia" @click="fnSetNum(goods.id,goods.optionid,parseInt(goods.total)+1)">+</span>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+
+          </div>
+      </div>
+      <div class="g_js">
+          <div class="g_jsnr gg">
+              <div class="g_jsz" @click="fnSelect('all',ischeckall)">
+                  <div class="g_yq"><span :class="{xzzt:ischeckall}"></span></div>
+                  <p class="f28">全选</p>
+              </div>
+              <div class="g_jsy" v-show="!showGl">
+                  <p>合计：¥ <span>{{totalprice}}</span></p>
+                  <div class="g_jsan" :class="{jiesuan:total==0}" @click="fnJesuan">结算<span v-show="total>0">({{total}})</span></div>
+              </div>
+              <div class="g_jsy" v-show="showGl">
+
+                  <div class="g_jsan"  @click="fnDel" style="background:#f00">删除<span v-show="total>0">({{total}})</span></div>
+              </div>
+          </div>
+      </div>
+      <div class="empty-box" v-show="!merch">暂无数据</div>
+    </div>
+    <script type="text/javascript">
+      apiready=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              ischeckall:false,
+              merch:[],
+              merch_user:[],
+              totalprice:0,
+              total:0,
+              showGl:false
+            }
+          },
+          methods:{
+            fnDel(){
+              //删除选中的
+              if(this.total<=0){
+                toast('请选择商品');
+                return;
+              }
+              fnConfirm('确定删除选中产品么？',function(){
+                ajax('ud.cart.remove').then(res=>{
+                  toast(res);
+                  vm.init();
+                })
+              })
+            },
+            init:function(){
+              ajax('ud.cart.get_list').then(res=>{
+                this.merch=res.merch;
+                this.merch_user=res.merch_user;
+                this.ischeckall=res.ischeckall;
+                this.totalprice=res.totalprice;
+                this.total=res.total;
+              })
+            },
+            fnSelect:function(id,select){
+              var param={
+                id:id,
+                select:select?0:1
+              }
+              ajax('ud.cart.select',param).then(res=>{
+                  this.init();
+              })
+            },
+            fnSelectShop:function(obj,idx){
+              var ids=[];
+              for(var i in obj){
+                ids.push(obj[i].id);
+              }
+              var id_str=ids.join(',');
+              this.fnSelect(id_str,this.merch_user[idx].selectedall)
+            },
+            fnSetNum:function(id,optionid,num){
+              if(num<1){
+                return;
+              }
+              var param={
+                id:id,
+                optionid:optionid,
+                total:num,
+                type:1
+              }
+
+              ajax('ud.cart.update',param).then(res=>{
+
+                  this.init();
+              })
+            },
+            fnJesuan:function(){
+              if(this.total<=0){
+                toast('未选择商品');
+                return;
+              }
+              //结算
+              ajax('ud.cart.submit').then(res=>{
+                this.interfaceTJDd({});
+
+              });
+            }
+          },
+          created:function(){
+
+            this.init();
+            api.addEventListener({
+                name: 'order-create-success'
+            }, function(ret, err){
+                vm.init();
+            });
+
+          }
+        });
+      }
+    </script>
+</body>
+
+</html>

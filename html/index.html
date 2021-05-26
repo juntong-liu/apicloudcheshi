@@ -13,15 +13,15 @@
   </head>
   <body>
     <div id="app" v-cloak>
-      <top-bar :bg="active.bg"></top-bar>
+      <top-bar :bg="active.bg" :icon="tImage(userInfo.avatar)"></top-bar>
       <!-- 轮播图 -->
 
       <div class="inban" style="position:relative;">
         <div style="position:absolute;width:100%;height:120px;border-radius:0 0 200% 200%;top:0;" :style="{background:active.bg}"></div>
         <div class="swiper-container gg" id='banner'>
           <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="banner in banners">
-              <img :src="tImage(banner.thumb)" style="height:150px;">
+            <div class="swiper-slide qcscbant" v-for="banner in banners">
+              <img :src="tImage(banner.thumb)">
             </div>
           </div>
           <!-- Add Pagination -->
@@ -46,57 +46,35 @@
             </div>
 
           </div>
-          <div class="gggd">
+          <div class="gggd" @click="interfaceNews(2)">
             更多<img  src="../image/hjt.png">
           </div>
         </div>
       </div>
       <!-- 主导航 -->
       <div class="in_zdh">
-        <div class="in_zdhli">
-          <img class="in_cpfl" src="../image/qctb.png">
-          <div class="f24 in_zdhwz">七彩</div>
+        <div class="in_zdhli" v-for="nav in navs" @click="jumpInterface(nav.window)">
+          <img class="in_cpfl" :src="tImage(nav.icon)">
+          <div class="f24 in_zdhwz">{{nav.navname}}</div>
         </div>
-        <div class="in_zdhli">
-          <img class="in_cpfl" src="../image/jftb.png">
-          <div  class="f24 in_zdhwz">积分</div>
-        </div>
-        <div class="in_zdhli">
-          <img class="in_cpfl" src="../image/zbtb.png">
-          <div  class="f24 in_zdhwz">直播</div>
-        </div>
-        <div class="in_zdhli">
-          <img class="in_cpfl" src="../image/xytb.png">
-          <div  class="f24 in_zdhwz">学院</div>
-        </div>
-        <div class="in_zdhli">
-          <img class="in_cpfl" src="../image/dfwtb.png">
-          <div  class="f24 in_zdhwz">大富翁</div>
-        </div>
+
       </div>
       <!--积分商品-->
       <div class="sc_tmhh gg">
         <div class="in_jfsck">
           <div class="sc_tmhh_bt">
             <div class="sc_tmhh_btz f32">积分商品</div>
-            <div class="sc_tmhh_bty f24">查看更多 <img class="sc_tmhhjt" src="../image/bjt.png"></div>
+            <div class="sc_tmhh_bty f24" @click="interfaceGoodsList({deduct:1})">查看更多 <img class="sc_tmhhjt" src="../image/bjt.png"></div>
           </div>
           <div class="sc_tmhh_nr">
-            <div class="sc_tmhh_li">
-              <img class="sc_tmhh_lit" src="../image/cpt.png">
-              <div class="sc_tmhh_liwz f28 ">缤纷田园树莓一2箱500g…</div>
-              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
+            <div class="sc_tmhh_li" v-for="goods in goodsList" @click="interfaceGoods(goods.id,goods.title)">
+              <img class="sc_tmhh_lit" :src="tImage(goods.thumb)">
+              <div class="sc_tmhh_liwz f28 ">{{goods.title}}</div>
+              <div class="sc_tmhh_lijg csz f30 zys">￥{{parseFloat(goods.marketprice)}}
+                <div style="font-size:12px;">积分抵扣￥{{parseFloat(goods.deduct)}}</div>
+              </div>
             </div>
-            <div class="sc_tmhh_li">
-              <img class="sc_tmhh_lit" src="../image/cpt.png">
-              <div class="sc_tmhh_liwz f28">缤纷田园树莓一2箱500g…</div>
-              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
-            </div>
-            <div class="sc_tmhh_li">
-              <img class="sc_tmhh_lit" src="../image/cpt.png">
-              <div class="sc_tmhh_liwz f28">缤纷田园树莓一2箱500g…</div>
-              <div class="sc_tmhh_lijg csz f30 zys">30积分</div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -105,26 +83,12 @@
         <div class="in_yxs">
           <div class="in_ysbt gg">
             <div class="in_ysbtz f34">短视频</div>
-            <div class="in_ysbty qhsz">更多<img class="hjt" src="../image/hjt.png"></div>
+            <div class="in_ysbty qhsz" @click="interfaceNews(1)">更多<img class="hjt" src="../image/hjt.png"></div>
           </div>
         </div>
         <div class="in_yxx">
           <div class="gg in_yxxnr">
-            <div class="in_yxli">
-              <img class="in_yxlit" src="../image/dsptp.png">
-              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
-              <div class="in_yxlijg f22 qhsz">10万人已学</div>
-            </div>
-            <div class="in_yxli">
-              <img class="in_yxlit" src="../image/dsptp.png">
-              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
-              <div class="in_yxlijg f22 qhsz">10万人已学</div>
-            </div>
-            <div class="in_yxli">
-              <img class="in_yxlit" src="../image/dsptp.png">
-              <div class="in_yxlibt f28">快速学习企业管理的正确打开方式</div>
-              <div class="in_yxlijg f22 qhsz">10万人已学</div>
-            </div>
+            <videoItem class="in_yxli" v-for="video in videos" :video="video" :key="video.id"></videoItem>
           </div>
         </div>
       </div>
@@ -142,7 +106,10 @@
             active:{},
             banners:[],
             gonggaos:[],
-            gonggaoSwiper:null
+            videos:[],
+            navs:[],
+            userInfo:getUserInfo(),
+            goodsList:[]
           }
         },
         methods:{
@@ -151,6 +118,9 @@
               this.banners=res.advs;
               this.active=this.banners[0];
               this.gonggaos=res.gonggaos;
+              this.videos=res.videos;
+              this.navs=res.navs;
+              this.goodsList=res.goods;
               this.$nextTick(()=>{
                 this.initSwiper();
               })
@@ -198,7 +168,7 @@
               observer:true,
               observeParents:true,
               autoplay: {
-                delay: 2000,
+                delay: 4000,
                 stopOnLastSlide: false,
                 disableOnInteraction: false,
               },
@@ -216,7 +186,7 @@
           this.init();
         }
       });
-
+      callback(vm);
     }
     </script>
   </html>

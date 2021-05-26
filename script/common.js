@@ -4,7 +4,8 @@ document.write('<script type="text/javascript" src="../script/md5.js"></script>'
 document.write('<script type="text/javascript" src="../script/api.js"></script>');
 document.write('<script type="text/javascript" src="../script/vue.js"></script>');
 document.write('<script type="text/javascript" src="../script/vue_common.js"></script>');
-document.write('<script src="../script/vue_components.js"></script>');
+document.write('<script type="text/javascript" src="../script/vue_components.js"></script>');
+document.write('<script type="text/javascript" src="../script/vue_mixins.js"></script>');
 document.write('<script type="text/javascript" src="../script/jquery.min.js"></script>');
 document.write('<script type="text/javascript" src="../script/jquery.js"></script>');
 
@@ -87,13 +88,13 @@ function openWhiteWin(html, title, param = {}, right_button = null) {
     });
 }
 
-function openDarkWin(html, title, param = {}, right_button = null) {
+function openWin(html, title, param = {}, right_button = null,bg='#3994c7',color='#fff') {
     var navigationBar = {
-        background: '#161825',
-        color: '#fff',
-        shadow: '#161825',
+        background: bg,
+        color:color,
+        shadow: bg,
         leftButtons: [{
-            iconPath: 'widget://images/back-white.png'
+            iconPath: 'widget://icon/back-white.png'
         }]
     }
     if (right_button) {
@@ -106,7 +107,7 @@ function openDarkWin(html, title, param = {}, right_button = null) {
         name: html,
         url: 'widget://html/' + html + '.html',
         useWKWebView: true,
-        bgColor: '#161825',
+        bgColor: bg,
         title: title,
         pageParam: param,
         navigationBar: navigationBar
@@ -211,6 +212,31 @@ function openUrl(url, title) {
             color: '#000'
         }
     });
+
+}
+
+function cacheImage(url){
+  var name=url.split('/').pop();
+  var thumb_dir='fs://thumb';
+  var img_dir='fs://img/'+name;
+  return new Promise((resolve,reject)=>{
+    download(url,img_dir,function(res){
+      var imageFilter=api.require('imageFilter');
+      imageFilter.compress({
+        img: img_dir,
+        scale: 0.1,
+        save:{imgPath:thumb_dir,imgName:name}
+        },function( ret, err ){
+          if(ret.status){
+            resolve(thumb_dir+'/'+name);
+          }else{
+            reject(err);
+          }
+
+        }
+      );
+    })
+  })
 
 }
 
@@ -464,7 +490,8 @@ function toast(data) {
             duration: 1000,
             location: 'bottom'
         });
-    } else {
+    }
+    else {
         _log(data);
     }
 }
@@ -538,7 +565,7 @@ function delArray(arr, idx) {
     return temp;
 }
 //上传文件
-function uploadFile(url, callback, files = [], param = {}) {
+function uploadFile(url, files = [], param = {}) {
     if (files.length == 0) {
         fnAlert("请选择要上传的文件");
         return;
@@ -554,25 +581,40 @@ function uploadFile(url, callback, files = [], param = {}) {
     for (var i = 0; i < files.length; i++) {
         upload_files['file_' + i] = files[i];
     }
-    api.ajax({
-            url: root + url,
-            method: 'post',
-            timeout: 60,
-            dataType: 'json',
-            headers: {
-                "Token": getToken()
-            },
-            data: {
-                values: param,
-                files: upload_files
+    return new Promise((resolve,reject)=>{
+      api.ajax({
+              url: root + url,
+              method: 'post',
+              timeout: 60,
+              dataType: 'json',
+              headers: {
+                  "Token": getToken()
+              },
+              data: {
+                  values: param,
+                  files: upload_files
+              }
+          },
+          function(res, err) {
+            api.hideProgress();
+            api.refreshHeaderLoadDone();
+            if (res) {
+                if (res.status == 1) {
+                    resolve(res.data);
+                } else if (res.status == -10) {
+                    toast('请先登录');
+                    return;
+                } else {
+                    fnAlert(res.data);
+                }
+            } else {
+                fnAlert(err.msg);
+                _log(err);
             }
-        },
-        function(ret, err) {
-          api.hideProgress();
-          api.refreshHeaderLoadDone();
-          httpRes(ret, err, callback, url, param);
-        }
-    );
+          }
+      );
+    });
+
 }
 
 //上传文件
@@ -1246,15 +1288,23 @@ function accountList(account,nickname,action='refresh'){
   setCacheObj('account-list',list);
 }
 apiready=function(){
+  var _vm;
   api.addEventListener({
       name:'navitembtn'
   },function(ret, err){
     if(ret.type=='left'){
       api.closeWin();
     }
+
+    if(ret.type=='right'){
+      if(_vm&&typeof(_vm.rightClick)=='function'){
+        _vm.rightClick();
+      }
+    }
   });
   if(typeof(apiLoad)=='function'){
     apiLoad(vm=>{
+      _vm=vm;
       //谁监听VM全局变量
       api.addEventListener({
           name: 'reload-user-info-success'

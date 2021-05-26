@@ -171,8 +171,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 .s_tittx {
 	height: 0.91rem;
-	height: 0.91rem;
+	width: 0.91rem;
 	object-fit: cover;
+	border-radius: 50%;
 }
 
 .s_titnr {
@@ -677,6 +678,7 @@ input[type="range"]::-webkit-slider-thumb {
 	height: 0.93rem;
 	object-fit: cover;
 	border-radius: 100%;
+	border: 1px solid #efefef;
 }
 
 .faq_lism {
@@ -1320,6 +1322,7 @@ input[type="range"]::-webkit-slider-thumb {
 	text-align: center;
 	height: 0.4rem;
 	line-height: 0.4rem;
+	padding: 0 10px;
 }
 
 /* 尊享页面 */
@@ -1546,8 +1549,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* vip页面 */
 .vip_tit {
-	background: url(../image/vipbg.jpg) no-repeat center top;
+	/*background: url(../image/vipbg.jpg) no-repeat center top;*/
 	background-size: 100% auto;
+	background: #181818;
 }
 
 .vip_s {
@@ -1563,7 +1567,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .vips {
-	background: url(../image/vipbg.jpg) no-repeat center bottom;
+	/*background: url(../image/vipbg.jpg) no-repeat center bottom;*/
 	background-size: 100% auto;
 	height: 3.39rem;
 }
@@ -1737,7 +1741,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .vip_sjtjnrzxznr {
-	width: 40%;
 	background: #e7c497;
 	height: 0.27rem;
 	border-radius: 0.67rem;
@@ -2041,4 +2044,239 @@ input[type="range"]::-webkit-slider-thumb {
 .qcqnrli3y {
 	color: #e84c3d;
 	font-weight: bold;
+}
+
+/* 我的果树 */
+.gsli {
+	background: url('../image/ldgbg.png') no-repeat center top;
+	background-size: 100% auto;
+	height: 5.31rem;
+	margin-top: 0.4rem;
+}
+
+.gslis {
+	text-align: center;
+	color: #fff;
+	padding-top: 0.4rem;
+}
+
+.gslinrlix {
+	display: flex;
+	align-items: center;
+	padding-top: 0.08rem;
+}
+
+.gslinrli {
+	color: #fff;
+	margin-top: 0.27rem;
+}
+
+.gslinrjdt {
+	width: 3.2rem;
+	height: 0.13rem;
+	background-color: #fff;
+	border-radius: 0.67rem;
+}
+
+.gslinrjdtnr {
+	background-color: #61b93a;
+	border-radius: 0.67rem;
+
+	height: 0.13rem;
+}
+
+.gslinr {
+	padding-left: 0.27rem;
+}
+
+.gslinrwz {
+	padding-left: 0.13rem;
+}
+
+.gslinrjdtnr2 {
+	background-color: #f97b41;
+	border-radius: 0.67rem;
+	height: 0.13rem;
+}
+
+.gslinrjdtnr3 {
+	background-color: #54d7cc;
+	border-radius: 0.67rem;
+	height: 0.13rem;
+}
+
+.dbx {
+	border-bottom: 0.01rem solid #e7e7e7;
+}
+
+.gsli2 {
+	height: 5.31rem;
+	margin-top: 0.27rem;
+	background-color: #f6f6f6;
+	border-radius: 0.21rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.gsli2nr {
+	text-align: center;
+}
+
+.gsli2nrt {
+	width: 2.93rem;
+	height: auto;
+}
+
+.gsli2wz {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+}
+
+/* 七彩森林页面 */
+.qcsl_tit {
+	background-color: #3994c7;
+	color: #fff;
+}
+
+.qcslbg {
+	background: url('../image/qcslbj.jpg') no-repeat center bottom;
+	height: 14.45rem;
+	background-size: 100% auto;
+	position: relative;
+}
+
+.qcsl_zs {
+	position: absolute;
+	right: 0;
+	top: 0.53rem;	/* height: 1.07rem; */
+	background: rgba(255, 255, 255, 0.8);
+	border-radius: 0.67rem 0 0 0.67rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.qcsl_zstxt {
+	height: 1.07rem;
+	width: 1.07rem;
+	border-radius: 100%;
+	border: 0.05rem solid #fff;
+}
+
+.qcsl_zsgz {
+	color: #159841;
+	text-align: center;
+	margin: 0.0rem 0.13rem;
+}
+
+.qcsl_zsgzwz {
+	font-weight: bold;
+}
+
+.qcsl_zsan {
+	background-color: #209f4e;
+	border-radius: 0.67rem;
+	padding: 0.13rem 0.27rem;
+	color: #fff;
+	font-weight: bold;
+}
+
+.qcsl_gzsfs {
+	width: 1.52rem;
+	height: 1.52rem;
+	background: url('../image/nlq.png') no-repeat center bottom;
+	background-size: 100% auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #d76404;
+	font-weight: bold;
+}
+
+.qcsl_gzsf {
+	position: absolute;
+	left: 3.33rem;
+	top: 2.67rem;
+	text-align: center;
+}
+
+.qcsl_gzsfx {
+	color: #d76404;
+	margin-top: 0.19rem;
+}
+
+.qcsl_jgct {
+	height: 1.52rem;
+}
+
+.qcsl_jgc {
+	position: absolute;
+	left: 0.4rem;
+	bottom: 0;
+}
+
+.qcsl_dt {
+	border-radius: 0.21rem;
+	overflow: hidden;
+	background-color: #fff;
+}
+
+.qcsl_dtk {
+	background: url('../image/lsjb.png') no-repeat center top;
+	padding-bottom: 0.27rem;
+	background-size: 100%  auto;
+}
+
+.qcsl_dtbt {
+	padding: 0.4rem 0 0.4rem 0.27rem;
+	font-weight: bold;
+	background-color: #f7f7f7;
+}
+
+.qcsl_dtnrli {
+	display: flex;
+	align-items: center;
+	padding: 0.4rem 0;
+	border-bottom: 0.01rem solid #e7e7e7;
+}
+
+.qcsl_dtnrliz {
+	width: 0.91rem;
+	height: 0.91rem;
+	border-radius: 0.11rem;
+}
+
+.qcsl_dtnrlizt {
+	width: 0.91rem;
+	height: 0.91rem;
+	border-radius: 0.11rem;
+	object-fit: cover;
+}
+
+.qcsl_dtnr {
+	padding: 0 0.27rem;
+}
+
+.qcsl_dtnrliy {
+	flex: 1;
+	margin-left: 0.27rem;
+}
+
+.qcsl_dtnrliyx {
+	padding-top: 0.08rem;
+}
+
+.qcsl_dtnrliys {
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.qcsl_dtgd {
+	text-align: center;
+	padding: 0.4rem 0;
 }

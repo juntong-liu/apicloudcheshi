@@ -7,101 +7,129 @@
     <title>学院派</title>
     <link rel="stylesheet" href="../css/swiper.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    
+    <script src="../script/swiper.min.js"></script>
+    <script src="../script/common.js"></script>
+
   </head>
   <body>
-    
-    <div class="r_tit xhx">
-      <div class="r_titnr s_titnr gg">
-        <div class="r_titl"><img class="r_titltp" src="../image/hfh.png"></div>
-        <div class="r_titm f36">学院派</div>
-        <div class="r_titr"></div>
-      </div>
-    </div>
-    <div class="kong"></div>
-    <div class="gg sxy_ssk"><form action="" class="sc_tjbd">
-      <input type="text" class="sxy_ss" placeholder="请输入搜索关键字">
-      <img class="sc_fdj" src="../image/fdj.png">
-    </form></div>
-    <section class="wk">
-      
+    <div id="app" v-cloak>
+      <div class="gg sxy_ssk"><form action="" class="sc_tjbd">
+        <input type="text" class="sxy_ss" placeholder="请输入搜索关键字">
+        <img class="sc_fdj" src="../image/fdj.png">
+      </form></div>
+
+
       <!-- 轮播图 -->
       <div class="sxyban gg">
-        
+
         <div class="swiper-container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide qcscbant"><img src="../image/sxyban.png"></div>
-            <div class="swiper-slide"><img src="../image/sxyban.png"></div>
+            <div class="swiper-slide qcscbant" v-for="banner in banners">
+              <img :src="tImage(banner.thumb)">
+            </div>
+
           </div>
           <!-- Add Pagination -->
           <div class="swiper-pagination"></div>
         </div>
-        <script src="../script/swiper.min.js"></script>
-        <script>
-        var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        loop: true,
-        autoplay:true,
-        observer:true,
-        pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        },
-        navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-        },
-        });
-        </script>
       </div>
       <!--分类-->
       <div class="sxy_fl gg">
         <div class="sc_rmcpbt">
           <div class="sc_rmcpbtnr">
-            <div class="sc_rmcpbtli sc_rmcpbtlih">推荐<div class="sc_rmcpbtlix"></div></div>
-            <div class="sc_rmcpbtli">商业管理</div>
-            <div class="sc_rmcpbtli">科技</div>
-            <div class="sc_rmcpbtli">教育</div>
-            <div class="sc_rmcpbtli">健康</div>
-            <div class="sc_rmcpbtli">国学</div>
-            <div class="sc_rmcpbtli">人文</div>
-            
+            <div class="sc_rmcpbtli" :class="{sc_rmcpbtlih:category_id==0}" @click="selectCategory(0)">
+              推荐
+              <div class="sc_rmcpbtlix" v-if="category_id==0"></div>
+            </div>
+            <div class="sc_rmcpbtli" :class="{sc_rmcpbtlih:category_id==category.id}"v-for="category in categories" @click="selectCategory(category.id)">
+              {{category.category_name}}
+              <div class="sc_rmcpbtlix" v-if="category_id==category.id"></div>
+            </div>
           </div>
-          
+
         </div>
       </div>
       <div class="sc_rmcpk">
         <div class="gg in_yxxnr sc_rmcpknr">
-          <div class="in_yxli">
-            <img class="sxy_yxlit" src="../image/dsptp.png">
-            <div class="in_yxlibt f28">品牌与营销快速从入门到精通</div>
-            <div class="sxy_yx f22 qhsz">10万人已学</div>
-          </div>
-          <div class="in_yxli">
-            <img class="sxy_yxlit" src="../image/dsptp.png">
-            <div class="in_yxlibt f28">品牌与营销快速从入门到精通</div>
-            <div class="sxy_yx f22 qhsz">10万人已学</div>
-          </div>
-          <div class="in_yxli">
-            <img class="sxy_yxlit" src="../image/dsptp.png">
-            <div class="in_yxlibt f28">品牌与营销快速从入门到精通</div>
-            <div class="sxy_yx f22 qhsz">10万人已学</div>
-          </div>
-          <div class="in_yxli">
-            <img class="sxy_yxlit" src="../image/dsptp.png">
-            <div class="in_yxlibt f28">品牌与营销快速从入门到精通</div>
-            <div class="sxy_yx f22 qhsz">10万人已学</div>
-          </div>
-          <div class="in_yxli">
-            <img class="sxy_yxlit" src="../image/dsptp.png">
-            <div class="in_yxlibt f28">品牌与营销快速从入门到精通</div>
-            <div class="sxy_yx f22 qhsz">10万人已学</div>
-          </div>
+          <videoItem v-for="video in list" :video=video :key="video.id"></videoItem>
+
+
         </div>
       </div>
-      
-    </body>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              banners:[],
+              categories:[],
+              category_id:0,
+              url:'ud.video.get_list'
+            }
+          },
+          mixins: [list],
+          methods:{
+            getParams(){
+              return {page:this.page,category_id:this.category_id}
+            },
+            selectCategory(id){
+              this.category_id=id;
+              this.refresh();
+            },
+
+            init(){
+              ajax('ud.video').then(res=>{
+                this.categories=res.categories;
+                this.banners=res.banners;
+                this.$nextTick(()=>{
+                  this.initSwiper();
+                });
+                this.refresh();
+              })
+            },
+            initSwiper(){
+              new Swiper('.swiper-container', {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                loop: true,
+                autoplay: {
+                  delay: 3000,
+                  stopOnLastSlide: false,
+                  disableOnInteraction: false,
+                },
+                observer:true,
+                pagination: {
+                  el: '.swiper-pagination',
+                  clickable: true,
+                },
+                navigation: {
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
+                },
+                on:{
+                  slideChangeTransitionStart:function(){
+                    if(vm&&vm.banners&&vm.banners.length>0){
+                      var idx=Math.abs((this.activeIndex-1)%vm.banners.length);
+                      vm.active=vm.banners[idx];
+                    }
+                  },
+                  tap(){
+                    if(vm&&vm.banners&&vm.banners.length>0){
+                      var idx=Math.abs((this.activeIndex-1)%vm.banners.length);
+                      vm.jumpInterface(vm.banners[idx].link);
+                    }
+                  }
+                }
+              });
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+      }
+    </script>
+  </body>
   </html>

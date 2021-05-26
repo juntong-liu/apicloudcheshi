@@ -7,38 +7,39 @@
     <title>升级</title>
     <link rel="stylesheet" href="../css/swiper-bundle.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    <style>    .swiper-container {
-    width: 100%;
-    height: 100%;
+    <script src="../script/common.js"></script>
+    <script src="../script/swiper-bundle.min.js"></script>
+    <style>
+    .swiper-container {
+      width: 100%;
+      height: 100%;
     }
     .swiper-slide {
-    width: 90%;
+      width: 90%;
     }
     .swiper-slide:nth-child(2n) {
-    width: 90%;
+      width: 90%;
     }
     .swiper-slide:nth-child(3n) {
-    width: 90%;
+      width: 90%;
     }
     </style>
   </head>
   <body>
-    <div style="background-color: #181818; min-height: 100%;">
-      <div class="r_tit vip_tit">
-        <div class="r_titnr s_titnr gg">
-          <div class="r_titl"><img class="r_titltp" src="../image/bfh.png"></div>
-          <div class="r_titm f36 hy_titm">会员升级</div>
-          <div class="r_titr"></div>
-        </div>
-      </div>
-      <div class="kong"></div>
+    <div style="background-color: #181818; min-height: 100%;" id="app" v-cloak>
+      <title-bar title='会员升级' bg="#181818">
+        <div class="r_titl" slot='right' onclick="api.closeWin()"><img class="r_titltp" src="../image/bfh.png"></div>
+      </title-bar>
+
       <div class="vips">
-        <div class="vip_stx"><img class="vip_stxt" src="../image/tx.png"></div>
+        <div class="vip_stx">
+          <img class="vip_stxt" :src="tImage(userInfo.avatar)">
+        </div>
         <div class="vip_sxx">
-          <div class="vip_sxxz f30">18765490876</div>
-          <div class="vip_sxxy"><img class="vip_sxxyt" src="../image/jbptdz.png"></div>
+          <div class="vip_sxxz f30">{{userInfo.nickname}}</div>
+          <div class="vip_sxxy">
+            <img class="vip_sxxyt" src="../image/jbptdz.png">
+          </div>
         </div>
         <div class="vip_sjbk">
           <div class="vip_sjb f24">普通店主</div>
@@ -47,183 +48,89 @@
       <!-- Swiper -->
       <div class="swiper-container vipswiper">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img class="vip_sw" src="../image/ptdz.png">
+          <div class="swiper-slide" v-for="(level,idx) in levels">
+            <img class="vip_sw" :src="tImage(level.level_icon)">
             <div class="vip_qy">
               <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
-              
-              <div class="vip_qybt f30">普通店主权益</div>
+
+              <div class="vip_qybt f30">{{level.levelname}}权益</div>
               <div class="vip_qybtnr">
-                <div class="vip_qybtbg f30">
-                  <p class="vip_qyp"> 1.每个月1000——3000优选区购物额度</p>
-                  <p  class="vip_qyp">2.享有直接推荐总业绩流水的3%积分奖
-                  励，可在积分商城兑换品质商品。</p>
-                </div>
+                <div class="vip_qybtbg f30 vip_qyp" v-html="level.level_des"></div>
               </div>
               <div class="vipd"><img class="vip_dt" src="../image/vipd.png"></div>
             </div>
-            
-          </div>
-          <div class="swiper-slide">
-            <img class="vip_sw" src="../image/mxdz.png">
-            <div class="vip_qy">
-              <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
-              
-              <div class="vip_qybt f30">明星店主权益</div>
-              <div class="vip_qybtnr">
-                <div class="vip_qybtbg f30">
-                  <p class="vip_qyp"> 1.每个月1000——3000优选区购物额度</p>
-                  <p  class="vip_qyp">2.享有直接推荐总业绩流水的3%积分奖
-                  励，可在积分商城兑换品质商品。</p>
-                </div>
-              </div>
-              <div class="vipd"><img class="vip_dt" src="../image/vipd.png"></div>
-            </div>
-            <div class="vip_sjtj">
+            <div class="vip_sjtj" v-if="level.last_count>0">
               <div class="vip_sjtjbt f30">做任务升级</div>
               <div class="vip_sjtjnr">
                 <div class="vip_sjtjnrz">
-                  <div class="vip_sjtjnrzs f22">累计推荐有效普通店主</div>
+                  <div class="vip_sjtjnrzs f22">累计推荐有效{{levels[idx-1].levelname}}</div>
                   <div class="vip_sjtjnrzx">
                     <div class="vip_sjtjnrzxz">
-                      <div class="vip_sjtjnrzxznr"></div>
+                      <div class="vip_sjtjnrzxznr" :style="getWidth(level.has_last_count,level.last_count)"></div>
                     </div>
-                    <div class="vip_sjtjnrzxy f22">2/<span class="qhsz">20</span></div>
+                    <div class="vip_sjtjnrzxy f22">{{level.has_last_count}}/<span class="qhsz">{{level.last_count}}</span></div>
                   </div>
                 </div>
                 <div class="vip_sjtjnry f28">去完成</div>
               </div>
             </div>
+
           </div>
-          <div class="swiper-slide">
-            <img class="vip_sw" src="../image/hhr.png">
-            <div class="vip_qy">
-              <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
-              
-              <div class="vip_qybt f30">合伙人权益</div>
-              <div class="vip_qybtnr">
-                <div class="vip_qybtbg f30">
-                  <p class="vip_qyp"> 1.每个月1000——3000优选区购物额度</p>
-                  <p  class="vip_qyp">2.享有直接推荐总业绩流水的3%积分奖
-                  励，可在积分商城兑换品质商品。</p>
-                  <p  class="vip_qyp">3.享有总业绩流水3%佣金。</p>
-                  <p  class="vip_qyp">4.平级推荐享有被推荐人收入部分的10%
-                  佣金</p>
-                </div>
-              </div>
-              <div class="vipd"><img class="vip_dt" src="../image/vipd.png"></div>
-            </div>
-            <div class="vip_sjtj">
-              <div class="vip_sjtjbt f30">做任务升级</div>
-              <div class="vip_sjtjnr">
-                <div class="vip_sjtjnrz">
-                  <div class="vip_sjtjnrzs f22">累计推荐有效明星店主</div>
-                  <div class="vip_sjtjnrzx">
-                    <div class="vip_sjtjnrzxz">
-                      <div class="vip_sjtjnrzxznr"></div>
-                    </div>
-                    <div class="vip_sjtjnrzxy f22">2/<span class="qhsz">5</span></div>
-                  </div>
-                </div>
-                <div class="vip_sjtjnry f28">去完成</div>
-              </div>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <img class="vip_sw" src="../image/yys.png">
-            <div class="vip_qy">
-              <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
-              
-              <div class="vip_qybt f30">运营商权益</div>
-              <div class="vip_qybtnr">
-                <div class="vip_qybtbg f30">
-                  <p class="vip_qyp"> 1.每个月1000——3000优选区购物额度</p>
-                  <p  class="vip_qyp">2.享有直接推荐总业绩流水的3%积分奖
-                  励，可在积分商城兑换品质商品。</p>
-                  <p  class="vip_qyp">3.享有总业绩流水3%佣金。</p>
-                  <p  class="vip_qyp">4.平级推荐享有被推荐人收入部分的10%
-                  佣金</p>
-                  <p  class="vip_qyp">5.享有下级合伙人团队级差佣金
-                  佣金</p>
-                </div>
-              </div>
-              <div class="vipd"><img class="vip_dt" src="../image/vipd.png"></div>
-            </div>
-            <div class="vip_sjtj">
-              <div class="vip_sjtjbt f30">做任务升级</div>
-              <div class="vip_sjtjnr">
-                <div class="vip_sjtjnrz">
-                  <div class="vip_sjtjnrzs f22">累计推荐有效合伙人</div>
-                  <div class="vip_sjtjnrzx">
-                    <div class="vip_sjtjnrzxz">
-                      <div class="vip_sjtjnrzxznr"></div>
-                    </div>
-                    <div class="vip_sjtjnrzxy f22">2/<span class="qhsz">5</span></div>
-                  </div>
-                </div>
-                <div class="vip_sjtjnry f28">去完成</div>
-              </div>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <img class="vip_sw" src="../image/lhcsr.png">
-            <div class="vip_qy">
-              <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
-              
-              <div class="vip_qybt f30">联合创始权益</div>
-              <div class="vip_qybtnr">
-                <div class="vip_qybtbg f30">
-                  <p class="vip_qyp"> 1.每个月1000——3000优选区购物额度</p>
-                  <p  class="vip_qyp">2.享有直接推荐总业绩流水的3%积分奖
-                  励，可在积分商城兑换品质商品。</p>
-                  <p  class="vip_qyp">3.享有总业绩流水3%佣金。</p>
-                  <p  class="vip_qyp">4.平级推荐享有被推荐人收入部分的10%
-                  佣金</p>
-                  <p  class="vip_qyp">5.享有下级合伙人团队级差佣金
-                  佣金</p>
-                  <p  class="vip_qyp">6.平台100万分红
-                  佣金</p>
-                </div>
-              </div>
-              <div class="vipd"><img class="vip_dt" src="../image/vipd.png"></div>
-            </div>
-            <div class="vip_sjtj">
-              <div class="vip_sjtjbt f30">做任务升级</div>
-              <div class="vip_sjtjnr">
-                <div class="vip_sjtjnrz">
-                  <div class="vip_sjtjnrzs f22">累计推荐100个运营商</div>
-                  <div class="vip_sjtjnrzx">
-                    <div class="vip_sjtjnrzxz">
-                      <div class="vip_sjtjnrzxznr"></div>
-                    </div>
-                    <div class="vip_sjtjnrzxy f22">2/<span class="qhsz">100</span></div>
-                  </div>
-                </div>
-                <div class="vip_sjtjnry f28">去完成</div>
-              </div>
-            </div>
-          </div>
+
         </div>
         <!-- Add Pagination -->
         <!--  <div class="swiper-pagination"></div> -->
       </div>
       <!-- Swiper JS -->
-      <script src="../script/swiper-bundle.min.js"></script>
+
       <!-- Initialize Swiper -->
-      <script>
-      var swiper = new Swiper('.swiper-container', {
-      slidesPerView: 'auto',
-      centeredSlides: true,
-      spaceBetween: 10,
-      pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-      },
-      });
-      </script>
       <div class="vipsj f30">
         立即升级
       </div>
     </div>
   </body>
+  <script type="text/javascript">
+    apiLoad=function(callback){
+      var vm=new Vue({
+        el:"#app",
+        data(){
+          return {
+            userInfo:getUserInfo(),
+            levels:[]
+          }
+        },
+        methods:{
+          getWidth(fz,fm){
+            var percent=(fz/fm)*100;
+            return{
+              width:(fz>=fm?100:percent)+'%'
+            }
+          },
+          init(){
+            ajax('ud.member.level').then(res=>{
+              this.levels=res;
+              this.$nextTick(()=>{
+                var swiper = new Swiper('.swiper-container', {
+                    slidesPerView: 'auto',
+                    centeredSlides: true,
+                    spaceBetween: 10,
+                    pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                  },
+                });
+              })
+            })
+          }
+        },
+        mounted(){
+          this.init();
+
+        }
+      });
+      callback(vm);
+
+    }
+  </script>
+
 </html>

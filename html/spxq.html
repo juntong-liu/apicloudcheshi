@@ -1,0 +1,529 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>商品详情</title>
+    <link rel="stylesheet" href="../css/swiper.min.css">
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <script src="../script/swiper.min.js"></script>
+    <style>
+        .s_tank {
+            background: #fff;
+            z-index: 100;
+            position: fixed;
+            right: 10px;
+            top: 20px;
+        }
+        .s_tank-task{
+          background: rgba(0,0,0,.2);
+          z-index: 10;
+          position: fixed;
+          right: 0;
+          top: 0;
+          left: 0;
+          bottom: 0
+        }
+
+        .s_tank ul {
+            padding: 0.2rem 0.4rem;
+        }
+
+        .s_tank ul li {
+            padding: 0.2rem 0;
+        }
+        .city-box{
+          position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);height:100%;z-index:1;
+          display: none;
+        }
+        .city{
+          font-style: normal;
+          display: inline-block;
+          border: 1px solid #ebebeb;
+          padding: 0.1rem 0.3rem;
+          margin: 0 0.1rem 0.2rem 0;
+          font-size: 12px;
+          border-radius: 0.15rem;
+        }
+        /*不能加入购物车*/
+        .addNot{
+          background: #aaa !important;
+          color: #fff !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+      <div v-show="showBox">
+        <div class="s_tank-task" @touchmove.prevent @click="showBox=false"></div>
+        <div class="s_tank" >
+            <img class="sjs" src="../icon/sjs.png">
+            <ul>
+                <li class="f28">
+                  <img src="../icon/sytb.png">
+                  <span>首页</span>
+                </li>
+                <li class="f28" @click="interfaceGwc">
+                  <img src="../icon/w_gwc.png">
+                  <span>购物车</span>
+                </li>
+                <li class="f28">
+                  <img src="../icon/sc-w.png">
+                  <span>我的收藏</span>
+                </li>
+            </ul>
+        </div>
+      </div>
+      <section class="bsbj" v-show="detail.id">
+          <div class="swiper-container swiper-cpxq">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide pb" v-if="detail.thumb_first==1">
+                  <img :src="tImage(detail.thumb)">
+                </div>
+                <div class="swiper-slide pb" v-for="img in detail.thumb_url">
+                  <img :src="tImage(img)">
+                </div>
+              </div>
+              <!-- Add Pagination -->
+              <div class="swiper-pagination"></div>
+          </div>
+          <div class="gg">
+              <div class="s_bt f32">{{detail.title}}</div>
+              <div class="s_jg">
+                <span class="s_xj f36" v-if="detail.minprice==detail.maxprice">￥{{parseFloat(detail.minprice)||0}}</span>
+                <span class="s_xj f36" v-else>￥{{parseFloat(detail.minprice)}}~{{parseFloat(detail.maxprice)}}</span>
+                <span class="s_xj f22" v-if="detail.ug>0&&is_ios!=1">+{{detail.ug}}浆果(必须)</span>
+                <span class="s_yj f22" v-if="detail.productprice>0">￥{{parseFloat(detail.productprice)}}</span>
+
+              </div>
+              <div v-if="detail.credit>0||detail.money>0">
+                <div class="s_yf f22">
+                  <span class="s_yfwz">
+                    购买获得
+                    <span v-if="detail.credit>0">{{detail.credit}}积分</span>
+                    <span v-if="detail.money>0">{{detail.money}}商城余额</span>
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div class="s_yf f22">
+                  <span class="s_yfwz" v-if="detail.use_credit3>0">
+                    可用<span style="color:red">七彩券</span>{{parseFloat(detail.use_credit3)}}
+                  </span>
+                  <span class="s_yfwz" v-if="detail.deduct>0">
+                    <span style="color:red">积分</span>最高抵扣￥{{parseFloat(detail.deduct)}}
+                  </span>
+                </div>
+              </div>
+
+              <div class="s_kcxl" v-if="detail.showtotal==1||detail.showsales==1">
+                  <p class="f22" v-if="detail.showtotal==1">库存:{{detail.total}}件</p>
+                  <p class="f22" v-if="detail.showsales==1">销量:{{detail.sales}}件</p>
+              </div>
+              <div v-if="typeof(detail.dispatchprice)=='object'">
+                <div class="s_yf f22" v-if="detail.type==1&&detail.isverify!=2">
+                  <span class="s_yfwz">运费：</span>
+                  <span >{{parseFloat(detail.dispatchprice.min)}}~{{parseFloat(detail.dispatchprice.max)}}</span>
+                </div>
+              </div>
+              <div v-else>
+                <div class="s_yf f22" v-if="detail.type==1&&detail.isverify!=2">
+                  <span class="s_yfwz">运费：</span>
+                  <span v-if="detail.dispatchprice==0">包邮</span>
+                  <span v-else>{{parseFloat(detail.dispatchprice)}}</span>
+                </div>
+              </div>
+          </div>
+
+          <!-- 配送区域 -->
+          <div v-if="detail.has_city">
+            <div class="hgx"></div>
+            <div class="s_gg gg f22" @click="fnBox('#city-box')">
+                <div class="s_ggwz">不配送区域：</div>
+                <div class="s_ggnr title-line1">
+                  <span v-for="city in detail.citys">{{city}},</span>
+                </div>
+                <div class="s_gggd">
+                  <img src="../icon/jt.png">
+                </div>
+            </div>
+            <div class="city-box" id="city-box" @touchmove.prevent @click="fnBox('#city-box')">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;">
+                <div style="font-size:16px;text-align:center;padding:10px;">不配送区域</div>
+                <div style="margin-top:10px;padding:10px;">
+                  <i class="city" v-for="city in detail.citys">{{city}}</i>
+                </div>
+                <div style="padding:15px 0;text-align:center;color:#fff;background:#f00;font-size:16px;">确定</div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="detail.canbuy">
+            <div class="hgx"></div>
+            <div class="s_gg gg f22" @click="fnBox('.fucengk')">
+                <div class="s_ggwz">选择规格：</div>
+                <div class="s_ggnr" v-if="detail.spec_titles">
+                  <span v-if="option">{{showText}}</span>
+                  <span v-else>{{detail.spec_titles}}等</span>
+                </div>
+                <div class="s_ggnr" v-else>
+                  数量
+                </div>
+                <div class="s_gggd"><img src="../icon/jt.png"></div>
+            </div>
+          </div>
+
+          <!-- 产品参数 -->
+          <div v-if="detail.params&&detail.params.length>0">
+            <div class="hgx"></div>
+            <div class="s_gg gg f22" @click="fnBox('#canshu-box')">
+                <div class="s_ggwz">产品参数</div>
+                <div class="s_ggnr title-line1"></div>
+                <div class="s_gggd">
+                  <img src="../icon/jt.png">
+                </div>
+            </div>
+            <div class="city-box" id="canshu-box" @touchmove.prevent @click="fnBox('#canshu-box')">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;">
+                <div style="font-size:16px;text-align:center;padding:10px;">产品参数</div>
+                <div style="margin-top:10px;padding:10px;">
+                  <div style="padding:15px 0;border-bottom:1px #ebebeb solid;font-size:16px;" v-for="param in detail.params">
+                    <span style="color:#999;margin-right:10px;">{{param.title}}</span>{{param.value}}
+                  </div>
+                </div>
+                <div style="padding:15px 0;text-align:center;color:#fff;background:#f00;font-size:16px;">确定</div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div style="display:none;">
+            <div class="hgx"></div>
+            <div class="pingjia gg">
+                <div class="pj_bt">
+                    <div class="pj_btz f30">宝贝评价(3000)</div>
+                    <div class="pj_bty f24">查看更多</div>
+                </div>
+                <div class="pj_nr">
+                    <div class="pj_nrnc f30">啦啦啦</div>
+                    <div class="pj_nrwz f28">评价内容</div>
+                </div>
+            </div>
+          </div>
+          <div class="hgx"></div>
+          <div class="s_dp gg">
+              <div class="s_dpz"><img :src="tImage(shopdetail.logo)"></div>
+              <div class="s_dpnr">
+                  <div class="s_dpnrbt f30">{{shopdetail.shopname}}</div>
+                  <div class="s_dpnrm f22" v-if="shopdetail.description">{{shopdetail.description}}</div>
+              </div>
+              <div class="s_dpgg f22"><img src="../icon/jt.png"></div>
+          </div>
+          <div class="hgx"></div>
+          <div class="s_spxq">
+              <div class="s_pxq_bt f30">商品详情</div>
+              <div class="s_pxq_nr gg f28" v-html="detail.content"></div>
+          </div>
+      </section>
+      <div class="dbql">
+        <div class="iteman">
+            <ul>
+                <li>
+                  <img src="../icon/dp.png">
+                  <p class="f22">店铺</p>
+                </li>
+                <li @click="fnSc">
+                  <span v-if="detail.favorite_id>0">
+                    <img src="../icon/sc1.png">
+                    <p class="f22" style="color:red;">收藏</p>
+                  </span>
+                  <span v-else>
+                    <img src="../icon/sc-w.png">
+                    <p class="f22">收藏</p>
+                  </span>
+                </li>
+                <li>
+                  <img src="../icon/kf.png">
+                  <p class="f22">客服</p>
+                </li>
+            </ul>
+        </div>
+        <div class="jrgwc f30 " :class="{addNot:!detail.canAddCart}"  @click="fnAddCart(0)">加入购物车</div>
+        <div class="ljgm f30"  @click="fnBuy(0)">立即购买</div>
+      </div>
+      <div class="fucengk" style="display:none;" @touchmove.prevent>
+        <div @click="fnBox('.fucengk')" style="height:100%;"></div>
+        <div class="fuceng">
+          <div class="fucegnnr gg">
+            <div class="fucengs">
+              <div class="fc_cpz">
+                <img :src="tImage(thumb)">
+              </div>
+              <div class="fc_cpm" >
+                <div v-if="option">
+                  <p class="f36 fc_cpjg" >￥{{option.marketprice}}</p>
+                  <p class="f22 fc_cpkc" >库存：{{option.stock}}</p>
+                </div>
+                <div v-else>
+                  <p class="f36 fc_cpjg" v-if="detail.minprice==detail.maxprice">￥{{parseFloat(detail.minprice)}}</p>
+                  <p class="f36 fc_cpjg" v-else>￥{{parseFloat(detail.minprice)}}~{{parseFloat(detail.maxprice)}}</p>
+                  <p class="f22 fc_cpkc" >库存：{{detail.total}}</p>
+                </div>
+
+                <p class="f22" style="padding-top:0.17rem">{{showText}}</p>
+              </div>
+              <div class="fc_cpy" @click="fnBox('.fucengk')">
+                <img src="../icon/d_gb.png">
+              </div>
+            </div>
+            <div v-if="info.specs&&info.specs.length>0">
+              <div class="fc_tc" v-for="spec in info.specs">
+                <div class="fc_tcbt f28">{{spec.title}}</div>
+                <div class="fc_tcnr">
+                  <ul>
+                    <li class="f24" :class="{tcxz:selects[spec.id].id==item.id}" v-for="item in spec.items" @click="fnSelectSpec(spec.id,item)">
+                      {{item.title}}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="gmsl">
+              <div class="gmsl_z f28">购买数量</div>
+              <div class="gmsl_y">
+                <div class="g_an">
+                  <span class="jian" @click="fnNum(-1)">-</span>
+                  <!-- <span class="shuzi">{{num}}</span> -->
+                  <input type="number" class="shuzi" v-model="num" style="width:30px;text-align:center;" @change="fnNumChange">
+                  <span class="jia" @click="fnNum(1)">+</span>
+                </div>
+              </div>
+
+            </div>
+            <div style="height:80px;"></div>
+          </div>
+          <div class="fc_gm">
+            <ul>
+              <li  class="fc_ljgm  f30" @click="fnClick">确定</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      apiready=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              showBox:false,
+              showBox2:false,
+              goods_id:api.pageParam.goods_id,
+              detail:{
+                canAddCart:true
+              },
+              info:{},
+              selects:{},
+              thumb:'',
+              showText:'请选择规格',
+              option:null,
+              num:1,
+              shopdetail:{},
+              is_ios:getCache("IOS"),
+              buttonType:''
+            }
+          },
+
+          methods:{
+            fnNumChange(){
+              let r=parseInt(this.num);
+
+              if(!r||r<1){
+                this.num=1;
+              }else{
+                this.num=r;
+              }
+            },
+            fnAddCart:function(flag){
+              if(!this.detail.canAddCart){
+                toast('该商品不可加入购物车');
+                return;
+              }
+              if(flag==0){
+                this.buttonType='addCart';
+                this.fnBox('.fucengk');
+                return;
+              }
+              if(this.detail.hasoption>0&&!this.option){
+                if(flag==1){
+                  toast('请选择规格');
+                }
+                return;
+              }
+              if(this.option&&this.option.stock<1||this.detail.total<1||this.detail.total<this.num){
+                toast('库存不足');
+                return;
+              }
+              ajax("ud.cart.add",{id:this.goods_id,num:this.num,optionid:this.option?this.option.id:0}).then(res=>{
+                toast(res.msg);
+              });
+
+            },
+            fnShop:function(){
+              if(this.detail.merchid>0){
+                this.fnMerchIndex(this.detail.merchid);
+              }else{
+                this.fnMall();
+              }
+            },
+            fnSc:function(){
+              ajax('ud.favorite.toggle',{id:this.goods_id}).then(res=>{
+                this.detail.favorite_id=res.favorite_id;
+              });
+            },
+            fnClick(){
+              if(this.buttonType=='addCart'){
+                this.fnAddCart(1);
+              }else{
+                this.fnBuy(1);
+              }
+            },
+            fnBuy:function(flag){
+              if(flag==0){
+                this.buttonType='buy';
+                this.fnBox('.fucengk');
+                return;
+              }
+              if(this.detail.hasoption>0&&!this.option){
+                if(flag==1){
+                  toast('请选择规格');
+                }
+                return;
+              }
+              if(this.detail.minbuy>this.num){
+                toast(this.detail.minbuy+'件起售');
+                return;
+              }
+              this.interfaceTJDd({id:this.goods_id,num:this.num,optionid:this.option?this.option.id:0});
+
+            },
+            fnSelectSpec:function(id1,obj){
+              if(this.selects[id1].id==obj.id){
+                this.selects[id1]={};
+                this.thumb=this.detail.thumb;
+              }else{
+                this.selects[id1]=obj;
+                if(obj.thumb){
+                  this.thumb=obj.thumb;
+                }
+              }
+              this.fnShowInfo();
+            },
+            fnShowInfo:function(){
+              //选中状态
+              var showText="";
+              var showPrice="";
+              var key=[];
+              for(var i in this.selects){
+                if(this.selects[i].id>0){
+                  if(showText){
+                    showText+=";"+this.selects[i].title;
+                  }else{
+                    showText="已选 "+this.selects[i].title;
+                  }
+                  key.push(this.selects[i].id);
+                }
+                //计算价格
+              }
+
+              if(showText){
+                this.showText=showText;
+              }else{
+                this.showText="请选择规格";
+              }
+              var option_key=key.sort().join("_");
+              var option=null;
+              for(var i in this.info.options){
+                var temp_key=this.info.options[i].specs.split('_').sort().join("_");
+                if(temp_key==option_key){
+                  option=this.info.options[i];
+                  break;
+                }
+              }
+              this.option=option;
+            },
+            fnNum:function(num){
+              this.num+=num;
+              if(this.num<1){
+                this.num=1;
+              }
+            },
+            init:function(){
+              ajax('ud.goodsDetail',{id:this.goods_id}).then(res=>{
+                this.detail=res.goods;
+                this.info=res.specs;
+                this.thumb=this.detail.thumb;
+                this.shopdetail=res.shopdetail;
+                selects={};
+                for(var i in this.info.specs){
+                  selects[this.info.specs[i].id]={};
+                }
+                this.selects=selects;
+              })
+
+            },
+
+            fnSelectBox:function(){
+              $(".fucengk").slideToggle(100);
+            },
+            fnBox:function(cla){
+              $(cla).slideToggle(200);
+            }
+
+
+          },
+          mounted(){
+            this.init();
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 1,
+                spaceBetween: 30,
+                loop: false,
+                observer:true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                autoplay: {
+                  delay: 2000,
+                  disableOnInteraction: false,
+                },
+            });
+            api.addEventListener({
+                name:'navitembtn'
+            },function(ret, err){
+              if(ret.type=='left'){
+                api.closeWin();
+              }
+              if(ret.type=='right'){
+                vm.showBox=!vm.showBox;
+              }
+            });
+          }
+        });
+      }
+    </script>
+</body>
+
+</html>

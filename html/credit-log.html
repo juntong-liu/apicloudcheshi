@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>记录</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style media="screen">
+      .red{
+        color: #ff5555;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+
+    <section class="bsbj" id="app" v-cloak>
+      <ul class="gg udgmjlk">
+        <li v-for="item in list">
+          <div class="udgms">
+            <div class="udgmsz f28">{{item.remark}}</div>
+            <div class="udgmsy f30" :class="{red:item.num<0}"><span v-if="item.num>0">+</span>{{item.num}}</div>
+          </div>
+          <div class="udgmx f22">
+            <div>{{date("Y-m-d H:i:s",item.createtime)}}</div>
+          </div>
+        </li>
+
+      </ul>
+      <div class="is_end" v-show="list.length>0&&isEnd">没有更多了</div>
+      <div class="empty-box" v-show="list.length==0&&isEnd">暂无数据</div>
+    </section>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              list:[],
+              page:1,
+              isEnd:false,
+              isLoading:false,
+              credit_type:api.pageParam.credit_type
+            }
+          },
+          methods:{
+            init:function(){
+              this.fnRefresh();
+            },
+            fnRefresh:function(){
+              this.page=1;
+              this.isEnd=false;
+              this.list=[];
+              this.fnList();
+            },
+            fnList:function(){
+              if(this.isEnd||this.isLoading)return;
+              ajax('ud.member.creditLog',{page:this.page,credit_type:this.credit_type}).then(res=>{
+                this.list=merge_list(this.list,res.list);
+                this.isEnd=res.isEnd;
+                this.page+=1;
+              })
+            }
+
+          },
+          created:function(){
+            this.init();
+            scrollToBottom(function(){
+              this.fnList();
+            }.bind(this));
+            refresh(function(){
+              this.fnRefresh();
+            }.bind(this));
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

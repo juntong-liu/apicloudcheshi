@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>大富翁</title>
+    <script src="../script/echarts.min.js" charset="utf-8"></script>
+    <script src="../script/china.js" charset="utf-8"></script>
+    <script src="../script/common.js" charset="utf-8"></script>
+
+</head>
+<body>
+
+<div id="main" style = "width:100%;height:300px;">
+
+</div>
+
+<script type="text/javascript">
+
+            var myChart = echarts.init(document.getElementById('main'));
+            var option = {
+                tooltip: {
+                   show: false,//不显示提示标签
+                    formatter: '{b}', //提示标签格式
+                    backgroundColor:"#ff7f50",//提示标签背景颜色
+                    textStyle:{color:"#fff"} //提示标签字体颜色
+                },
+                series: [{
+                    type: 'map',
+                    mapType: 'china',
+                    label: {
+                        normal: {
+                            show: false,//显示省份标签
+                            textStyle:{color:"#000"}//省份标签字体颜色
+                        },
+
+                    },
+                    itemStyle: {
+                        normal: {
+                            borderWidth: .5,//区域边框宽度
+                            borderColor: '#009fe8',//区域边框颜色
+                            areaColor:"#ffefd5",//区域颜色
+                        },
+                    },
+                    data:[
+                        {name:'黑龙江', selected:true}
+                    ]
+                }],
+            };
+
+            myChart.setOption(option);
+            myChart.on('click', function (params) {
+              if(params.name=='黑龙江'){
+                Vue.prototype.interfaceQcsl();
+              }else{
+                fnAlert('该区域未开放');
+
+              }
+            })
+
+
+
+
+
+</script>
+</body>
+</html>

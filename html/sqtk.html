@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>申请退款</title>
+
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <style type="text/css">
+
+      html{ background: #fff!important; }
+      .select{
+        -webkit-appearance: none;
+        border: 0;
+        outline: 0;
+        background-color: transparent;
+        width: 100%;
+        font-size: inherit;
+        height: 1.2rem;
+        position: relative;
+        z-index: 1;
+        padding-left: 15px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div id="app" v-cloak>
+
+      <div class="sqshx gg f28" v-if="order.refundid=='0'">
+        <div class="thyy" @click="fnSelectWay">
+          <div class="thyyz">处理方式</div>
+          <div class="thyyy" >
+            <div>
+                {{refundWay[refund.rtype]||'请选择'}}
+            </div>
+            <img class="jtdx" src="../icon/jt.png">
+          </div>
+        </div>
+        <div class="thyy" @click="fnSelectReason">
+          <div class="thyyz" v-if="refund.rtype==2">换货原因</div>
+          <div class="thyyz" v-else>退款原因</div>
+          <div class="thyyy">
+            <div>
+              {{refund.reason||'请选择'}}
+            </div>
+            <img class="jtdx" src="../icon/jt.png">
+          </div>
+        </div>
+        <div class="thyy">
+          <div class="thyyz">退款金额</div>
+          <div class="thyyy">
+            <b>￥{{order.price}}</b>
+          </div>
+        </div>
+
+        <div class="tksm">
+          <div class="thyyz" v-if="refund.rtype==2">换货说明</div>
+          <div class="thyyz" v-else>退款说明</div>
+          <div class="thsmy"> <input class="tk-input"  v-model="refund.content" placeholder="选填"></div>
+
+        </div>
+        <div class="tjsq f30" @click="fnSubMit">提交申请</div>
+      </div>
+      <div v-else>
+        <div class="sqshx gg f28">
+          <div style="background:#fff;margin:10px 0;" >
+            <span style="font-size:18px;" v-if="refund.status==0">
+              等待商家处理{{order.status==1?'退款':'售后'}}申请
+            </span>
+            <span style="font-size:18px;" v-if="refund.status>=3">
+              商家已经通过{{order.status==1?'退款':'售后'}}申请
+            </span>
+
+            <div style="line-height:1.5;color:#999;margin-top:10px;">
+              <span v-if="refund.rtype==0">
+                <span v-if="refund['status']==0">
+                  退款申请流程： <br>1、发起退款申请<br>2、商家确认后退款到您的账户如果商家未处理：请及时与商家联系
+                </span>
+              </span>
+              <span v-else-if="refund.rtype==1">
+                退款退货申请流程：<br>1、发起退款退货申请<br>2、退货需将退货商品邮寄至商家指定地址，并在系统内输入快递单号<br>3、商家收货后确认无误<br>4、退款到您的账户
+              </span>
+              <span v-else-if="refund.rtype==2">
+                换货申请流程：<br>1、发起换货申请，并把快递单号录入系统<br>2、将需要换货的商品邮寄至商家指定地址，并在系统内输入快递单号<br>3、商家确认后货后重新发出商品<br>4、签收确认商品
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#efefef;height:10px;"> </div>
+        <div class="sqshx gg f28">
+          <div class="thyy">
+            <div class="thyyz">处理方式</div>
+            <div class="thyyy">
+              <div>
+                {{refundWay[refund.rtype]||'请选择'}}
+              </div>
+              <img class="jtdx" src="../icon/jt.png">
+            </div>
+          </div>
+          <div class="thyy">
+            <div class="thyyz" v-if="refund.rtype==2">换货原因</div>
+            <div class="thyyz" v-else>退款原因</div>
+            <div class="thyyy">
+              <div>
+                {{refund.reason}}
+              </div>
+              <img class="jtdx" src="../icon/jt.png">
+            </div>
+          </div>
+          <div class="thyy">
+            <div class="thyyz">退款金额</div>
+            <div class="thyyy">
+              <b>￥{{refund.applyprice}}</b>
+            </div>
+          </div>
+
+          <div class="tksm">
+            <div class="thyyz" v-if="refund.rtype==2">换货说明</div>
+            <div class="thyyz" v-else>退款说明</div>
+            <div class="thsmy"> {{refund.content?refund.content:'无'}}</div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              id:api.pageParam.id,
+              order:{},
+              back:{},
+              refund:{
+                rtype:"",
+                reason:"",
+                content:'',
+                price:''
+              },
+              refundWay:{
+                '0':'退款(仅退款不退货)',
+                '1':'退货退款',
+                '2':'换货'
+              },
+              refundReason:['不想要了','卖家缺货','拍错了/订单信息错误','其它']
+
+
+            }
+          },
+          methods:{
+            init:function(){
+              ajax('ud.refund',{id:this.id}).then(res=>{
+                this.back=res;
+                if(res.refund){
+                  this.refund=res.refund;
+                  this.refund_apply=true;
+                }else{
+                  this.refund.price=res.order.price;
+                }
+
+                this.order=res.order;
+              });
+            },
+            fnSelectWay(){
+              var buttons=[];
+              buttons.push(this.refundWay['0']);
+              if(this.back.canreturns==1||this.order.status==2 || this.order.status==3){
+                buttons.push(this.refundWay['2']);
+                if(this.order.status==2 || this.order.status==3){
+                  buttons.push(this.refundWay['1']);
+                }
+              }
+              selectAction(buttons,true).then(res=>{
+                for(var i in this.refundWay){
+                  if(this.refundWay[i]==res){
+                    this.refund.rtype=i;
+                  }
+                }
+              })
+            },
+            fnSelectReason(){
+              //选择原因
+              selectAction(this.refundReason,true).then(res=>{
+                this.refund.reason=res;
+              })
+            },
+            fnSubMit:function(){
+              if(!this.refund.rtype){
+                toast('请选择处理方式');
+                return;
+              }
+              if(!this.refund.reason){
+                toast('请选择处理原因');
+                return;
+              }
+              var param=this.refund;
+              param.id=this.id;
+              ajax('ud.refund.submit',param,'post').then(res=>{
+                toast(res);
+                orderRelaodEvent();
+                setTimeout(function () {
+                  api.closeWin();
+                }, 1000);
+              })
+            }
+          },
+          created:function(){
+            this.init();
+          }
+        });
+      }
+    </script>
+
+  </body>
+</html>

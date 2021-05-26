@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>评价</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <style type="text/css"> html{ background: #fff!important; }</style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <section class="gg">
+        <div class="wddd_btz" style="margin-top:0.3rem;">
+          <img src="../icon/dptb.png">
+          <span class="f28 dd_dpmz">{{shopname}}</span>
+        </div>
+        <div class="pjs" v-for="g in goods">
+          <div class="pjst">
+            <img :src="tImage(g.thumb)">
+          </div>
+          <div class="pjsy f28">
+            <p>
+              {{g.title}}
+              <span style="float:right;">￥{{g.price}}</span>
+            </p>
+            <p class="pjxj">
+              <span v-if="g.optiontitle">{{g.optiontitle}}</span>
+              <span style="float:right;">x{{g.total}}</span>
+            </p>
+          </div>
+        </div>
+        <div class="fbpjnr">
+          <textarea class="dhwb f26" rows="5" cols="40" placeholder="说说你的购买使用心得，分享给想买的他们" v-model="content"></textarea>
+        </div>
+
+        <div class="pjsct">
+          <div class="pjsctnr" @click="fnImgs">
+            <p class="pjsctnr_yt"><img src="../icon/pz.png"></p>
+            <p class="f22 hsz tjtp">添加图片</p>
+          </div>
+          <div class="pjsctnr" v-for="(img,idx) in images">
+            <p class="pjsctnr_t">
+              <img :src="img">
+            </p>
+            <p class="f22 pjsctnr_sc" @click="fnDeleteImg(idx)"><img src="../icon/ycan.png"></p>
+          </div>
+
+        </div>
+
+      </section>
+      <div class="hgx"></div>
+      <div class="qtpj gg f28 ">
+        <p style="display:flex;align-items:center">
+          评分:
+          <span v-for="i in 5" @click="fnStar(i)">
+            <img src="../icon/xjxz.png" v-if="level>=i">
+            <img src="../icon/xjwxz.png" v-else>
+          </span>
+          <span v-if="level==1" style="margin-left:10px;">差评</span>
+          <span v-if="level==2" style="margin-left:10px;color:#0290be;">一般</span>
+          <span v-if="level==3" style="margin-left:10px;color:#04ab02;">挺好</span>
+          <span v-if="level==4" style="margin-left:10px;color:#ff8000;">满意</span>
+          <span v-if="level==5" style="margin-left:10px;color:#ff5555;">非常满意</span>
+
+        </p>
+
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              id:api.pageParam.id,
+              goods:[],
+              shopname:'',
+              level:5,
+              content:'',
+              images:[],
+              max:0,
+              uploades:[]
+            }
+          },
+          methods:{
+            fnStar:function(level){
+              this.level=level;
+            },
+            init:function(){
+              ajax('ud.comment',{id:this.id}).then(res=>{
+                this.goods=res.goods;
+                this.shopname=res.shopname;
+                this.max=res.max;
+              })
+            },
+            fnImgs:function(){
+              if(this.images.length>=this.max){
+                toast('最多选择'+this.max+"张图片")
+                return;
+              }
+              fnSelectImage(function(res){
+                for(var i in res){
+                  this.images.push(res[i].thumbPath);
+                }
+              }.bind(this),this.max-this.images.length);
+            },
+            fnDeleteImg(idx){
+              this.images=delArray(this.images,idx);
+            },
+            rightClick:function(){
+              if(!this.level){
+                toast('还没有评分');
+                return;
+              }
+              if(!this.content){
+                toast('说点什么吧');
+                return;
+              }
+              if(this.images.length>0){
+                // 上传图片
+                uploadFile('ud.uploader',this.images).then(res=>{
+                  _log(res);
+                  for(var i in res){
+                    this.uploades.push(res[i].url);
+                  }
+                  this.fnSave();
+                })
+              }else{
+                this.fnSave();
+              }
+            },
+            fnSave:function(){
+              var comments=[];
+              for(var i in this.goods){
+                comments.push({
+                    'goodsid': this.goods[i].goodsid,
+                    'level': this.level,
+                    'content': this.content,
+                    'images': this.uploades
+                })
+              }
+              ajax('ud.comment.submit',{orderid:this.id,comments:comments}).then(res=>{
+                toast(res);
+                orderRelaodEvent();
+                setTimeout(function () {
+                  api.closeWin();
+                }, 1000);
+              })
+            }
+          },
+          mounted:function(){
+
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
+  </body>
+</html>

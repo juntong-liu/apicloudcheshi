@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>订单支付</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style media="screen">
+    .juzhong{
+      display: flex;
+      align-items: center;
+    }
+    .juzhong img{
+      margin-right: 5px;
+      width: 1rem;
+      height: 1rem;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div id='app' v-cloak>
+      <div class="zffs" style="margin-bottom:10px;">
+        <div class="zffs_nr gg">
+          <ul>
+            <li>
+              <p><span class="f28">订单编号</span></p>
+              <div class="f32">{{payInfo.ordersn}}</div>
+            </li>
+            <li>
+              <p><span class="f28">订单金额</span></p>
+              <div class="f32" style="color:#ff5555;">￥{{parseFloat(payInfo.money)}}</div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <div class="zffs" style="margin-bottom:10px;" v-if="payInfo.can_js">
+        <div class="zffs_nr gg">
+          <ul>
+            <li @click="js=!js">
+              <p class="juzhong f28">
+                <div style="flex:1;font-size:16px;">
+                  平台寄售
+                </div>
+              </p>
+              <div class="t_z2"><span :class="{xzzt:js}"></span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+
+
+      <div class="zffs">
+        <div class="zffs_nr gg">
+          <ul>
+            <li v-if="payInfo.money>0&&payInfo.alipay.success" @click="fnSelectPay('alipay')">
+              <p class="juzhong f28">
+                <img src="../icon/zfb.png">
+                <div style="flex:1;margin-left:5px;font-size:16px;">
+                  支付宝支付
+                  <div style="font-size:12px;color:#999">
+                    支付宝安全支付
+                  </div>
+                </div>
+              </p>
+              <div class="t_zt"><span></span></div>
+            </li>
+            <li v-if="payInfo.money>0&&payInfo.wechat.success"  @click="fnSelectPay('wechat')">
+              <p class="juzhong f28">
+                <img src="../icon/wxzf.png">
+                <div style="flex:1;margin-left:5px;font-size:16px;">
+                  微信支付
+                  <div style="font-size:12px;color:#999">
+                     微信安全支付
+                  </div>
+                </div>
+              </p>
+              <div class="t_zt"><span></span></div>
+            </li>
+
+            <li v-if="payInfo.credit&&payInfo.credit.success" @click="fnSelectPay('credit')">
+              <p class="juzhong f28">
+                <img src="../icon/yuezf.png">
+
+                <div style="flex:1;margin-left:5px;font-size:16px;">
+                  余额支付
+                  <div style="font-size:12px;color:#999">
+                    当前余额：￥{{payInfo.credit.current}}
+                  </div>
+                </div>
+              </p>
+              <div class="t_zt"><span></span></div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+
+
+
+      <div class="dk"></div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var aliPayPlus = api.require('aliPayPlus');
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              id:api.pageParam.id,
+              payInfo:{},
+              use_ug:0,
+              js:false
+            }
+          },
+          methods:{
+            init:function(){
+              ajax('ud.pay',{id:this.id}).then(res=>{
+                this.payInfo=res.payinfo;
+                if(parseFloat(this.payInfo.money)==0){
+                  this.fnSelectPay('credit');
+                }
+              })
+            },
+
+            fnSelectPay:function(type){
+              ajax('ud.pay.orderPay',{id:this.id,type:type,ptjs:this.js?1:0}).then(res=>{
+                if(type=='alipay'){
+                  alipay(res,function(){
+                    vm.fnSuccess();
+                  });
+                }
+                if(type=='credit'||type=='credit8'){
+                  this.fnSuccess();
+                }
+                if(type=='wechat'){
+                  wechatpay(res,function(){
+                    vm.fnSuccess();
+                  });
+                }
+              })
+            },
+            fnSuccess:function(){
+              ajax('ud.pay.orderstatus',{id:this.id}).then(res=>{
+                toast(res);
+                reloadUserInfo();
+                orderRelaodEvent();
+                setTimeout(function () {
+                  api.closeWin();
+                }, 1000);
+              })
+            }
+          },
+          created:function(){
+            this.init();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

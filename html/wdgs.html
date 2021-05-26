@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>我的果树</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/common.js"></script>
+
+  </head>
+  <body >
+
+    <div class="gs gg" id="app" v-cloak>
+      <div class="gsli">
+        <div class="gslis f32">蓝靛果果树 </div>
+        <div class="gslinr">
+          <div class="gslinrli">
+            <div class="gslinrlis"> 基地{{tCount(total)}}棵树</div>
+            <div class="gslinrlix">
+              <div class="gslinrjdt">
+                <div class="gslinrjdtnr" :style="getWidth(count,total)"> </div>
+              </div>
+              <div class="gslinrwz"> 还剩{{total-count}}棵</div>
+            </div>
+          </div>
+          <div class="gslinrli">
+            <div class="gslinrlis"> 团队果树</div>
+            <div class="gslinrlix">
+              <div class="gslinrjdt">
+                <div class="gslinrjdtnr2" :style="getWidth(group_count,total)"> </div>
+              </div>
+              <div class="gslinrwz"> {{tCount(group_count)}}棵</div>
+            </div>
+          </div>
+          <div class="gslinrli">
+            <div class="gslinrlis"> 我的果树</div>
+            <div class="gslinrlix">
+              <div class="gslinrjdt">
+                <div class="gslinrjdtnr3" :style="getWidth(my_count,total)"> </div>
+              </div>
+              <div class="gslinrwz">{{tCount(my_count)}}棵</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="gsli2">
+        <div class="gsli2nr">
+          <img class="gsli2nrt" src="../image/qtsbg.png">
+        </div>
+        <div class="gsli2wz f28">更多树种 敬请期待…</div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              total:300000,
+              count:0,
+              group_count:0,
+              my_count:0
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.tree.zcjs').then(res=>{
+                this.total=res.total;
+                this.count=res.count;
+                this.group_count=res.group_count;
+                this.my_count=res.my_count;
+              })
+            },
+            getWidth(fz,fm){
+              var percent=(fz/fm)*100;
+              return{
+                width:(fz>=fm?100:(percent<1?1:percent))+'%'
+              }
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+
+      }
+    </script>
+  </body>
+</html>

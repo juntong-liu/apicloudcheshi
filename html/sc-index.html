@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>七彩商城</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/common.js"></script>
+    <script src="../script/swiper.min.js"></script>
+    <link rel="stylesheet" href="../css/swiper.min.css">
+
+  </head>
+  <body>
+      <div id="app" v-cloak>
+        <title-bar title="七彩商城" color="#000" bg="#fff">
+          <div class="r_titr" slot='right'>
+            <img class="r_titltp" src="../icon/fdj2.png">
+          </div>
+        </title-bar>
+
+        <!-- 轮播图 -->
+        <div class="qcscban gg">
+
+          <div class="swiper-container" id="banner">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide qcscbant" v-for="banner in banners">
+                <img :src="tImage(banner.thumb)">
+              </div>
+
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+
+        <!-- 主导航 -->
+
+        <div class="in_zdh">
+          <div class="in_zdhli" v-for="nav in navs" @click="jumpInterface(nav.window)">
+            <img class="qcsc_cpfl" :src="tImage(nav.icon)">
+            <div class="f24 qc_zdhwz">{{nav.navname}}</div>
+          </div>
+        </div>
+        <!--广告图-->
+        <div class="qcsc_adv gg">
+          <img class="qcsc_advt" src="../image/adv.png">
+        </div>
+        <!--商城产品-->
+        <div class="sc_rmcp gg">
+          <div class="sc_rmcpbt">
+            <div class="sc_rmcpbtnr">
+              <div class="sc_rmcpbtli sc_rmcpbtlih">热门<div class="sc_rmcpbtlix"></div></div>
+              <div class="sc_rmcpbtli" v-for="cate in category" @click="interfaceGoodsList({cate:cate.id})">{{cate.name}}</div>
+            </div>
+
+          </div>
+        </div>
+        <div class="goods-content">
+          <ul>
+            <li v-for="g in list">
+              <goods :goods="g"></goods>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <script>
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              userInfo:{},
+              active:{},
+              banners:[],
+              gonggaos:[],
+              videos:[],
+              navs:[],
+              category:[],
+              list:[],
+              page:1,
+              isEnd:false,
+              isLoading:false
+
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.mallIndex').then(res=>{
+                this.banners=res.banners;
+                this.active=this.banners[0];
+                this.gonggaos=res.gonggaos;
+                this.videos=res.videos;
+                this.navs=res.navs;
+                this.category=res.category;
+                this.$nextTick(()=>{
+                  this.initSwiper();
+                })
+              })
+              this.fnRefresh();
+            },
+            fnRefresh:function(){
+              this.list=[];
+              this.page=1;
+              this.isEnd=false;
+              this.fnList();
+            },
+            fnList:function(){
+              if(this.isLoading||this.isEnd)return;
+              this.isLoading=true;
+              var param={
+                ishot:1,
+                merchid:0,
+                page: this.page,
+              }
+              ajax('ud.goods.get_list',param).then(res=>{
+                this.list=merge_list(this.list,res.list);
+                this.isEnd=res.isEnd;
+                this.page+=1;
+                this.isLoading=false;
+              })
+            },
+            initSwiper(){
+              new Swiper('#banner', {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                loop: true,
+                autoplay: {
+                  delay: 3000,
+                  stopOnLastSlide: false,
+                  disableOnInteraction: false,
+                },
+                observer:true,
+                pagination: {
+                  el: '.swiper-pagination',
+                  clickable: true,
+                },
+                navigation: {
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
+                },
+                on:{
+                  slideChangeTransitionStart:function(){
+                    if(vm&&vm.banners&&vm.banners.length>0){
+                      var idx=Math.abs((this.activeIndex-1)%vm.banners.length);
+                      vm.active=vm.banners[idx];
+                    }
+                  },
+                  tap(){
+
+                    if(vm&&vm.banners&&vm.banners.length>0){
+                      var idx=Math.abs((this.activeIndex-1)%vm.banners.length);
+                      vm.jumpInterface(vm.banners[idx].link);
+                    }
+                  }
+                }
+              });
+
+            }
+          },
+          mounted(){
+            this.init();
+            scrollToBottom(function(){
+              this.fnList();
+            }.bind(this))
+          }
+        });
+
+      }
+      </script>
+
+    </body>
+  </html>

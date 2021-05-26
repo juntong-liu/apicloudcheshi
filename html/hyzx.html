@@ -5,31 +5,28 @@
     <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>会员中心</title>
-    <link rel="stylesheet" href="../css/swiper.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    
+    <script src="../script/common.js"></script>
+
+
   </head>
   <body>
-    <div style="background:#f8f8f8; min-height: 100%;">
-      <div class="r_tit hy_tit">
-        <div class="r_titnr s_titnr gg">
-          <div class="r_titl"><img class="r_titltp" src="../image/bfh.png"></div>
-          <div class="r_titm f36 hy_titm">会员中心</div>
-          <div class="r_titr"></div>
-        </div>
-      </div>
-      <div class="kong"></div>
+    <div style="background:#f8f8f8; min-height: 100%;" id='app' v-cloak>
+      <title-bar title='会员中心' bg="linear-gradient(to right, #fd8550, #eb4b3e)">
+        <div class="r_titl" slot="left" onclick="api.closeWin()"><img class="r_titltp" src="../image/bfh.png"></div>
+      </title-bar>
+
+
       <div class="hy_bg">
         <div class="my_gr gg">
           <div class="my_grz">
-            <div class="my_grzt"><img class="my_grytx" src="../image/tx.png"></div>
+            <div class="my_grzt">
+              <img class="my_grytx" :src="tImage(userInfo.avatar)">
+            </div>
             <div class="my_grzwz">
-              <div class="my_grzmz">浅蓝淡雅</div>
+              <div class="my_grzmz">{{userInfo.nickname}}</div>
               <div class="my_grzjs">
-                <div class="my_grzjsli f22">普通店主</div>
-                
+                <div class="my_grzjsli f22">{{userInfo.level_name}}</div>
               </div>
             </div>
           </div>
@@ -38,81 +35,81 @@
           </div>
         </div>
         <div class="my_sj">
-          <div class="my_sjli">
-            <div class="my_sjlisz f36">178</div>
+          <div class="my_sjli" @click="interfaceQb()">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit2)||0}}</div>
             <div class="my_sjliwz f24">我的钱包</div>
           </div>
-          <div class="my_sjli">
-            <div class="my_sjlisz f36">6426</div>
+          <div class="my_sjli" @click="interfaceQcq()">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit3)||0}}</div>
             <div class="my_sjliwz f24">七彩券</div>
           </div>
           <div class="my_sjli">
-            <div class="my_sjlisz f36">178</div>
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit1)||0}}</div>
             <div class="my_sjliwz f24">积分</div>
           </div>
           <div class="my_sjli">
-            <div class="my_sjlisz f36">298</div>
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit6)||0}}</div>
             <div class="my_sjliwz f24">果子数量</div>
           </div>
         </div>
       </div>
-      
+
       <div class="hy_fh gg">
         <div class="hy_fhnr">
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">100000</div>
+            <div class="hy_fhzsz f30">0</div>
             <div class="hy_fhzwz f22">市场分红总额</div>
           </div>
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">100000</div>
+            <div class="hy_fhzsz f30">0</div>
             <div class="hy_fhzwz f22">市场分红扣除</div>
           </div>
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">100000</div>
+            <div class="hy_fhzsz f30">0</div>
             <div class="hy_fhzwz f22">市场分红结余</div>
           </div>
         </div>
       </div>
-      
+
       <div class="yxdd gg">
         <div class="yxddbt">
           <div class="yxddbtz f28">优选订单</div>
-          <div class="yxddbty f22 qhsz">
+          <div class="yxddbty f22 qhsz" @click="interfaceWddd('')">
             更多订单
             <img class="sc_tmhhjt" src="../image/hjt.png">
           </div>
         </div>
-        
+
         <div class="my_dd">
-          <div class="my_ddli">
+          <div class="my_ddli" @click="interfaceWddd(0)">
             <img class="my_ddlit" src="../image/dfktb.png">
             <div class="my_cdliwz f24">待付款</div>
           </div>
-          <div class="my_ddli">
+          <div class="my_ddli" @click="interfaceWddd(1)">
             <img class="my_ddlit" src="../image/dfhtb.png">
             <div class="my_cdliwz f24">待发货</div>
           </div>
-          <div class="my_ddli">
+          <div class="my_ddli" @click="interfaceWddd(2)">
             <img class="my_ddlit" src="../image/dshtb.png">
             <div class="my_cdliwz f24">待收货</div>
           </div>
-          <div class="my_ddli">
+          <div class="my_ddli" @click="interfaceWddd(3)">
             <img class="my_ddlit" src="../image/thhtb.png">
-            <div class="my_cdliwz f24">退换货</div>
+            <div class="my_cdliwz f24">待评价</div>
           </div>
         </div>
-        
+
       </div>
       <div class="hy_cd gg">
         <div class="hy_cdli">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/jsdd.png">集市订单</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
-        <div class="hy_cdli">
+        <div class="hy_cdli"  @click="interfaceWddd('',1)">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/jmzx.png">寄卖中心</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
-        <div class="hy_cdli">
+        <div class="hy_cdli" @click="interfaceWddd('',2)">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/jfdd.png">积分订单</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
@@ -120,11 +117,11 @@
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/wdfs.png">我的粉丝</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
-        <div class="hy_cdli">
+        <div class="hy_cdli"  @click="interfaceTx()">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/yetx.png">余额提现</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
-        <div class="hy_cdli">
+        <div class="hy_cdli" @click="fnMyAddress()">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/shdz.png">收货地址</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
@@ -135,5 +132,28 @@
       </div>
       <div class="kc"></div>
     </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              userInfo:{}
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.member').then(res=>{
+                this.userInfo=res;
+              })
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
   </body>
 </html>

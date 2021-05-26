@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>确认订单</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+</head>
+
+<body>
+  <div id="app" v-cloak v-show="detail.goods_list">
+    <div @click="fnMyAddress(listen,account)">
+      <div class="gwdz" v-if="address">
+          <div class="gwdz_nr gg">
+              <div class="t_dzt"><img src="../icon/dwz.png"></div>
+              <div class="t_dznr">
+                  <p class="f28"><span>收件人：</span><span>{{address.realname}}</span><span class="t_xm">{{address.mobile}}</span></p>
+                  <div class="shdz f28">收货地址：{{address.province}} {{address.city}} {{address.area}} {{address.address}}</div>
+              </div>
+              <div class="t_dgd"><img src="../icon/jt.png"></div>
+          </div>
+      </div>
+      <div class="gwdz" v-else>
+          <div class="gwdz_nr gg">
+              <div class="t_dzt"><img src="../icon/dwz.png"></div>
+              <div class="t_dznr">
+                  <p class="f28" style="text-align:center">添加收货地址</p>
+              </div>
+              <div class="t_dgd"><img src="../icon/jt.png"></div>
+          </div>
+      </div>
+    </div>
+
+    <div class="gwc" v-for="goods in goods_list">
+        <div class="gwcnr gg">
+            <div class="gwdp">
+
+                <div class="t_dptb"><img src="../icon/dptb.png"></div>
+                <div class="g_dpmz f28">{{goods.shopname}}</div>
+                <div class="g_jt"><img src="../icon/jt.png"></div>
+            </div>
+            <div class="gwcp" v-for="item in goods.goods">
+                <div class="t_wcy">
+                    <div class="g_wct">
+                      <img :src="tImage(item.thumb)"></div>
+                    <div class="g_wcwz">
+                        <p class="f28">{{item.title}}</p>
+                        <div class="f26 guige t_sl">
+                          <span>{{item.optiontitle}}</span><span>x {{item.total}}</span>
+                        </div>
+                        <div class="g_wcx">
+                            <div class="g_jg">¥{{parseFloat(item.marketprice)}}</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:10px;background:#fff;font-size:14px;margin:10px 0;">
+      <div style="margin:10px 0;">买家留言</div>
+      <textarea v-model='ly' rows="4" style="width:98%;padding:1%;" placeholder="50字以内（选填）"></textarea>
+    </div>
+
+    <div class="zffs" style="margin-bottom:10px;" >
+      <div class="zffs_nr gg">
+        <ul>
+          <li v-if="detail.qcq_count>0" @click="fnSelectQcq()">
+            <p class="juzhong f28">
+              <div style="flex:1;font-size:16px;">
+                {{qcq.id?("七彩券￥"+parseFloat(qcq.num)):'选择七彩券'}}
+                <div style="font-size:12px;color:#999;margin-top:5px;">
+                  <span style="font-size:12px;color:#f00;">订单生成后撤销订单将不退回，请谨慎选择，最多可优惠￥{{parseFloat(detail.use_credit3)||0}}</span>
+                </div>
+              </div>
+            </p>
+          </li>
+          <li v-if="detail.deductmoney>0" @click="deductcredit>0?(deductcredit=0):(deductcredit=detail.deductcredit)">
+            <p class="juzhong f28">
+              <div style="flex:1;font-size:16px;">
+                积分抵扣 ￥{{detail.deductmoney}}
+              </div>
+            </p>
+            <div class="t_z2"><span :class="{xzzt:deductcredit>0}"></span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+    <!-- 商品小计 -->
+    <div style="padding:0 10px;background:#fff;font-size:16px;">
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;">
+        商品小计<p style="flex:1;text-align:right">￥{{parseFloat(goodsprice)||0}}</p>
+      </div>
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;">
+        运费<p style="flex:1;text-align:right">￥{{parseFloat(dispatch_price)||0}}</p>
+      </div>
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;" v-if="allUg>0">
+        需要浆果<p style="flex:1;text-align:right">{{parseFloat(allUg)||0}}(剩余{{parseFloat(ky_ug)||0}})</p>
+      </div>
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;" v-if="new_discount_price>0">
+        会员折扣<p style="flex:1;text-align:right">￥{{parseFloat(new_discount_price)||0}}</p>
+      </div>
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="deductcredit>0">
+        积分折扣<p style="flex:1;text-align:right;color:#fcc000">-￥{{parseFloat(detail.deductmoney)||0}}</p>
+      </div>
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="qcq.id>0">
+        七彩券抵扣
+        <p style="flex:1;text-align:right;color:#fcc000">-￥{{Math.min(detail.use_credit3,qcq.num)}}</p>
+      </div>
+    </div>
+
+    <div class="g_js">
+        <div class="g_jsnr gg">
+            <div class="g_jsz"></div>
+            <div class="g_jsy">
+                <div class="t_hj"><span>共</span><span>{{total}}<span><span>件</span></div>
+                <p>合计：
+                  <span>¥{{totalMoney}}</span>
+                  <span v-if="allUg>0">+{{allUg}}浆果</span>
+                </p>
+                <div class="g_jsan" style="background:#999" v-if="allUg>ky_ug">结算</div>
+                <div class="g_jsan" @click="fnSubmit" v-else>结算</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dk"></div>
+  </div>
+  <script type="text/javascript">
+    apiLoad=function(){
+      var vm=new Vue({
+        el:"#app",
+        data:function(){
+          return {
+            param:{},
+            address:false,
+            createInfo:{},
+            listen:'select-address',
+            goods_list:[],
+            total:0,
+            goodsprice:0,
+            ly:'',
+            dispatch_price:0,
+            realprice:0,
+            allUg:0,
+            allUd:0,
+            ud_set:{},
+            select_ug:0,
+            select_ud:0,
+            is_ios:getCache("IOS"),
+            new_discount_price:0,
+            ky_ug:0,
+            detail:{},
+            account:'',
+            from_type:api.pageParam.from_type,
+
+            deductcredit:0,
+            qcq:{}
+          }
+        },
+        computed:{
+          totalMoney(){
+            var totalMoney=parseFloat(this.realprice);
+            if(this.qcq.id>0){
+              totalMoney-=Math.min(this.detail.use_credit3,this.qcq.num);
+            }
+            if(this.deductcredit>0){
+              totalMoney-=this.detail.deductmoney;
+            }
+            return totalMoney;
+          }
+        },
+        methods:{
+
+          fnSelectUg:function(){
+            this.select_ug=this.select_ug>0?0:this.allUg;
+          },
+          fnSelectUd:function(){
+            this.select_ud=this.select_ud>0?0:this.allUd;
+          },
+          init:function(){
+            ajax('ud.orderCreate',this.param).then(res=>{
+              this.address=res.address;
+              this.createInfo=res.createInfo;
+              this.goods_list=res.goods_list;
+              this.total=res.total;
+              this.goodsprice=res.goodsprice;
+              this.dispatch_price=res.dispatch_price;
+              this.realprice=res.realprice;
+              this.allUg=res.allUg;
+              this.ky_ug=res.ky_ug;
+              this.ud_set=res.ud_set;
+              this.new_discount_price=res.new_discount_price;
+              this.detail=res;
+            })
+          },
+          fnSubmit:function(){
+            var data = {
+                'orderid': 0,
+                'id': this.param.id,
+                'goods': this.createInfo.goods,
+                'card_id': this.createInfo.card_id,
+                'giftid': this.createInfo.giftid,
+                'gdid': this.createInfo.gdid,
+                'liveid': this.createInfo.liveid,
+                'diydata': '',
+                'dispatchtype': this.createInfo.dispatchtype,
+                'fromcart': this.createInfo.fromcart,
+                'carrierid': 0,
+                'addressid': this.address.id,
+                'carriers': '',
+                'remark': this.ly,
+                'officcode':'',
+                'deduct':  this.deductcredit>0?1:0,
+                'deduct2': 0,
+                'contype':this.createInfo.contype,
+                'couponid':this.createInfo.couponid,
+                'wxid': this.createInfo.wxid,
+                'wxcardid': this.createInfo.wxcardid,
+                'wxcode': this.createInfo.wxcode,
+                'invoicename': '',
+                'submit': true,
+                'real_price': this.realprice,
+
+                'packageid': this.createInfo.card_packageid,
+                'fromquick':  this.createInfo.fromquick,
+                'use_ug':this.allUg,
+                'qcq_id':this.qcq.id
+            };
+
+            ajax('ud.orderCreate.submit',data,'post').then(res=>{
+              api.sendEvent({
+                  name: 'order-create-success'
+              });
+
+              this.interfaceOrderPay(res.orderid);
+              setTimeout(function () {
+                api.closeWin();
+              }, 1000);
+            })
+          },
+        },
+        created:function(){
+          this.param=api.pageParam;
+          if(this.param.num){
+            this.param.total=this.param.num;
+          }
+          this.account=api.pageParam.account;
+          this.init();
+          api.addEventListener({
+              name: this.listen
+          }, function(ret, err){
+              this.address=ret.value;
+          }.bind(this));
+          api.addEventListener({
+              name: 'select-qcq'
+          }, function(ret, err){
+              this.qcq=ret.value;
+          }.bind(this));
+
+
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

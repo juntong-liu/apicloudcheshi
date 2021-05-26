@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>商品列表</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <status-bar bg="#efefef"></status-bar>
+      <div class="u_tit">
+        <div class="m_titnr gg" style="margin-right:0;">
+          <div class="skm">
+            <div class="u_fh skmz" onclick="api.closeWin()">
+              <img src="../icon/hfh.png">
+            </div>
+            <div class="p_bt">
+              <form action="" class="ss">
+                <input type="text" class="search" placeholder="请输入搜索关键字" @change="fnRefresh" v-model="keywords">
+                <img class="fdj" src="../icon/fdj3.png">
+                <span class="p_sx"></span>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kong"></div>
+      <div class="xtb">
+        <ul>
+          <li><span :class="{p_xz:isnew==1}" @click="fnParam('isnew')">新品</span></li>
+          <li><span :class="{p_xz:order=='salesreal'}" @click="fnOrder('salesreal','desc')">按销量</span></li>
+          <li><span :class="{p_xz:order=='minprice'}" @click="fnOrder('minprice','asc')">按价格</span></li></ul>
+      </div>
+
+      <div class="goods-content" style="padding-top:1.5rem;">
+        <ul>
+          <li v-for="g in list">
+            <goods :goods="g"></goods>
+          </li>
+        </ul>
+      </div>
+      <div class="is_end" v-show="list.length>0&&isEnd">没有更多了</div>
+      <div class="empty-box" v-show="list.length==0&&isEnd">暂无数据</div>
+    </div>
+
+    <script type="text/javascript">
+      apiready=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              page:1,
+              list:[],
+              isEnd:false,
+              isLoading:false,
+              isrecommand: 0,
+              ishot: 0,
+              isnew: 0,
+              isdiscount: 0,
+              issendfree: 0,
+              istime: 0,
+              cate: api.pageParam.cate,
+              keywords:'',
+              order:'',
+              by:'',
+              type:api.pageParam.type,
+              is_ios:getCache("IOS"),
+              groupid:api.pageParam.groupid,
+              js_type:api.pageParam.js_type,
+              deduct:api.pageParam.deduct,
+              qcq:api.pageParam.qcq
+            }
+          },
+          methods:{
+            fnOrder:function(order,by){
+              if(this.order==order){
+                this.order='';
+              }else{
+                this.order=order;
+                this.by=by;
+              }
+
+              this.fnRefresh();
+            },
+            fnParam:function(param){
+              this[param]=this[param]==1?0:1;
+              this.fnRefresh();
+            },
+            init:function(){
+              this.fnRefresh();
+            },
+            fnRefresh:function(){
+              this.list=[];
+              this.page=1;
+              this.isEnd=false;
+              this.fnList();
+            },
+            fnList:function(){
+              if(this.isLoading||this.isEnd)return;
+              this.isLoading=true;
+              var param={
+                keywords:this.keywords,
+                isrecommand:this.isrecommand,
+                ishot:this.ishot,
+                isnew:this.isnew,
+                isdiscount:this.isdiscount,
+                issendfree:this.issendfree,
+                istime:this.istime,
+                cate:this.cate,
+                order: this.order,
+                by: this.by,
+                merchid:0,
+                page: this.page,
+                type:this.type,
+                groupid:this.groupid,
+                js_type:this.js_type,
+                deduct:this.deduct,
+                qcq:this.qcq
+              }
+
+              ajax('ud.goods.get_list',param).then(res=>{
+                this.list=merge_list(this.list,res.list);
+                this.isEnd=res.isEnd;
+                this.page+=1;
+                this.isLoading=false;
+              })
+            }
+          },
+          created:function(){
+            this.init();
+            refresh(function(){
+              this.fnRefresh();
+            }.bind(this));
+            scrollToBottom(function(){
+              this.fnList();
+            }.bind(this))
+          }
+        });
+      }
+    </script>
+
+  </body>
+</html>

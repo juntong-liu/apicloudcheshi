@@ -1,4 +1,37 @@
 if(typeof(Vue)=="function"){
+  Vue.component('qcqitem',{
+    template:
+    `
+    <div :class="{qcqnrli:detail.status==0,qcqnrli2:detail.status!=0}" @click="_itemClick">
+      <div class="qcqnrliz">
+        <div class="qcqnrlizs">¥<span class="qcqnrlizsje">{{parseFloat(detail.num)||0}}</span></div>
+        <div class="qcqnrlizx f22" v-if="detail.status==0">立即使用</div>
+        <div class="qcqnrlizx2 f22" v-else-if="detail.status==1">已使用</div>
+        <div class="qcqnrlizx2 f22" v-else>已失效</div>
+      </div>
+      <div class="qcqnrliy">
+        <div class="qcqnrliymz f30"> 七彩券</div>
+        <div class="qcqnrliyyxq f24 qhsz"> 有效期：{{date("Y-m-d",detail.create_time)}}—{{date("Y-m-d",detail.end_time)}}</div>
+        <div class="qcqnrliyfw  f24 qhsz"> 适用范围：集市</div>
+      </div>
+      <div v-if="detail.status==-1" class="qcq_sxt"><img class="qcq_sxtt" src="../image/ysx.png"></div>
+    </div>
+    `,
+    methods:{
+      _itemClick(){
+        this.$emit('click');
+      }
+    },
+    props:{
+      detail:{
+        type:Object,
+        default(){
+          return {}
+        }
+      }
+    }
+
+  })
   Vue.component('share',{
     template:
     `
@@ -45,6 +78,7 @@ if(typeof(Vue)=="function"){
     }
 
   })
+
   //组件
   Vue.component('status-bar',{
     template:
@@ -70,10 +104,12 @@ if(typeof(Vue)=="function"){
     template:
     `
     <div>
-      <div class="r_tit xhx faqtit title-bar" :style="{color:color,background:bg}">
+      <div class="r_tit title-bar" :style="style">
         <status-bar ></status-bar>
         <div class="r_titnr s_titnr gg">
-          <slot name="left"></slot>
+          <slot name="left" class="r_titl" >
+            <img class="r_titltp" src="../image/hfh.png" @click="leftClick()">
+          </slot>
           <div class="r_titm f36">{{title}}</div>
           <slot name="right"></slot>
         </div>
@@ -93,11 +129,33 @@ if(typeof(Vue)=="function"){
       color:{
         type:String,
         default:'#fff'
+      },
+      _class:{
+        type:String,
+        default:''
       }
     },
     data(){
       return {
         height:0
+      }
+    },
+    computed:{
+      style(){
+        let style={};
+        if(this.color){
+          style.color=this.color;
+        }
+        if(this.bg){
+          style.background=this.bg;
+        }
+        return style;
+        // :style="{color:color,background:bg}"
+      }
+    },
+    methods:{
+      leftClick(){
+        api.closeWin();
       }
     },
     mounted(){
@@ -112,10 +170,10 @@ if(typeof(Vue)=="function"){
         <status-bar :bg="bg"></status-bar>
         <div class="s_titnr gg">
           <div class="s_titz">
-            <img class="s_tittx" src="../image/tx.png">
+            <img class="s_tittx" :src="icon">
           </div>
           <div class="s_titm">
-            <form action="" class="sc_tjbd">
+            <form action="" class="sc_tjbd" @click="interfaceGoodsList()">
               <input type="text" class="sc_search" placeholder="请输入搜索关键字" readonly>
               <img class="sc_fdj" src="../image/fdj.png">
             </form>
@@ -134,8 +192,12 @@ if(typeof(Vue)=="function"){
     `,
     props:{
       bg:{
-        default:String,
+        type:String,
         default:''
+      },
+      icon:{
+        type:String,
+        default:'../image/tx.png'
       }
     },
     data(){
@@ -208,16 +270,22 @@ if(typeof(Vue)=="function"){
   Vue.component('goods',{
     template:
     `
-    <div class="index-hy-conn-lb" @click="interfaceGoods(goods.id)">
-      <div class="index-hy-conn-lb-img">
+    <div class="goods-content-lb" @click="interfaceGoods(goods.id)">
+      <div class="goods-content-lb-img">
         <img :src="tImage(goods.thumb)" onerror="this.src='../icon/nopic.png'">
         <div class="sold-out" v-if="goods.total<=0">
           已售完
         </div>
       </div>
-      <div class="index-hy-conn-text">
-        <div class="index-hy-conn-text-bt">{{goods.title}}</div>
-        <div class="index-hy-conn-text-price">￥{{parseFloat(goods.marketprice)}}<span v-if="goods.ug>0">+{{goods.ug}}浆果</span></div>
+      <div class="goods-content-text">
+        <div class="goods-content-text-bt">{{goods.title}}</div>
+        <div class="goods-content-text-price">
+          ￥{{parseFloat(goods.marketprice)}}
+        </div>
+        <div class="goods-content-text-price2">
+          <span v-if="goods.ug>0">+{{goods.ug}}浆果</span>
+          <span v-if="goods.deduct>0">积分抵扣￥{{parseFloat(goods.deduct)}}</span>
+        </div>
       </div>
     </div>`,
     props:{
@@ -270,6 +338,28 @@ if(typeof(Vue)=="function"){
           })
         }.bind(this))
       },
+    }
+  })
+
+  Vue.component('videoitem',{
+    template:
+    `<div class="in_yxli" @click="interfaceVideoDetail(video.id)">
+      <img class="sxy_yxlit" :src="tImage(video.poster_url)">
+      <div class="in_yxlibt f28">{{video.title}}</div>
+      <div class="sxy_yx f22 qhsz">{{tCount(video.watch_count)}}人已学</div>
+    </div>`,
+    props:{
+      video:{
+        type:Object,
+        required:true,
+        default(){
+          return {}
+        }
+      }
+    },
+    methods:{
+
+
     }
   })
 

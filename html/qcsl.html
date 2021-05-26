@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>七彩森林</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/common.js"></script>
+
+  </head>
+  <body >
+    <div style="background-color: #f8f8f8; min-height: 100%; " id='app' v-cloak>
+      <div class="qcslbg">
+        <div class="qcsl_zs">
+          <div class="qcsl_zstx"><img class="qcsl_zstxt" :src="tImage(info.avatar)"></div>
+          <div class="qcsl_zsgz f22">
+            <div class="f28 qcsl_zsgzwz">{{parseFloat(info.credit6)||0}}</div>
+            果子
+          </div>
+          <div class="qcsl_zsan f28" @click="interfaceWdGs()">种树</div>
+        </div>
+        <div class="qcsl_gzsf">
+          <div class="qcsl_gzsfs f30">{{parseFloat(info.day_count)||0}}</div>
+          <div class="qcsl_gzsfx f22">今日释放</div>
+        </div>
+        <div class="qcsl_jgc"><img class="qcsl_jgct" src="../image/jgct.png"></div>
+      </div>
+      <div class="qcsl_dtk">
+        <div class="qcsl_dt gg">
+          <div class="qcsl_dtbt f28">最新动态</div>
+          <div class="qcsl_dtnr">
+            <div class="qcsl_dtnrli" v-for="item in list">
+              <div class="qcsl_dtnrliz"><img class="qcsl_dtnrlizt" :src="tImage(info.avatar)"></div>
+              <div class="qcsl_dtnrliy">
+                <div class="qcsl_dtnrliys f28">今天共获得{{parseFloat(item.num)||0}}个果实</div>
+                <div class="qcsl_dtnrliyx f22 qhsz">{{date('Y-m-d',item.createtime)}}</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="qcsl_dtgd f24 qhsz" @click="interfaceCredit6Log">查看更多动态</div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              info:{},
+              list:[]
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.tree').then(res=>{
+                this.info=res;
+                this.list=res.log;
+              })
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
+  </body>
+</html>

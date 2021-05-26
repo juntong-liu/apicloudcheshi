@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>首页</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <style media="screen">
+      html,body{
+        background: #f5f5f5;
+        height: 100%;
+      }
+      .article-list{
+        padding: 10px;
+      }
+      .article-item{
+        display: flex;
+        background: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+      .article-item-img{
+        width:120px;
+        height: 120px;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+      .article-item-img img{
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+      }
+      .article-item-right{
+        flex: 1;
+
+      }
+      .article-item-title{
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+      .article-item-des{
+        font-size: 12px;
+        color: #999;
+        margin-top: 10px;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <div class="article-list">
+        <div class="article-item" v-for="item in list" @click="interfaceArticle(item.id,item.article_title)">
+          <div class="article-item-img" v-if="item.resp_img">
+            <img src="../image/dsptp.png">
+          </div>
+          <div class="article-item-right">
+            <div class="article-item-title">
+              {{item.article_title}}
+            </div>
+            <div class="article-item-des" v-if="item.resp_desc">
+              {{item.resp_desc}}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script  type="text/javascript">
+    apiLoad=function(){
+      var vm=new Vue({
+        el:"#app",
+        data:function(){
+          return {
+            list:[],
+            isEnd:false,
+            page:1,
+            type:api.pageParam.type
+          }
+        },
+        methods:{
+          init:function(){
+            this.fnRefresh();
+          },
+          fnRefresh:function(){
+            this.list=[];
+            this.page=1;
+            this.isEnd=false;
+            this.fnList();
+          },
+          fnList:function(){
+            if(this.isEnd||this.isLoading){
+              return;
+            }
+            this.isLoading=true;
+            ajax("ud.article_list",{type:this.type,page:this.page}).then(res=>{
+              this.list=merge_list(this.list,res.list);
+              this.isEnd=res.isEnd;
+              this.page+=1;
+              this.isLoading=false;
+            })
+          }
+
+        },
+        created:function(){
+          this.init();
+          refresh(function(){
+            this.fnRefresh();
+          }.bind(this));
+          scrollToBottom(function(){
+            this.fnList();
+          }.bind(this));
+
+        }
+      });
+    }
+
+    </script>
+  </body>
+</html>

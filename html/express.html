@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>订单-物流</title>
+
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" href="../css/style_sh.css">
+	<script type="text/javascript" src="../script/common.js"></script>
+
+</head>
+
+<body style="background: #f3f3f3;">
+
+	<div id="app" v-cloak>
+		<div class="order-log-header">
+			<dl class="flexbox" v-if="goods.length>0">
+				<dt>
+					<img :src="tImage(goods[0].thumb)">
+					<span>共{{goods.length}}件</span>
+				</dt>
+				<dd class="flexitem">
+					<p v-if="expresslist.length>0">物流状态:&nbsp;
+						<span v-if="expresslist[0].step.indexOf('已签收')!=-1" style="color:#ff5555">已签收</span>
+						<span v-else-if="expresslist.length<=2" style="color:#428bca">备货中</span>
+						<span v-else style="color:#3c763d">运输中</span>
+					</p>
+					<small>承运来源:&nbsp;{{order.expresscom}}</small>
+					<small>订单编号:&nbsp;{{order.expresssn}}</small>
+				</dd>
+			</dl>
+		</div>
+		<div class="order-rate" v-if="expresslist.length>0">
+			<dl v-for="item in expresslist">
+				<dt></dt>
+				<dd class="border-bottom">
+					<p>{{item.step}}</p>
+					<span>{{item.time}}</span>
+				</dd>
+			</dl>
+
+		</div>
+		<div v-else class="empty-box">暂无数据</div>
+
+	</div>
+
+	<script type="text/javascript">
+		apiLoad=function(){
+			var vm=new Vue({
+				el:"#app",
+				data:function(){
+					return {
+						id:api.pageParam.id,
+						expresslist:[],
+						goods:[],
+						order:{}
+					}
+				},
+				methods:{
+					init:function(){
+						ajax('ud.order.express',{id:this.id}).then(res=>{
+							this.expresslist=res.expresslist;
+							this.goods=res.goods;
+							this.order=res.order;
+						})
+					}
+				},
+				created:function(){
+
+					this.init();
+
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

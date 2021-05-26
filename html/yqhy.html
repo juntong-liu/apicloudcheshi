@@ -35,7 +35,8 @@
               percent:2,
               id:'',
               ewm_list:[],
-              show:false
+              show:false,
+              aid:''
             }
           },
           methods:{
@@ -60,7 +61,6 @@
                   thumb:thumb_url,
                   contentUrl:thumb_url
                 },function(ret,err){
-                  vm.fnShareBox();
                   if (!ret.status) {
                     alert(err.code);
                   }
@@ -80,6 +80,7 @@
                 this.avatar=this.tImage(res.avatar);
                 this.nickname=res.nickname;
                 this.id=res.id;
+                this.aid=res.aid;
                 setTimeout(function () {
                   vm.initEwm();
                 }, 30);
@@ -168,12 +169,18 @@
               let width=parseInt(data.width)*this.percent;
               let height=parseInt(data.height)*this.percent;
               context.drawImage(dom ,left ,top , width , height)
+            },
+            rightClick(){
+              this.interfaceArticle(this.aid,'邀请说明');
             }
+
+
           },
           mounted(){
             this.init();
           }
         });
+        callback(vm);
       }
     </script>
   </body>

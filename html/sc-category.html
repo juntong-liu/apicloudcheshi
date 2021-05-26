@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>分类</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <style type="text/css">
+      html{ background: #fff!important; }
+    </style>
+  </head>
+
+  <body>
+    <div id='app' v-cloak>
+      <title-bar title="商品分类" color="#000" bg="#fff"></title-bar>
+      <div v-if="set.level==1">
+        <div class="fl_yg" style="margin:0;width:100%;">
+          <div style="font-size:18px;color:#999;margin:10px;">#所有分类</div>
+          <ul>
+            <li @click="interfaceGoodsList()">
+              <img src="../icon/fl3.png" class="all-goods">
+              <p>全部商品</p>
+            </li>
+            <li v-for="p in parent" @click="interfaceGoodsList({cate:p.id})">
+              <img :src="tImage(p.thumb,'../icon/no-pic.png')">
+              <p>{{p.name}}</p>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+      <div v-else-if="set.level==2" class="fl_xnr">
+        <div class="fl_zg">
+          <ul class="f30">
+            <li :class="{flxz:category_id==0}" @click="fnCategory(0)">{{default_category}}</li>
+            <li :class="{flxz:category_id==p.id}" @click="fnCategory(p.id)"v-for="p in parent">{{p.name}}</li>
+          </ul>
+        </div>
+        <div class="fl_yg" v-show="category_id==0">
+          <ul>
+            <li  @click="interfaceGoodsList()">
+              <img src="../icon/fl3.png" class="all-goods">
+              <p>全部商品</p>
+            </li>
+            <li v-for="r in recommand"  @click="interfaceGoodsList({cate:r.id})">
+              <img :src="tImage(r.thumb,'../icon/no-pic.png')" :class="{yuan:!set.style||set.style==0}">
+              <p>{{r.name}}</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="fl_yg" v-show="category_id!=0">
+          <div>
+            <ul>
+              <li v-for="category2 in activeChildern" @click="interfaceGoodsList({cate:category2.id})">
+                <img :src="tImage(category2.thumb,'../icon/no-pic.png')">
+                <p>{{category2.name}}</p>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="set.level==3" class="fl_xnr">
+        <div class="fl_zg">
+          <ul class="f30">
+            <li :class="{flxz:category_id==0}" @click="fnCategory(0)">{{default_category}}</li>
+            <li :class="{flxz:category_id==p.id}" @click="fnCategory(p.id)"v-for="p in parent">{{p.name}}</li>
+          </ul>
+        </div>
+        <div class="fl_yg" v-show="category_id==0">
+          <ul>
+            <li @click="interfaceGoodsList()">
+              <img src="../icon/fl3.png" class="all-goods">
+              <p>全部商品</p>
+            </li>
+            <li v-for="r in recommand" @click="interfaceGoodsList({cate:r.id})">
+              <img :src="tImage(r.thumb,'../icon/no-pic.png')" :class="{yuan:!set.style||set.style==0}">
+              <p>{{r.name}}</p>
+            </li>
+          </ul>
+        </div>
+        <div></div>
+        <div class="fl_yg" v-show="category_id!=0">
+          <div v-for="c2 in activeChildern">
+            <div class="category2" @click="interfaceGoodsList({cate:c2.id})">{{c2.name}}</div>
+            <ul v-if="grandchildren[c2.id]">
+              <li v-for="c3 in grandchildren[c2.id]" @click="interfaceGoodsList({cate:c3.id})">
+                <img :src="tImage(c3.thumb,'../icon/no-pic.png')">
+                <p>{{c3.name}}</p>
+              </li>
+
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              default_category:'推荐分类',
+              parent:[],
+              category_id:0,
+              children:[],
+              grandchildren:[],
+              set:{},
+              recommand:[],
+              activeChildern:[],
+              activeGrandchildren:[]
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.goods.category').then(res=>{
+                this.parent=res.category.parent[0];
+                this.children=res.category.children;
+                this.grandchildren=res.category.grandchildren;
+                this.set=res.set;
+                var c_r=this.getRecommand(res.category.children);
+                var gc_r=this.getRecommand(res.category.grandchildren);
+                this.recommand=c_r.concat(gc_r);
+              })
+            },
+            getRecommand(d){
+              var recommand=[];
+              for(let id in d){
+                var item = d[id];
+                for (var t of item){
+                  if(t.isrecommand==1){
+                    recommand.push(t);
+                  }
+                }
+              }
+              return recommand;
+            },
+            fnCategory(id=0){
+              this.category_id=id;
+              if(id!=0){
+                this.activeChildern=this.children[id];
+              }
+
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
+  </body>
+</html>

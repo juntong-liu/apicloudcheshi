@@ -11,20 +11,9 @@
   </head>
   <body >
     <div style="background-color: #f8f8f8; min-height: 100%; " id='app' v-cloak>
-      <div class="qcq_bg">
-        <div class="qcq_bgwz f28">可用七彩券</div>
-        <div class="qcq_bgsz f40">{{parseFloat(userInfo.credit3)||0}}</div>
-      </div>
-      <div class="qcq_tab">
 
-        <div class="qcq_tabli" @click="fnStatus(k)" v-for="(v,k) in statusObj">
-          <div class="qcq_tabliwz f28" :class="{qcq_dq:status==k}">{{v}}</div>
-          <div class="qcq_tablihx" v-if="status==k"></div>
-        </div>
-      </div>
       <div class="qcqnr gg">
-        <qcqitem v-for="item in list" :detail="item" :key="item.id" @click="interfaceGoodsList({qcq:1})"></qcqitem>
-
+        <qcqitem v-for="item in list" :detail="item" :key="item.id" @click="fnSelect(item)"></qcqitem>
       </div>
 
     </div>
@@ -34,14 +23,8 @@
           el:"#app",
           data:function(){
             return {
-              userInfo:{},
               url:'ud.member.qcq',
               status:0,
-              statusObj:{
-                '0':'未使用',
-                '1':'已使用',
-                '-1':'已过期'
-              }
             }
           },
           mixins:[list],
@@ -49,6 +32,16 @@
             fnStatus(status){
               this.status=status;
               this.refresh()
+            },
+            fnSelect(item){
+              api.sendEvent({
+                  name: 'select-qcq',
+                  extra:item
+              });
+              setTimeout(function () {
+                api.closeWin();
+              }, 100);
+
             },
 
             getParams(){

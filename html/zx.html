@@ -5,49 +5,58 @@
     <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>尊享</title>
-    
+
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../script/flexible_css.js"></script>
-    <script src="../script/flexible.js"></script>
-    
+    <script src="../script/common.js"></script>
+
+
   </head>
   <body>
-    <div style="background-color: #385786; min-height: 100%;">
+    <div style="background-color: #385786; min-height: 100%;" id="app" v-cloak>
       <div class="zx_ban">
         <img class="zx_bant" src="../image/zxt.jpg">
       </div>
       <div class="zx_x gg">
-        <div class="zx_li">
+        <div class="zx_li" v-for="goods in list" @click="interfaceGoods(goods.id,goods.title)">
           <div class="zx_lis">
-            <img class="zx_list" src="../image/cpt2.png">
+            <img class="zx_list" :src="tImage(goods.thumb)">
           </div>
           <div class="zx_lix">
             <div class="zx_lixz">
-              <div class="zx_lixzs f34">蓝靛果暖饮礼包</div>
-              <div class="zx_lixzx f26 qhsz"> 源于天然 恩于天赐</div>
+              <div class="zx_lixzs f34">{{goods.title}}</div>
+              <div class="zx_lixzx f26 qhsz">{{goods.subtitle}}</div>
             </div>
             <div class="zx_lixy">
-              <div class="zx_lixyz f34">¥1998</div>
+              <div class="zx_lixyz f34">¥{{parseFloat(goods.minprice)}}</div>
               <div class="zx_lixyr f30">去购买</div>
             </div>
           </div>
         </div>
-        <div class="zx_li">
-          <div class="zx_lis">
-            <img class="zx_list" src="../image/cpt2.png">
-          </div>
-          <div class="zx_lix">
-            <div class="zx_lixz">
-              <div class="zx_lixzs f34">蓝靛果暖饮礼包</div>
-              <div class="zx_lixzx f26 qhsz"> 源于天然 恩于天赐</div>
-            </div>
-            <div class="zx_lixy">
-              <div class="zx_lixyz f34">¥998</div>
-              <div class="zx_lixyr f30">去购买</div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              list:[]
+            }
+          },
+          methods:{
+            init(){
+              ajax('ud.goods.get_list',{js_type:1}).then(res=>{
+                this.list=res.list;
+              })
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+
+      }
+    </script>
   </body>
 </html>

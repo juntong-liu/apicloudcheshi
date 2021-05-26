@@ -12,52 +12,105 @@
   </head>
   <body>
     <div class="hsbgk" id="app" v-cloak>
-      <title-bar title='发圈' bg="#f04343"></title-bar>
+      <title-bar title='发圈' bg="#f04343">
+        <span slot='left'></span>
+      </title-bar>
       <div class="gg">
-        <div class="faq_li">
+        <div class="faq_li" v-for="item in list">
           <div class="faq_lis">
-            <div class="faq_lisz"><img class="faq_liszt" src="../image/tx.png"></div>
+            <div class="faq_lisz"><img class="faq_liszt" src="../icon/logo.png"></div>
             <div class="faq_lism">
               <div class="faq_lisms f32">七彩官方推荐</div>
-              <div class="faq_lismx f22 qhsz">三小时前</div>
+              <div class="faq_lismx f22 qhsz">{{cdate(item.update_time)}}</div>
             </div>
-            <div class="faq_lisy">
+            <div class="faq_lisy" @click="shareItem(item)">
               <img class="faq_lisyt" src="../image/fxtb.png"> 分享
             </div>
           </div>
-          <div class="faq_lix">
-            <img class="faq_lixt" src="../image/faqt.jpg">
+          <div class="faq_lix" @click="jumpInterface(item.link)">
+            <img class="faq_lixt" :src="tImage(item.thumb)">
           </div>
         </div>
-        <div class="faq_li">
-          <div class="faq_lis">
-            <div class="faq_lisz"><img class="faq_liszt" src="../image/tx.png"></div>
-            <div class="faq_lism">
-              <div class="faq_lisms f32">七彩官方推荐</div>
-              <div class="faq_lismx f22 qhsz">三小时前</div>
-            </div>
-            <div class="faq_lisy">
-              <img class="faq_lisyt" src="../image/fxtb.png"> 分享
-            </div>
-          </div>
-          <div class="faq_lix">
-            <img class="faq_lixt" src="../image/faqt.jpg">
-          </div>
-        </div>
+
       </div>
+
+      <share @type="fnShareType" :show="show"></share>
     </div>
   </body>
   <script type="text/javascript">
     apiLoad=function(callback){
+      var wxPlus = api.require('wxPlus');
       var vm=new Vue({
         el:"#app",
         data(){
           return {
+            list:[],
+            page:1,
+            isEnd:false,
+            isLoading:false,
+            mid:0,
+            show:false,
+            selectObj:{}
 
           }
         },
         methods:{
-          init(){}
+          shareItem(item){
+            this.show=true;
+            this.selectObj=item
+          },
+          fnShareType(type){
+            this.show=false;
+            if(type!='cancel'){
+              obj=this.selectObj;
+              var shareObj={
+                  scene: type,
+                  title:obj.bannername,
+                  description:obj.des||obj.bannername,
+                  contentUrl:root+'ud.account.download&mid='+this.mid,
+              };
+              api.showProgress({
+                  style: 'default',
+                  animationType: 'fade',
+                  title: '努力加载中...',
+                  text: '请稍后...',
+                  modal: false
+              });
+              cacheImage(this.tImage(obj.thumb)).then(url=>{
+                api.hideProgress();
+                shareObj.thumb=url;
+                wxPlus.shareWebpage(shareObj,function(ret,err){
+                  if (!ret.status) {
+                    alert(err.code);
+                  }
+                });
+              }).catch(err=>{
+                api.hideProgress();
+                fnAlert(err);
+              })
+
+
+            }
+          },
+          init(){
+            this.list=[];
+            this.page=1;
+            this.isEnd=false;
+            this.fnList();
+          },
+          fnList(){
+            if(this.isLoading||this.isEnd)return;
+            this.isLoading=true;
+            ajax('ud.member.faquan',{page:this.page}).then(res=>{
+              this.isLoading=false;
+              this.isEnd=res.isEnd;
+              if(res.list){
+                this.list=merge_list(this.list,res.list);
+              }
+              this.page+=1;
+              this.mid=res.mid;
+            })
+          }
         },
         mounted(){
           this.init();
