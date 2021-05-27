@@ -13,7 +13,7 @@
   <body>
     <div class="hsbgk" id="app" v-cloak>
       <title-bar title='发圈' bg="#f04343">
-        <span slot='left'></span>
+        <img slot='left' class="r_titltp" src="../image/bfh.png" onclick="api.closeWin()" v-show="winName!='root'">
       </title-bar>
       <div class="gg">
         <div class="faq_li" v-for="item in list">
@@ -50,7 +50,8 @@
             isLoading:false,
             mid:0,
             show:false,
-            selectObj:{}
+            selectObj:{},
+            winName:api.winName
 
           }
         },
@@ -81,7 +82,12 @@
                 shareObj.thumb=url;
                 wxPlus.shareWebpage(shareObj,function(ret,err){
                   if (!ret.status) {
-                    alert(err.code);
+                    fnAlert(err.code);
+                  }else{
+                    ajax('ud.task.shareSuccess',{id:obj.id,type:type}).then(res=>{
+                      toast(res);
+                      reloadUserInfo();
+                    })
                   }
                 });
               }).catch(err=>{
@@ -101,7 +107,7 @@
           fnList(){
             if(this.isLoading||this.isEnd)return;
             this.isLoading=true;
-            ajax('ud.member.faquan',{page:this.page}).then(res=>{
+            ajax('ud.task.faquan',{page:this.page}).then(res=>{
               this.isLoading=false;
               this.isEnd=res.isEnd;
               if(res.list){

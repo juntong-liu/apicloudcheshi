@@ -78,6 +78,56 @@ if(typeof(Vue)=="function"){
     }
 
   })
+  Vue.component('selectpayway',{
+    template:
+    `
+    <div>
+      <div class="share-body-mask" @click="fnShareType('cancel')"></div>
+      <div class="share-content">
+        <div class="share-body-title">选择支付方式</div>
+        <div class="share-box">
+          <div class="share-item" @click="fnShareType('wechat')">
+            <img src="../icon/wxzf.png" class="img">
+            <div class="share-title">微信</div>
+          </div>
+          <div class="share-item" @click="fnShareType('alipay')">
+            <img src="../icon/zfb.png" class="img">
+            <div class="share-title">支付宝</div>
+          </div>
+          <div class="share-item" @click="fnShareType('credit')">
+            <img src="../icon/yuezf.png" class="img">
+            <div class="share-title">余额</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    `,
+    methods:{
+      fnShareType(type){
+        this.$emit('type',type)
+      }
+    },
+    props:{
+      show:{
+        type:Boolean,
+        default:false
+      }
+    },
+    watch:{
+      show(v){
+
+        if(v){
+          $api.dom('.share-body-mask').style.display='block';
+        }else{
+          $api.dom('.share-body-mask').style.display='none';
+        }
+        $(".share-content").slideToggle(200);
+
+
+      }
+    }
+
+  })
 
   //组件
   Vue.component('status-bar',{
@@ -270,7 +320,7 @@ if(typeof(Vue)=="function"){
   Vue.component('goods',{
     template:
     `
-    <div class="goods-content-lb" @click="interfaceGoods(goods.id)">
+    <div class="goods-content-lb" @click="interfaceGoods(goods.id,goods.title,ext)">
       <div class="goods-content-lb-img">
         <img :src="tImage(goods.thumb)" onerror="this.src='../icon/nopic.png'">
         <div class="sold-out" v-if="goods.total<=0">
@@ -295,6 +345,12 @@ if(typeof(Vue)=="function"){
           return {}
         },
         required:true
+      },
+      ext:{
+        type:Object,
+        default(){
+          return{}
+        }
       }
     }
   })

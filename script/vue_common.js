@@ -249,7 +249,7 @@ if(typeof(Vue)=="function"){
   }
   //签到界面
   Vue.prototype.interfaceQd=function(){
-    openGreenWin('qiandao','签到');
+    openWin('qiandao','签到',{},null,'#3ccb7c');
   }
   Vue.prototype.jumpInterface=function(interface){
     if(!interface){
@@ -278,7 +278,7 @@ if(typeof(Vue)=="function"){
     date = new Date(year, parseInt(month)-1, day);
     return "周" + "日一二三四五六".charAt(date.getDay());
   }
-  Vue.prototype.interfaceGoods=function(id,title=""){
+  Vue.prototype.interfaceGoods=function(id,title="",ext={}){
     //商品详情
     var navigationBar={
       background: '#fff',
@@ -296,7 +296,10 @@ if(typeof(Vue)=="function"){
         useWKWebView: true,
         bgColor: '#fff',
         title: title?title:'商品详情',
-        pageParam:{goods_id:id},
+        pageParam:{
+          goods_id:id,
+          ext:ext
+        },
         navigationBar:navigationBar
     });
   }
@@ -409,6 +412,15 @@ Vue.prototype.fnOrderCancel=function(id){
         })
       })
     })
+}
+Vue.prototype.fnOrderCancelJs=function(id){
+
+  fnConfirm('确定取消寄售么？取消寄售之后，将改为发货，且该订单不能重新寄售。',function(){
+    ajax('ud.orderOp.cancelJs',{id:id}).then(res=>{
+      toast(res);
+      orderRelaodEvent();
+    })
+  });
 }
 
   //删除订单
@@ -553,6 +565,12 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   //七彩森林
   Vue.prototype.interfaceQcsl=function(){
     openWin('qcsl','七彩森林')
+  }
+  Vue.prototype.interfaceRwzx=function(){
+    openWhiteWin('rwzx','任务中心');
+  }
+  Vue.prototype.interfaceFaquan=function(){
+    openNotTabWin('faq');
   }
 
 }

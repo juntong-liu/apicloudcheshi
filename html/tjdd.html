@@ -66,30 +66,7 @@
       <textarea v-model='ly' rows="4" style="width:98%;padding:1%;" placeholder="50字以内（选填）"></textarea>
     </div>
 
-    <div class="zffs" style="margin-bottom:10px;" >
-      <div class="zffs_nr gg">
-        <ul>
-          <li v-if="detail.qcq_count>0" @click="fnSelectQcq()">
-            <p class="juzhong f28">
-              <div style="flex:1;font-size:16px;">
-                {{qcq.id?("七彩券￥"+parseFloat(qcq.num)):'选择七彩券'}}
-                <div style="font-size:12px;color:#999;margin-top:5px;">
-                  <span style="font-size:12px;color:#f00;">订单生成后撤销订单将不退回，请谨慎选择，最多可优惠￥{{parseFloat(detail.use_credit3)||0}}</span>
-                </div>
-              </div>
-            </p>
-          </li>
-          <li v-if="detail.deductmoney>0" @click="deductcredit>0?(deductcredit=0):(deductcredit=detail.deductcredit)">
-            <p class="juzhong f28">
-              <div style="flex:1;font-size:16px;">
-                积分抵扣 ￥{{detail.deductmoney}}
-              </div>
-            </p>
-            <div class="t_z2"><span :class="{xzzt:deductcredit>0}"></span></div>
-          </li>
-        </ul>
-      </div>
-    </div>
+
 
 
 
@@ -107,12 +84,12 @@
       <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;" v-if="new_discount_price>0">
         会员折扣<p style="flex:1;text-align:right">￥{{parseFloat(new_discount_price)||0}}</p>
       </div>
-      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="deductcredit>0">
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="detail.deductmoney>0">
         积分折扣<p style="flex:1;text-align:right;color:#fcc000">-￥{{parseFloat(detail.deductmoney)||0}}</p>
       </div>
-      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="qcq.id>0">
+      <div style="border-bottom:1px solid #efefef;display:flex;padding:10px 0;align-items: center;" v-if="detail.use_credit3>0">
         七彩券抵扣
-        <p style="flex:1;text-align:right;color:#fcc000">-￥{{Math.min(detail.use_credit3,qcq.num)}}</p>
+        <p style="flex:1;text-align:right;color:#fcc000">-￥{{parseFloat(detail.use_credit3)||0}}</p>
       </div>
     </div>
 
@@ -160,18 +137,18 @@
             detail:{},
             account:'',
             from_type:api.pageParam.from_type,
-
             deductcredit:0,
-            qcq:{}
+            qcq:{},
+            ext:api.pageParam.ext
           }
         },
         computed:{
           totalMoney(){
             var totalMoney=parseFloat(this.realprice);
-            if(this.qcq.id>0){
-              totalMoney-=Math.min(this.detail.use_credit3,this.qcq.num);
+            if(this.detail.use_credit3>0){
+              totalMoney-=this.detail.use_credit3;
             }
-            if(this.deductcredit>0){
+            if(this.detail.deductmoney>0){
               totalMoney-=this.detail.deductmoney;
             }
             return totalMoney;
@@ -218,7 +195,7 @@
                 'carriers': '',
                 'remark': this.ly,
                 'officcode':'',
-                'deduct':  this.deductcredit>0?1:0,
+                'deduct':  this.detail.deductcredit>0?1:0,
                 'deduct2': 0,
                 'contype':this.createInfo.contype,
                 'couponid':this.createInfo.couponid,
@@ -232,7 +209,7 @@
                 'packageid': this.createInfo.card_packageid,
                 'fromquick':  this.createInfo.fromquick,
                 'use_ug':this.allUg,
-                'qcq_id':this.qcq.id
+                'use_credit3':this.detail.use_credit3
             };
 
             ajax('ud.orderCreate.submit',data,'post').then(res=>{

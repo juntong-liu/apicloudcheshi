@@ -34,7 +34,7 @@
                 <img class="my_grytx" :src="tImage(userInfo.avatar,'../icon/logo.png')">
               </div>
               <div class="my_grzwz">
-                  <div class="my_grzmz">{{userInfo.nickname}}</div>
+                  <div class="my_grzmz">{{userInfo.nickname}}【{{userInfo.id}}】</div>
                   <div class="my_grzjs">
                       <div class="wd_grzjsli f22">{{userInfo.level_name}}</div>
 
@@ -149,7 +149,7 @@
         </div>
     </div>
     <div class="qtrw gg">
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceRwzx()">
             <img class="qt_ddlit" src="../image/jfrw.png">
             <div class="my_cdliwz f24">积分任务</div>
         </div>

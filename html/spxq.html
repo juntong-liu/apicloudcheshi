@@ -338,7 +338,8 @@
               num:1,
               shopdetail:{},
               is_ios:getCache("IOS"),
-              buttonType:''
+              buttonType:'',
+              ext:api.pageParam.ext
             }
           },
 
@@ -412,7 +413,8 @@
                 toast(this.detail.minbuy+'件起售');
                 return;
               }
-              this.interfaceTJDd({id:this.goods_id,num:this.num,optionid:this.option?this.option.id:0});
+              // _log({id:this.goods_id,num:this.num,optionid:this.option?this.option.id:0,ext:this.ext});
+              this.interfaceTJDd({id:this.goods_id,num:this.num,optionid:this.option?this.option.id:0,ext:this.ext});
 
             },
             fnSelectSpec:function(id1,obj){

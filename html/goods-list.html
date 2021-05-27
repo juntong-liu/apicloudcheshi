@@ -38,7 +38,7 @@
       <div class="goods-content" style="padding-top:1.5rem;">
         <ul>
           <li v-for="g in list">
-            <goods :goods="g"></goods>
+            <goods :goods="g" :ext="getParams()"></goods>
           </li>
         </ul>
       </div>
@@ -98,10 +98,8 @@
               this.isEnd=false;
               this.fnList();
             },
-            fnList:function(){
-              if(this.isLoading||this.isEnd)return;
-              this.isLoading=true;
-              var param={
+            getParams(){
+              return {
                 keywords:this.keywords,
                 isrecommand:this.isrecommand,
                 ishot:this.ishot,
@@ -120,6 +118,11 @@
                 deduct:this.deduct,
                 qcq:this.qcq
               }
+            },
+            fnList:function(){
+              if(this.isLoading||this.isEnd)return;
+              this.isLoading=true;
+              var param=this.getParams();
 
               ajax('ud.goods.get_list',param).then(res=>{
                 this.list=merge_list(this.list,res.list);

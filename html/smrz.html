@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>实名认证</title>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <script src="../script/common.js"></script>
+    <script src="../script/cityPicker/picker.min.js"></script>
+    <link rel="stylesheet" href="../script/cityPicker/CityPicker.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+      <section class="bsbj gx" v-if="info.id">
+
+          <div class="s_mrznr gg">
+              <ul>
+                  <li>
+                      <p class="f28">姓名</p>
+                      <input class="zz-input" ref="realname" type="text" placeholder="请输入姓名" v-model='info.realname'>
+                  </li>
+                  <li>
+                      <p class="f28 yzm">身份证号</p>
+                      <input class="zz-input" ref="idnumber" type="text" placeholder="请输入身份证号" v-model='info.idnumber'>
+                  </li>
+              </ul>
+
+          </div>
+          <select-area :area="area" @selectarea="handelSelectArea" ref="selectarea"></select-area>
+
+      </section>
+      <section class="gg" v-if="!isSh">
+          <div class="tjan f30" @click="fnSave">提交审核</div>
+      </section>
+      <section class="gg" v-else>
+          <div class="tjan f30" style="background:#999;">已审核</div>
+      </section>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              info:{},
+              isSh:false
+            }
+          },
+          computed:{
+            area(){
+              if(this.info.province){
+                return this.info.province+' '+this.info.city+' '+this.info.area;
+              }
+              return '';
+            }
+          },
+          methods:{
+            handelSelectArea(e){
+              let arr=e.split(' ');
+              this.info.province=arr[0];
+              this.info.city=arr[1];
+              this.info.area=arr[2];
+            },
+            init(){
+              ajax("ud.member.info").then(res=>{
+                this.info=res;
+                this.isSh=res.realname?true:false;
+              })
+            },
+            fnSave(){
+              if(!this.info.realname){
+                toast('请输入真实姓名');
+                this.$refs.realname.focus();
+                return;
+              }
+              if(!this.info.idnumber){
+                toast('请输入身份证号');
+                this.$refs.idnumber.focus();
+                return;
+              }
+              if(!this.info.province){
+                this.$refs.selectarea.fnSelectArea();
+                return;
+              }
+
+              ajax('ud.task.submit_realname',this.info).then(res=>{
+                toast(res);
+                reloadUserInfo();
+                setTimeout(function () {
+                  api.closeWin();
+                }, 1000);
+              })
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+      }
+
+    </script>
+</body>
+
+</html>

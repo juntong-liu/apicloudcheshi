@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>签到</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_mufan.css">
+
+  </head>
+
+  <body>
+    <div style="background: #f8f8f8; min-height: 100%;" id="app" v-cloak>
+      <div class="qd_top">
+        <div class="qd_top_btn">
+          <div class="qd_top_btnnr f32" v-if="signInfo.signed==1">
+            今日<br>{{texts.textsigned}}
+          </div>
+          <div class="qd_top_btnnr f32" v-else @click="fnDoSign(null)">
+            立即<br>{{texts.textsign}}
+          </div>
+
+        </div>
+      </div>
+      <div class="qd_mid">
+        <div class="qd_mids gg">
+          <div class="qd_midsz f30">已连续{{texts.textsign}}<span class="csz">{{signInfo.orderday}}天</span></div>
+          <div class="qd_midsy f24 qhsz" @click="fnSelectMounth()">{{mounth}}</div>
+        </div>
+        <div class="qd_midx gg">
+          <div class="qd_midxzm">
+            <div class="qd_minxzmnr" v-for="w in week">
+              {{w}}
+            </div>
+
+          </div>
+          <div v-for="week_item in weeks">
+            <div style="display:flex;align-items:center;">
+              <div v-for="d in week" style="flex:1;text-align:center">
+                <!-- qd_yqd -->
+                <div class="qd_midxrqnr" :class="{'qd_yqd':week_item[d].signed==1}" v-if="week_item[d]">{{week_item[d].day}}</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="rwjl gg">
+        <div class="rwjl_bt">
+          <span class="zcsx"></span>
+          <span class="f32">任务奖励</span>
+        </div>
+        <div class="rwjl_nr">
+          <ul>
+            <li  v-for="award in advaward.order">
+              <div class="rwjl_p"><img src="../image/qdtb.png"></div>
+              <div class="rwjl_y">
+                <div class="rwjl_ywz">
+                  <p class="f28">连续{{texts.textsign}}{{award.day}}天</p>
+                  <span class="f22 qhsz rwxq">送{{award.credit}}果子</span>
+                </div>
+                <div class="rwjl_yan f24 ywc" v-if="award.candraw==1&&award.drawed==1">已完成</div>
+                <div class="rwjl_yan f24" v-else>未完成</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data(){
+            return {
+              info:{},
+              texts:{},
+              signInfo:{},
+              advaward:{},
+              weeks:[],
+              week:['周一','周二','周三','周四','周五','周六','周日'],
+              mounth:'',
+              mounthList:[]
+            }
+          },
+          methods:{
+            fnSelectMounth(){
+              if(this.mounthList.length==0){
+                //计算当前月
+                this.mounthList=getYearAndMonth('2020-12');
+              }
+              selectAction( this.mounthList,true).then(res=>{
+                ajax('ud.sign.getCalendar',{date:res.replace('月','').replace('年','-')}).then(ret=>{
+                  this.fnWeeks(ret);
+                })
+              })
+            },
+            fnWeeks(calendar){
+              this.mounth=calendar['1'].year+'年'+calendar['1'].month+'月';
+              var week={},weeks=[];
+              for(var i  in calendar){
+                var day=calendar[i];
+                if(!day.day){
+                  break;
+                }
+                d=this.fnDayToWeek(day.year,day.month,day.day);
+                week[d]=day;
+                if(d=='周日'){
+                  weeks.push(week);
+                  week={};
+                }
+              }
+              weeks.push(week);
+              this.weeks=weeks;
+
+            },
+            fnDoSign:function(day){
+              //签到
+              ajax('ud.sign.dosign',{date:day?day.date:''},'post').then(res=>{
+                toast(res);
+                reloadUserInfo();
+                api.sendEvent({
+                    name: 'sign-success'
+                });
+
+                setTimeout(function () {
+                  vm.init();
+                }, 1000);
+              });
+            },
+            init(){
+              ajax('ud.sign').then(res=>{
+                this.info=res;
+                this.texts=res.texts;
+                this.signInfo=res.signinfo;
+                this.advaward=res.advaward;
+                this.fnWeeks(res.calendar);
+              })
+            }
+          },
+          mounted(){
+            this.init();
+          }
+        });
+        callback(vm);
+      }
+    </script>
+  </body>
+</html>

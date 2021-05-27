@@ -5,9 +5,14 @@
     <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>我的果树</title>
-
+    <link rel="stylesheet" href="../css/style_ud.css">
     <link rel="stylesheet" href="../css/style.css">
     <script src="../script/common.js"></script>
+    <style>
+      .dqwt_nr ul li{
+        background: #fafafa;
+      }
+    </style>
 
   </head>
   <body >
@@ -46,12 +51,35 @@
         </div>
 
       </div>
+      <div class="ms">
+        <div class="dqwt_nr">
+            <ul>
+              <li v-for="(item,idx) in buy_list">
+                <div class="jiaoyi_bt">
+                  <p class="f30 lsz">购买果树</p>
+                  <p  class="f22 lsz lscd" @click="fnSelect(idx)">立即购买</p>
+                </div>
+                <div class="jiaoyi_wz f22 hsz">
+                  <span>购买数量</span><span>赠送数量</span><span>总金额</span>
+                </div>
+                <div class="jiaoyi_sj f28 ">
+                  <span>{{parseInt(item.buy_count)}}</span>
+                  <span>{{parseInt(item.send_count)}}</span>
+                  <span>￥{{parseFloat(item.price)}}</span>
+                </div>
+              </li>
+
+            </ul>
+        </div>
+      </div>
+
       <div class="gsli2">
         <div class="gsli2nr">
           <img class="gsli2nrt" src="../image/qtsbg.png">
         </div>
         <div class="gsli2wz f28">更多树种 敬请期待…</div>
       </div>
+      <selectPayWay @type="fnBuy" :show="showPayWay"></selectPayWay>
     </div>
     <script type="text/javascript">
       apiLoad=function(){
@@ -62,7 +90,10 @@
               total:300000,
               count:0,
               group_count:0,
-              my_count:0
+              my_count:0,
+              buy_list:[],
+              showPayWay:false,
+              select_idx:0
             }
           },
           methods:{
@@ -72,7 +103,40 @@
                 this.count=res.count;
                 this.group_count=res.group_count;
                 this.my_count=res.my_count;
+                this.buy_list=res.buy_list;
               })
+            },
+            fnSuccess(order_sn){
+
+            },
+            fnBuy(type){
+              this.showPayWay=false;
+              if(type=='cancel')return;
+              ajax('ud.tree.buy',{idx:this.select_idx,pay_type:type}).then(res=>{
+                if(type=='wechat'){
+                  wechatpay(res,function(data){
+                    this.fnSuccess(data.order_sn);
+                  }.bind(this));
+                }else if(type=='alipay'){
+                  alipay(res,function(data){
+                    this.fnSuccess(data.order_sn);
+                  }.bind(this));
+                }else{
+                  this.fnSuccess(res.order_sn);
+                }
+              })
+
+            },
+            fnSuccess:function(order_sn){
+              ajax('ud.tree.payres',{order_sn:order_sn}).then(res=>{
+                toast(res);
+                this.init();
+                reloadUserInfo();
+              })
+            },
+            fnSelect(idx){
+              this.select_idx=idx;
+              this.showPayWay=true;
             },
             getWidth(fz,fm){
               var percent=(fz/fm)*100;
