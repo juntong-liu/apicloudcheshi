@@ -469,7 +469,7 @@
               }
             },
             init:function(){
-              ajax('ud.goodsDetail',{id:this.goods_id}).then(res=>{
+              ajax('ud.goodsDetail',{id:this.goods_id,ext:this.ext}).then(res=>{
                 this.detail=res.goods;
                 this.info=res.specs;
                 this.thumb=this.detail.thumb;

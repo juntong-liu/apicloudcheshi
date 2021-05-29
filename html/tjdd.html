@@ -211,6 +211,7 @@
                 'use_ug':this.allUg,
                 'use_credit3':this.detail.use_credit3
             };
+            // _log(data);
 
             ajax('ud.orderCreate.submit',data,'post').then(res=>{
               api.sendEvent({

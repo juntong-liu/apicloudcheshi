@@ -151,8 +151,14 @@
         <div class="ddan f26" v-if="order.userdeleted==0">
           <span class="span" v-if="order.ptjs==1&&order.js_status==0" @click="fnOrderCancelJs(order.id)">取消寄售</span>
           <span class="span" v-if="((order.status==3&&order.ptjs==0)|| order.status==-1)" @click="fnOrderDelete(order.id,1)">删除订单</span>
-          <span class="span" v-if="order.status==3 && order.iscomment==1" @click="fnOrderComment(order.id,1)">追加评价</span>
-          <span class="span" v-if="order.status==3 && order.iscomment==0" @click="fnOrderComment(order.id,0)">评价</span>
+          <span v-if="order.ptjs==1">
+            <span class="span" v-if="order.status==3 && order.iscomment==1&&order.js_status==1" @click="fnOrderComment(order.id,1)">追加评价</span>
+            <span class="span" v-if="order.status==3 && order.iscomment==0&&order.js_status==1" @click="fnOrderComment(order.id,0)">评价</span>
+          </span>
+          <span v-else>
+            <span class="span" v-if="order.status==3 && order.iscomment==1" @click="fnOrderComment(order.id,1)">追加评价</span>
+            <span class="span" v-if="order.status==3 && order.iscomment==0" @click="fnOrderComment(order.id,0)">评价</span>
+          </span>
           <span class="span" v-if="order.status>1 && order.addressid>0 && order.iscycelbuy == 0 " @click="fnOrderWl(order.id)">查看物流</span>
           <span class="span" v-if="order.status==2 && order.iscycelbuy == 0" @click="fnOrderFinish(order.id)">确认收货</span>
           <span class="span" v-if="order.canrefund && order.iscycelbuy == 0&&order.refundstate!=3" >
