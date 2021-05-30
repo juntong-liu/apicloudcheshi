@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>记录</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style media="screen">
+      .red{
+        color: #ff5555;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+
+    <section class="bsbj" id="app" v-cloak>
+      <ul class="gg udgmjlk">
+        <li v-for="item in list">
+          <div style="margin:5px 0;font-size:16px;" v-if="item.user_id>0">{{item.nickname}}【{{item.user_id}}】</div>
+          <div class="udgms">
+            <div class="udgmsz f28">{{item.pay_type}}</div>
+            <div class="udgmsy f30">
+              A类：{{item.num}}&nbsp;&nbsp;,B类：{{item.send_num}}
+            </div>
+          </div>
+          <div class="udgmx f22">
+            <div>{{date("Y-m-d H:i:s",item.createtime)}}</div>
+          </div>
+        </li>
+
+      </ul>
+      <div class="is_end" v-show="list.length>0&&isEnd">没有更多了</div>
+      <div class="empty-box" v-show="list.length==0&&isEnd">暂无数据</div>
+    </section>
+    <script type="text/javascript">
+      apiLoad=function(){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              type:api.pageParam.type,
+              url:'ud.tree.log'
+            }
+          },
+          mixins:[list],
+          methods:{
+            getParams(){
+              return{
+                page:this.page,
+                type:this.type
+              }
+            }
+          },
+          mounted:function(){
+            this.refresh();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

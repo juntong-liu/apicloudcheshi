@@ -56,11 +56,11 @@
 
       <div class="hy_fh gg">
         <div class="hy_fhnr">
-          <div class="hy_fhz">
+          <div class="hy_fhz" @click="interfaceTreeLog(0)">
             <div class="hy_fhzsz f30">{{parseInt(userInfo.my_tree_count)||0}}</div>
             <div class="hy_fhzwz f22">我的果树</div>
           </div>
-          <div class="hy_fhz">
+          <div class="hy_fhz" @click="interfaceTreeLog(1)">
             <div class="hy_fhzsz f30">{{parseInt(userInfo.group_tree_count)||0}}</div>
             <div class="hy_fhzwz f22">团队果树</div>
           </div>

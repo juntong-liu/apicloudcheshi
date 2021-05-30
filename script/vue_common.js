@@ -581,5 +581,8 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   Vue.prototype.interfaceWdsc=function(){
     openWhiteWin('wdsc','我的收藏')
   }
+  Vue.prototype.interfaceTreeLog=function(type=0){
+    openWhiteWin('tree-log','购树记录',{type:type})
+  }
 
 }
