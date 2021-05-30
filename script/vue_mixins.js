@@ -5,7 +5,8 @@ var list={
       url:'',
       page:1,
       isEnd:false,
-      isLoading:false
+      isLoading:false,
+      total:0
     }
   },
   methods:{
@@ -28,6 +29,7 @@ var list={
         this.isEnd=res.isEnd;
         this.isLoading=false;
         this.page+=1;
+        this.total=res.total;
         // _log(res);
       })
     },

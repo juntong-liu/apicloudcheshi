@@ -1,37 +1,5 @@
 if(typeof(Vue)=="function"){
-  Vue.component('qcqitem',{
-    template:
-    `
-    <div :class="{qcqnrli:detail.status==0,qcqnrli2:detail.status!=0}" @click="_itemClick">
-      <div class="qcqnrliz">
-        <div class="qcqnrlizs">¥<span class="qcqnrlizsje">{{parseFloat(detail.num)||0}}</span></div>
-        <div class="qcqnrlizx f22" v-if="detail.status==0">立即使用</div>
-        <div class="qcqnrlizx2 f22" v-else-if="detail.status==1">已使用</div>
-        <div class="qcqnrlizx2 f22" v-else>已失效</div>
-      </div>
-      <div class="qcqnrliy">
-        <div class="qcqnrliymz f30"> 七彩券</div>
-        <div class="qcqnrliyyxq f24 qhsz"> 有效期：{{date("Y-m-d",detail.create_time)}}—{{date("Y-m-d",detail.end_time)}}</div>
-        <div class="qcqnrliyfw  f24 qhsz"> 适用范围：集市</div>
-      </div>
-      <div v-if="detail.status==-1" class="qcq_sxt"><img class="qcq_sxtt" src="../image/ysx.png"></div>
-    </div>
-    `,
-    methods:{
-      _itemClick(){
-        this.$emit('click');
-      }
-    },
-    props:{
-      detail:{
-        type:Object,
-        default(){
-          return {}
-        }
-      }
-    }
 
-  })
   Vue.component('share',{
     template:
     `
@@ -427,30 +395,26 @@ if(typeof(Vue)=="function"){
       <div class="tanchuang-content"  @click="_ok" v-if="poster">
         <img :src="tImage(poster)" class='tanchuang-content-img'/>
       </div>
-      <div class="tanchuang-content tanchuang-content-text"  @click="_ok" v-else>
+      <div class="tanchuang-content tanchuang-content-text"   v-else>
         <div class="tanchuang-content-title">
           {{title}}
         </div>
-        <div class="tanchuang-content-msg">
-          {{msg}}
+        <div class="tanchuang-content-msg" v-html="msg">
+
         </div>
-        <div class="tanchuang-content-button">
+        <div class="tanchuang-content-button" @click="_ok">
           {{button}}
         </div>
       </div>
     </div>
     `,
-    data(){
-      return{
-        show:false
-      }
-    },
+
     props:{
       type:{
         type:String,
         default:''
       },
-      visible:{
+      show:{
         type:Boolean,
         default: false
       },

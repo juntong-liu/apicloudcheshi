@@ -153,13 +153,13 @@
             <img class="qt_ddlit" src="../image/jfrw.png">
             <div class="my_cdliwz f24">积分任务</div>
         </div>
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceJfdh()">
             <img class="qt_ddlit" src="../image/gzhjf.png">
             <div class="my_cdliwz f24">果子换积分</div>
         </div>
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceLpDh()">
             <img class="qt_ddlit" src="../image/jfdzp.png">
-            <div class="my_cdliwz f24">积分大转盘</div>
+            <div class="my_cdliwz f24">礼品卡兑换</div>
         </div>
         <div class="qtrwli" @click="interfaceYqhy">
             <img class="qt_ddlit" src="../image/yqhy.png">
@@ -169,11 +169,11 @@
             <img class="qt_ddlit" src="../image/wdsc.png">
             <div class="my_cdliwz f24">我的收藏</div>
         </div>
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceCreditSc()">
             <img class="qt_ddlit" src="../image/jfsctb.png">
             <div class="my_cdliwz f24">积分商城</div>
         </div>
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceGoodsList({groupid:6})">
             <img class="qt_ddlit" src="../image/jgc.png">
             <div class="my_cdliwz f24">加工厂</div>
         </div>
@@ -203,6 +203,9 @@
       },
       mounted(){
         this.init();
+        refresh(function(){
+          vm.init();
+        })
       }
     });
     callback(vm);

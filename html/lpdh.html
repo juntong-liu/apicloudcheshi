@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>充值</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style>
+      .czje{
+        border-bottom: 1px solid #efefef;
+      }
+      .dh-des{
+        color:#999;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .dh-des span{
+        color: #fcc000;
+      }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="czje">
+            <div class="czjenr f28 gg">
+                <div class="czjez">请输入礼品码</div>
+                <div class="czjey">
+                  <input class="xjcz-input f28" v-model="code" type="text" placeholder="请输入礼品码">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tjsq f30 gg" @click="fnRecharge">兑换</div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    apiLoad = function(callback) {
+      var vm = new Vue({
+          el: "#app",
+          data: function() {
+              return {
+                  code:''
+              }
+          },
+          methods: {
+              fnRecharge:function(){
+                if(!this.code){
+                  toast('请输入礼品码');
+                  return;
+                }
+                this.interfaceTJDd({lpk_code:this.code})
+              }
+          },
+          mounted(){
+            this.longProess();
+          }
+      });
+      callback(vm);
+    }
+</script>
+
+</html>

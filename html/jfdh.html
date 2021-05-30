@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>充值</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style>
+      .czje{
+        border-bottom: 1px solid #efefef;
+      }
+      .dh-des{
+        color:#999;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .dh-des span{
+        color: #fcc000;
+      }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="czje">
+            <div class="czjenr f28 gg">
+                <div class="czjez">兑换数量</div>
+                <div class="czjey"><input class="xjcz-input f28" v-model="count" type="number" placeholder="请输入兑换数量"></div>
+            </div>
+        </div>
+        <div class="dh-des">
+          当前可用果子：{{parseFloat(userInfo.credit6)||0}}，{{trade.credit_dh_count}}果子兑换1积分
+        </div>
+
+        <div class="tjsq f30 gg" @click="fnRecharge">兑换</div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    apiLoad = function(callback) {
+      var vm = new Vue({
+          el: "#app",
+          data: function() {
+              return {
+                  count:'',
+                  userInfo:{},
+                  trade:{}
+              }
+          },
+          methods: {
+              init: function() {
+                ajax('ud.member',{paytype:'recharge'}).then(res=>{
+                  // _log(res);
+                  this.trade=res.trade;
+                  this.userInfo=res;
+                })
+              },
+
+              fnRecharge:function(){
+                if(!this.count||this.count<=0){
+                  toast('请输入兑换数量');
+                  return;
+                }
+                if(this.count>this.userInfo.credit6){
+                  toast('数量不足');
+                  return;
+                }
+
+                ajax('ud.member.creditDh',{count:this.count}).then(res=>{
+                  toast(res);
+                  reloadUserInfo();
+                  setTimeout(function () {
+                    api.closeWin();
+                  }, 1000);
+                })
+              }
+          },
+          created: function() {
+              this.init();
+              api.addEventListener({
+                  name:'navitembtn'
+              },function(ret, err){
+                if(ret.type=='left'){
+                  api.closeWin();
+                }
+                if(ret.type=='right'){
+                  vm.interfaceCredit1Log();
+                }
+              });
+          }
+      });
+      callback(vm);
+    }
+</script>
+
+</html>

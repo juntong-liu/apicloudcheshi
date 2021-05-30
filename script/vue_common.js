@@ -278,6 +278,9 @@ if(typeof(Vue)=="function"){
     date = new Date(year, parseInt(month)-1, day);
     return "周" + "日一二三四五六".charAt(date.getDay());
   }
+  Vue.prototype.interfaceLpk=function(orderid){
+    openWhiteWin('lpk','礼品卡',{orderid:orderid});
+  }
   Vue.prototype.interfaceGoods=function(id,title="",ext={}){
     //商品详情
     var navigationBar={
@@ -330,6 +333,9 @@ if(typeof(Vue)=="function"){
 
   Vue.prototype.interfaceCredit3Log=function(){
     openWhiteWin('credit-log','七彩券明细',{credit_type:'credit3'});
+  }
+  Vue.prototype.interfaceCredit4Log=function(){
+    openWhiteWin('credit-log','消费金明细',{credit_type:'credit4'});
   }
   Vue.prototype.interfaceCredit6Log=function(){
     openWhiteWin('credit-log','果子明细',{credit_type:'credit6'});
@@ -509,6 +515,9 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   Vue.prototype.interfaceQcsc=function(tab=0){
     openNotTabWin('sc',{tab:tab});
   }
+  Vue.prototype.interfaceCreditSc=function(){
+    this.interfaceGoodsList({deduct:1});
+  }
   Vue.prototype.fnBindWechat=function(){
     wxPlus = api.require('wxPlus');
     wxPlus.isInstalled(function(ret, err) {
@@ -571,6 +580,9 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   }
   Vue.prototype.interfaceFaquan=function(){
     openNotTabWin('faq');
+  }
+  Vue.prototype.interfaceLpDh=function(){
+    openWhiteWin('lpdh','礼品兑换');
   }
 
 }

@@ -139,7 +139,8 @@
             from_type:api.pageParam.from_type,
             deductcredit:0,
             qcq:{},
-            ext:api.pageParam.ext
+            ext:api.pageParam.ext,
+            lpk_code:api.pageParam.lpk_code
           }
         },
         computed:{
@@ -209,7 +210,8 @@
                 'packageid': this.createInfo.card_packageid,
                 'fromquick':  this.createInfo.fromquick,
                 'use_ug':this.allUg,
-                'use_credit3':this.detail.use_credit3
+                'use_credit3':this.detail.use_credit3,
+                'lpk_code':this.lpk_code
             };
             // _log(data);
 

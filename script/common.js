@@ -1353,3 +1353,54 @@ function reloadUserInfo(){
   });
 
 }
+
+
+
+function shareWebpage(obj,callback){
+  var wxPlus=api.require('wxPlus')
+  var shareObj={
+      scene: obj.scene,
+      title:obj.title,
+      description:obj.des,
+      contentUrl:obj.url,
+  };
+  api.showProgress({
+      style: 'default',
+      animationType: 'fade',
+      title: '努力加载中...',
+      text: '请稍后...',
+      modal: false
+  });
+  if(obj.thumb){
+    cacheImage(Vue.prototype.tImage(obj.thumb)).then(url=>{
+      api.hideProgress();
+      shareObj.thumb=url;
+      wxPlus.shareWebpage(shareObj,function(ret,err){
+        api.hideProgress();
+
+        if (!ret.status) {
+          fnAlert(err.code);
+        }else{
+          if(typeof(callback)=='function'){
+            callback();
+          }
+        }
+      });
+    }).catch(err=>{
+      api.hideProgress();
+      fnAlert(err);
+    })
+  }else{
+    wxPlus.shareWebpage(shareObj,function(ret,err){
+      api.hideProgress();
+      if (!ret.status) {
+        fnAlert(err.code);
+      }else{
+        if(typeof(callback)=='function'){
+          callback();
+        }
+      }
+    });
+  }
+
+}

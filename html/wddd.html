@@ -75,7 +75,8 @@
               </div>
             </div>
             <div class="ddan f26" v-if="item.userdeleted==0">
-              <span class="span" v-if="(item.status==3&&item.ptjs!=1) || item.status==-1" @click="fnOrderDelete(item.id,1)">删除订单</span>
+              <span class="span" v-if="item.is_lpk==1&&!item.lpk_code" @click="interfaceLpk(item.id)">礼品卡</span>
+              <span class="span" v-if="(item.status==3&&item.ptjs!=1&&item.is_lpk!=1) || item.status==-1" @click="fnOrderDelete(item.id,1)">删除订单</span>
               <span class="span" v-if="item.status==3 && item.iscomment==1" @click="fnOrderComment(item.id,1)">追加评价</span>
               <span class="span" v-if="item.status==3 && item.iscomment==0&&item.ptjs!=1" @click="fnOrderComment(item.id,0)">评价</span>
               <span class="span" v-if="item.status>1 && item.addressid>0 && item.iscycelbuy == 0 &&item.ptjs!=1" @click="fnOrderWl(item.id)">查看物流</span>

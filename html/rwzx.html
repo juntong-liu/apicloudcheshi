@@ -16,7 +16,7 @@
       <div class="rw_s">
         <div class="rw_snr gg">
           <div class="rw_syh">
-            <div class="rw_syhz"><img class="rw_syhzt" src="../image/tx.png"></div>
+            <div class="rw_syhz"><img class="rw_syhzt" :src="tImage(userInfo.avatar)"></div>
             <div class="rw_syhy">
               <div class="rw_syhymc f28">{{userInfo.nickname}}</div>
               <div class="rw_syhyjb f22">{{userInfo.level_name}}</div>
@@ -31,7 +31,7 @@
             <div class="rw_ssjz">
               <div class="rw_ssjzsz">{{parseFloat(userInfo.credit8)||0}}</div>
               <div class="rw_ssjzmz f28">我的额度</div>
-              <img class="rw_smt" src="../image/shuoming.png">
+              <img class="rw_smt" src="../image/shuoming.png" @click="show=true">
             </div>
           </div>
         </div>
@@ -79,6 +79,7 @@
         </div>
       </div>
       <div class="kc"></div>
+      <tanchuang :msg=detail.des v-show="show" @ok="show=false" @cancel="show=false"></tanchuang>
     </div>
     <script type="text/javascript">
       apiLoad=function(callback){
@@ -90,18 +91,22 @@
               signInfo:{},
               calendar:[],
               day_task:null,
-              new_task:null
+              new_task:null,
+              detail:{},
+              show:false
 
             }
           },
           methods:{
             init(){
               ajax('ud.task').then(res=>{
+                this.detail=res;
                 this.signInfo=res.signinfo;
                 this.calendar=res.calendar;
                 this.day_task=res.day;
                 this.new_task=res.new;
               })
+              ajax('ud.member')
             }
           },
           mounted(){

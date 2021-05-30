@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>七彩券</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../script/common.js"></script>
+    <style>
+      .my-lpk{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+
+</head>
+
+<body>
+    <div style="background-color: #f8f8f8; min-height: 100%; " id='app' v-cloak>
+        <div class="qcq_bg">
+            <div class="qcq_bgwz f28">礼品卡</div>
+            <div class="qcq_bgsz f40">{{total}}</div>
+        </div>
+        <div class="qcq_tab">
+
+            <div class="qcq_tabli" @click="fnStatus(k)" v-for="(v,k) in statusObj">
+                <div class="qcq_tabliwz f28" :class="{qcq_dq:status==k}">{{v}}</div>
+                <div class="qcq_tablihx" v-if="status==k"></div>
+            </div>
+        </div>
+        <div class="qcqnr gg">
+            <div v-for="detail in list">
+
+                <div  :class="{qcqnrli:detail.status==0,qcqnrli2:detail.status!=0}" @click="fnShare(detail)">
+                    <div class="qcqnrliz my-lpk">
+                        <div class="qcqnrlizs"  style="padding-top:0;" v-if="detail.status==0"><span style="font-size:16px;" class="qcqnrlizsje">立即分享</span></div>
+                        <div class="qcqnrlizx2 f22" v-else-if="detail.status==1">已使用</div>
+                    </div>
+                    <div class="qcqnrliy">
+                        <div class="qcqnrliymz f30"> {{detail.lpk_code}}</div>
+                        <div class="qcqnrliyyxq f24 qhsz" v-if="detail.status==0"> 创建时间：{{date("Y-m-d",detail.create_time)}}</div>
+                        <div class="qcqnrliyyxq f24 qhsz" v-if="detail.status==1"> 使用时间：{{date("Y-m-d",detail.use_time)}}</div>
+                        <div class="qcqnrliyfw  f24 qhsz"> 适用范围：新人</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:50px;"></div>
+        </div>
+        <share @type="fnShareType" :show="show"></share>
+
+    </div>
+    <script type="text/javascript">
+        apiLoad = function(callback) {
+
+            var vm = new Vue({
+                el: "#app",
+                data: function() {
+                    return {
+                        url: 'ud.order.lpk',
+                        orderid:api.pageParam.orderid,
+                        status: 0,
+                        statusObj: {
+                            '0': '未使用',
+                            '1': '已使用',
+                        },
+                        lpk:{},
+                        show:false,
+                        userInfo:getUserInfo()
+                    }
+                },
+                mixins: [list],
+                methods: {
+                    fnShare(detail){
+                      if(detail.status==0){
+                        this.lpk=detail;
+                        this.show=true;
+                      }
+                    },
+                    fnShareType(type){
+                      this.show=false;
+                      if(type!='cancel'){
+                        //分享到微信
+                        shareWebpage({
+                          title:'礼品卡',
+                          scene:type,
+                          url:root+'ud.account.lpk&mid='+this.userInfo.id+'&lpk_code='+this.lpk.lpk_code,
+
+                        },function(){
+
+                        })
+                      }
+                    },
+
+                    fnStatus(status) {
+                        this.status = status;
+                        this.refresh()
+                    },
+
+                    getParams() {
+                        return {
+                            page: this.page,
+                            status: this.status,
+                            orderid:this.orderid
+                        }
+                    }
+
+                },
+                mounted() {
+                    this.refresh();
+                }
+
+            });
+            callback(vm);
+        }
+    </script>
+</body>
+
+</html>
