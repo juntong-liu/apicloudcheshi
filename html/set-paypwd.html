@@ -59,13 +59,6 @@
           },
           methods:{
             get_code:function(){
-              if(!this.userInfo.mobile){
-                fnConfirm('您还未绑定手机号，请先绑定手机号',function(){
-                  vm.interfaceBindMobile();
-                });
-                return;
-              }
-
               if(this.getCoding){
                 toast('请'+this.time+"s后再发送");
                 return;
@@ -118,11 +111,7 @@
   					}
           },
           mounted(){
-            if(!this.userInfo.mobile){
-              fnConfirm('您还未绑定手机号，请先绑定手机号',function(){
-                vm.interfaceBindMobile();
-              });
-            }
+
 
           }
         });

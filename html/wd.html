@@ -45,42 +45,25 @@
               去升级
           </div>
         </div>
-        <!-- <div class="wd_sj">
+        <div class="wd_sj">
             <div class="my_sjli">
-                <div class="my_sjlisz f36">178</div>
-                <div class="my_sjliwz f24">本月预估</div>
+                <div class="my_sjlisz f36">{{userInfo.credit9||0}}</div>
+                <div class="my_sjliwz f24">我的惊喜</div>
             </div>
             <div class="my_sjli">
-                <div class="my_sjlisz f36">6426</div>
-                <div class="my_sjliwz f24">昨日预估</div>
+                <div class="my_sjlisz f36">{{userInfo.surprise_id||0}}</div>
+                <div class="my_sjliwz f24">我的位置</div>
             </div>
             <div class="my_sjli">
-                <div class="my_sjlisz f36">178.00</div>
-                <div class="my_sjliwz f24">累计收益</div>
+                <div class="my_sjlisz f36">{{userInfo.surprise_total||0}}</div>
+                <div class="my_sjliwz f24">排序总数</div>
             </div>
             <div class="my_sjli">
-                <div class="my_sjlisz f36">298</div>
-                <div class="my_sjliwz f24">粉丝量</div>
+                <div class="my_sjlisz f36">{{userInfo.surprise_sy||0}}</div>
+                <div class="my_sjliwz f24">剩余惊喜</div>
             </div>
-        </div> -->
-        <!-- <div class="wd_sj">
-            <div class="my_sjli">
-                <div class="my_sjlisz f36">{{parseFloat(userInfo.byyg)||0}}</div>
-                <div class="my_sjliwz f24">本月预估</div>
-            </div>
-            <div class="my_sjli">
-                <div class="my_sjlisz f36">{{parseFloat(userInfo.zryg)||0}}</div>
-                <div class="my_sjliwz f24">昨日预估</div>
-            </div>
-            <div class="my_sjli">
-                <div class="my_sjlisz f36">{{parseFloat(userInfo.ljsy)||0}}</div>
-                <div class="my_sjliwz f24">累计收益</div>
-            </div>
-            <div class="my_sjli">
-                <div class="my_sjlisz f36">{{userInfo.group_count||0}}</div>
-                <div class="my_sjliwz f24">团队人数</div>
-            </div>
-        </div> -->
+        </div>
+
     </div>
 
     <div class="wd_tx gg">
