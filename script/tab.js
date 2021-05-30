@@ -32,7 +32,7 @@ let indexFooter=[
 ];
 let scFooter=[
   {
-    name:'首页',
+    name:'商城首页',
     active_icon:'../image/fsyh.png',
     default_icon:'../image/fsy.png',
     url:'widget://html/sc-index.html'
@@ -50,7 +50,7 @@ let scFooter=[
     url:'widget://html/gwc.html'
   },
   {
-    name:'我的',
+    name:'个人中心',
     active_icon:'../image/fwdh.png',
     default_icon:'../image/fwd.png',
     url:'widget://html/hyzx.html'

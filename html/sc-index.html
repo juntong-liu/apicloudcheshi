@@ -15,7 +15,7 @@
   <body>
       <div id="app" v-cloak>
         <title-bar title="七彩商城" color="#000" bg="#fff">
-          <div class="r_titr" slot='right'>
+          <div class="r_titr" slot='right' @click="interfaceGoodsList()">
             <img class="r_titltp" src="../icon/fdj2.png">
           </div>
         </title-bar>
@@ -44,8 +44,8 @@
           </div>
         </div>
         <!--广告图-->
-        <div class="qcsc_adv gg">
-          <img class="qcsc_advt" src="../image/adv.png">
+        <div class="qcsc_adv gg" v-if="detail.mall_set" @click="jumpInterface(detail.mall_set.link)">
+          <img class="qcsc_advt" :src="tImage(detail.mall_set.ad_img)">
         </div>
         <!--商城产品-->
         <div class="sc_rmcp gg">
@@ -82,7 +82,8 @@
               list:[],
               page:1,
               isEnd:false,
-              isLoading:false
+              isLoading:false,
+              detail:{}
 
             }
           },
@@ -94,6 +95,7 @@
                 this.gonggaos=res.gonggaos;
                 this.videos=res.videos;
                 this.navs=res.navs;
+                this.detail=res;
                 this.category=res.category;
                 this.$nextTick(()=>{
                   this.initSwiper();

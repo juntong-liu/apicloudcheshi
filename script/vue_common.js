@@ -264,15 +264,8 @@ if(typeof(Vue)=="function"){
   Vue.prototype.interfaceArticle=function(id,title='详情'){
     openWhiteWin('article',title,{id:id});
   }
-  Vue.prototype.interfaceNews=function(type=0){
-    if(type==1){
-      openWhiteWin('news','短视频',{type:type});
-    }else if(type==2){
-      openWhiteWin('news','系统公告',{type:type});
-    }else{
-      openWhiteWin('news','全部内容',{type:type});
-
-    }
+  Vue.prototype.interfaceNews=function(type=0,title=''){
+    openWhiteWin('news',title,{type:type});
   }
   Vue.prototype.fnDayToWeek=function(year,month,day) {
     date = new Date(year, parseInt(month)-1, day);
@@ -575,6 +568,7 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   Vue.prototype.interfaceQcsl=function(){
     openWin('qcsl','七彩森林')
   }
+
   Vue.prototype.interfaceRwzx=function(){
     openWhiteWin('rwzx','任务中心');
   }
@@ -583,6 +577,9 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   }
   Vue.prototype.interfaceLpDh=function(){
     openWhiteWin('lpdh','礼品兑换');
+  }
+  Vue.prototype.interfaceWdsc=function(){
+    openWhiteWin('wdsc','我的收藏')
   }
 
 }

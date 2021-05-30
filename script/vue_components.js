@@ -197,8 +197,8 @@ if(typeof(Vue)=="function"){
             </form>
           </div>
           <div class="s_tity">
-            <div class="s_tityz"><img class="s_tityzt" src="../image/syrw.png"></div>
-            <div class="s_tityy">
+            <div class="s_tityz" @click="interfaceRwzx()"><img class="s_tityzt" src="../image/syrw.png"></div>
+            <div class="s_tityy" @click="interfaceQcsc(3)">
               <img class="s_tityyt" src="../image/syxx.png">
               <div class="s_tityd"></div>
             </div>

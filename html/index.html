@@ -46,7 +46,7 @@
             </div>
 
           </div>
-          <div class="gggd" @click="interfaceNews(2)">
+          <div class="gggd" @click="interfaceNews(14,'系统公告')">
             更多<img  src="../image/hjt.png">
           </div>
         </div>
@@ -63,7 +63,7 @@
       <div class="sc_tmhh gg">
         <div class="in_jfsck">
           <div class="sc_tmhh_bt">
-            <div class="sc_tmhh_btz f32">积分商品</div>
+            <div class="sc_tmhh_btz f32">积分商城</div>
             <div class="sc_tmhh_bty f24" @click="interfaceGoodsList({deduct:1})">查看更多 <img class="sc_tmhhjt" src="../image/bjt.png"></div>
           </div>
           <div class="sc_tmhh_nr">
@@ -82,7 +82,7 @@
       <div class="in_yx">
         <div class="in_yxs">
           <div class="in_ysbt gg">
-            <div class="in_ysbtz f34">短视频</div>
+            <div class="in_ysbtz f34">学院派</div>
             <div class="in_ysbty qhsz" @click="interfaceXyp()">更多<img class="hjt" src="../image/hjt.png"></div>
           </div>
         </div>
@@ -92,6 +92,7 @@
           </div>
         </div>
       </div>
+      <tanchuang v-if="detail.mall_set" :poster="tImage(detail.mall_set.tan_img)" @ok="jumpInterface(detail.mall_set.tan_link);show=false;" @cancel="show=false" v-show="show"></tanchuang>
     </div>
 
   </body>
@@ -109,7 +110,9 @@
             videos:[],
             navs:[],
             userInfo:getUserInfo(),
-            goodsList:[]
+            goodsList:[],
+            detail:{},
+            show:true
           }
         },
         methods:{
@@ -121,6 +124,7 @@
               this.videos=res.videos;
               this.navs=res.navs;
               this.goodsList=res.goods;
+              this.detail=res;
               this.$nextTick(()=>{
                 this.initSwiper();
               })

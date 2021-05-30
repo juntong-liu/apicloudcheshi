@@ -21,7 +21,7 @@
             <div class="wd_titsz">
               <img class="wd_titszt" src="../image/sztb.png" @click="interfaceSet()">
             </div>
-            <div class="wd_titxx">
+            <div class="wd_titxx" @click="interfaceQcsc(3)">
               <img class="s_tityyt" src="../image/syxx.png">
               <div class="wd_tityd"></div>
             </div>
@@ -63,7 +63,7 @@
                 <div class="my_sjliwz f24">粉丝量</div>
             </div>
         </div> -->
-        <div class="wd_sj">
+        <!-- <div class="wd_sj">
             <div class="my_sjli">
                 <div class="my_sjlisz f36">{{parseFloat(userInfo.byyg)||0}}</div>
                 <div class="my_sjliwz f24">本月预估</div>
@@ -80,7 +80,7 @@
                 <div class="my_sjlisz f36">{{userInfo.group_count||0}}</div>
                 <div class="my_sjliwz f24">团队人数</div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="wd_tx gg">
@@ -107,7 +107,7 @@
                 <img class="wd_ddlit" src="../image/wdwx.png">
                 <div class="my_cdliwz f24">导师微信</div>
             </div>
-            <div class="wd_ddli">
+            <div class="wd_ddli" @click="interfaceNews(17,'新手教程')">
                 <img class="wd_ddlit" src="../image/wdxs.png">
                 <div class="my_cdliwz f24">新手教程</div>
             </div>
@@ -119,7 +119,7 @@
                 <img class="wd_ddlit" src="../image/wdzb.png">
                 <div class="my_cdliwz f24">直播中心</div>
             </div>
-            <div class="wd_ddli">
+            <div class="wd_ddli" @click="interfaceQb()">
                 <img class="wd_ddlit" src="../image/wdsy.png">
                 <div class="my_cdliwz f24">我的收益</div>
             </div>
@@ -127,14 +127,14 @@
                 <img class="wd_ddlit" src="../image/wdtd.png">
                 <div class="my_cdliwz f24">团队粉丝</div>
             </div>
-            <div class="wd_ddli">
+            <div class="wd_ddli" @click="interfaceNews(18,'用户协议')">
                 <img class="wd_ddlit" src="../image/wddl.png">
-                <div class="my_cdliwz f24">代理故事</div>
+                <div class="my_cdliwz f24">用户协议</div>
             </div>
         </div>
 
     </div>
-    <div class="wd_dj gg">
+    <div class="wd_dj gg" @click="interfaceUpgrade()">
         <div class="wd_djli">
             <img class="wd_djlit" src="../image/hytb1.png">
         </div>
@@ -151,7 +151,7 @@
     <div class="qtrw gg">
         <div class="qtrwli" @click="interfaceRwzx()">
             <img class="qt_ddlit" src="../image/jfrw.png">
-            <div class="my_cdliwz f24">积分任务</div>
+            <div class="my_cdliwz f24">任务中心</div>
         </div>
         <div class="qtrwli" @click="interfaceJfdh()">
             <img class="qt_ddlit" src="../image/gzhjf.png">
@@ -165,7 +165,7 @@
             <img class="qt_ddlit" src="../image/yqhy.png">
             <div class="my_cdliwz f24">邀请好友</div>
         </div>
-        <div class="qtrwli">
+        <div class="qtrwli" @click="interfaceWdsc()">
             <img class="qt_ddlit" src="../image/wdsc.png">
             <div class="my_cdliwz f24">我的收藏</div>
         </div>

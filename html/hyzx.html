@@ -18,7 +18,7 @@
 
 
       <div class="hy_bg">
-        <div class="my_gr gg">
+        <div class="my_gr gg"  @click="interfaceSet()">
           <div class="my_grz">
             <div class="my_grzt">
               <img class="my_grytx" :src="tImage(userInfo.avatar)">
@@ -57,23 +57,23 @@
       <div class="hy_fh gg">
         <div class="hy_fhnr">
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">0</div>
-            <div class="hy_fhzwz f22">市场分红总额</div>
+            <div class="hy_fhzsz f30">{{parseInt(userInfo.my_tree_count)||0}}</div>
+            <div class="hy_fhzwz f22">我的果树</div>
           </div>
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">0</div>
-            <div class="hy_fhzwz f22">市场分红扣除</div>
+            <div class="hy_fhzsz f30">{{parseInt(userInfo.group_tree_count)||0}}</div>
+            <div class="hy_fhzwz f22">团队果树</div>
           </div>
           <div class="hy_fhz">
-            <div class="hy_fhzsz f30">0</div>
-            <div class="hy_fhzwz f22">市场分红结余</div>
+            <div class="hy_fhzsz f30">{{parseInt(userInfo.sy_tree_count)||0}}</div>
+            <div class="hy_fhzwz f22">市场剩余</div>
           </div>
         </div>
       </div>
 
       <div class="yxdd gg">
         <div class="yxddbt">
-          <div class="yxddbtz f28">优选订单</div>
+          <div class="yxddbtz f28">全部订单</div>
           <div class="yxddbty f22 qhsz" @click="interfaceWddd('')">
             更多订单
             <img class="sc_tmhhjt" src="../image/hjt.png">
@@ -101,7 +101,7 @@
 
       </div>
       <div class="hy_cd gg">
-        <div class="hy_cdli">
+        <div class="hy_cdli" @click="interfaceWddd('',3)">
           <div class="hy_cdliz f28"><img class="hy_cdlizt" src="../image/jsdd.png">集市订单</div>
           <div class="hy_cdliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
         </div>
