@@ -368,7 +368,7 @@ if(typeof(Vue)=="function"){
     openWhiteWin('zcjs','宗祠建设');
   }
   Vue.prototype.interfaceQb=function(){
-    openWhiteWin('qb','我的钱包');
+    openWhiteWin('qb','我的钱包',{},{text:'充值'});
   }
   Vue.prototype.interfaceZz=function(id=""){
     openWhiteWin('zz','转账',{id:id},{iconPath:"widget://icon/hjl2.png"});
@@ -583,6 +583,32 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
   }
   Vue.prototype.interfaceTreeLog=function(type=0){
     openWhiteWin('tree-log','购树记录',{type:type})
+  }
+
+  Vue.prototype.interfaceKf=function(){
+    var userInfo=getUserInfo();
+    if(!userInfo.id){
+      ajax(ud.member).then(res=>{
+        this.openMq(res);
+      })
+    }else{
+      this.openMq(userInfo);
+    }
+  }
+  Vue.prototype.openMq=function(userInfo){
+    var mq = api.require('meiQiaPlus');
+    mq.setTitleColor({color:"#000"});
+    mq.setLoginCustomizedId({id:userInfo.id});
+    mq.setClientInfo({
+      avatar:Vue.prototype.tImage(userInfo.avatar),
+      name:userInfo.nickname,
+      tel:userInfo.mobile
+    });
+    mq.show({
+      showAvatar:true,
+      showTitle:true,
+      updateClientInfo:true
+    });
   }
 
 }

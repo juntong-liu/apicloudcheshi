@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>充值</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" href="../css/style_ud.css">
+    <style>
+      .czje{
+        border-bottom: 1px solid #efefef;
+      }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="czje">
+            <div class="czjenr f28 gg">
+                <div class="czjez">充值金额</div>
+                <div class="czjey"><input class="xjcz-input f28" v-model="money" type="number" placeholder="请输入金额"></div>
+            </div>
+        </div>
+        <div class="czfs gg">请选择充值方式</div>
+        <div class="zffs">
+            <div class="zffs_nr gg">
+                <ul>
+                    <li @click="selectPay('alipay')" v-if="types.alipay&&types.alipay.success">
+                        <p><img src="../icon/zfb.png"><span class="zffswz f28">支付宝支付</span></p>
+                        <div class="t_z2"><span :class="{xzzt:pay_type=='alipay'}"></span></div>
+                    </li>
+                    <li @click="selectPay('wechat')" v-if="types.wechat&&types.wechat.success">
+                        <p><img src="../icon/wxzf.png"><span class="zffswz f28">微信支付</span></p>
+                        <div class="t_z2"><span :class="{xzzt:pay_type=='wechat'}"></span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tjsq f30 gg" @click="fnRecharge">充值</div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    apiLoad = function() {
+      var vm = new Vue({
+          el: "#app",
+          data: function() {
+              return {
+                  pay_type: "",
+                  money:'',
+                  types:{}
+              }
+          },
+          methods: {
+              init: function() {
+                ajax('ud.member.payWay',{paytype:'recharge'}).then(res=>{
+                  this.types=res;
+                })
+              },
+              selectPay:function(pay_type){
+                this.pay_type=pay_type;
+              },
+              fnRecharge:function(){
+                if(!this.money||this.money<=0){
+                  toast('请输入充值金额');
+                  return;
+                }
+                if(!this.pay_type){
+                  toast('请选择充值方式');
+                  return;
+                }
+                ajax('ud.member.recharge',{type:this.pay_type,money:this.money}).then(res=>{
+                  if(this.pay_type=='wechat'){
+                    wechatpay(res,function(){
+                      vm.fnSuccess(res.logno);
+                    });
+
+                  }else{
+                    alipay(res,function(){
+                        vm.fnSuccess(res.logno);
+                    });
+                  }
+                })
+              },
+              fnSuccess:function(logno){
+                ajax('ud.member.rechargeRes',{logno:logno}).then(res=>{
+                  toast(res);
+                  reloadUserInfo();
+                  setTimeout(function () {
+                    api.closeWin();
+                  }, 1000);
+                })
+              }
+          },
+          created: function() {
+              this.init();
+              api.addEventListener({
+                  name:'navitembtn'
+              },function(ret, err){
+                if(ret.type=='left'){
+                  api.closeWin();
+                }
+                if(ret.type=='right'){
+                  vm.interfaceCredit2Log();
+                }
+              });
+          }
+      });
+    }
+</script>
+
+</html>

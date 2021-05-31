@@ -28,6 +28,8 @@
 
 <script type="text/javascript">
   apiLoad=function(){
+    var mq = api.require('meiQiaPlus');
+    mq.initMeiQia({appkey: "b3be8492b8c5c390ebfcd189e0719dfd"}, function(ret, err) {})
     api.removeLaunchView({
         animation: {
             type: 'fade',
@@ -115,6 +117,9 @@
           // vm.interfaceTreeLog(1);
           // vm.interfaceSet();
           // vm.interfaceQb();
+          // vm.interfaceKf2();
+          // vm.interfaceKf();
+          // vm.interfaceXjcz();
 
 
         });
