@@ -25,7 +25,9 @@
           <div class="qcsl_gzsfs f30">{{parseFloat(info.day_count)||0}}</div>
           <div class="qcsl_gzsfx f22">今日释放</div>
         </div>
-        <div class="qcsl_jgc"><img class="qcsl_jgct" src="../image/jgct.png"></div>
+        <div class="qcsl_jgc" @click="jumpInterface(info.jgc)">
+          <img class="qcsl_jgct" src="../image/jgct.png">
+        </div>
       </div>
       <div class="qcsl_dtk">
         <div class="qcsl_dt gg">
@@ -57,6 +59,7 @@
           methods:{
             init(){
               ajax('ud.tree').then(res=>{
+
                 this.info=res;
                 this.list=res.log;
               })

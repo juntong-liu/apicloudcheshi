@@ -28,6 +28,12 @@
               <img class="jtdx" src="../icon/jt.png">
             </div>
         </div>
+        <div class="thyy gg f28" @click="interfaceResetPwd()" v-if="userInfo.mobile">
+            <div class="thyyz" style="flex:1">设置登录密码</div>
+            <div class="thyyy" style="flex:none;">
+              <img class="jtdx" src="../icon/jt.png">
+            </div>
+        </div>
         <div class="thyy gg f28" v-if="userInfo.unbind==1" @click="fnBindWechat()">
             <div class="thyyz" style="flex:1">绑定微信号</div>
             <div class="thyyy" style="flex:none;">

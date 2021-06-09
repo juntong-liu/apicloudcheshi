@@ -221,10 +221,13 @@ if(typeof(Vue)=="function"){
     }
   }
   Vue.prototype.interfaceRegister=function(){
-    openWhiteWin('register','注册',{temp:'sms_reg'})
+    openWhiteWin('register','注册',{temp:'sms_reg',title:'欢迎注册'})
   }
   Vue.prototype.interfaceForgetPwd=function(){
-    openWhiteWin('register','忘记密码',{temp:'sms_forget'});
+    openWhiteWin('register','忘记密码',{temp:'sms_forget',title:'找回密码'});
+  }
+  Vue.prototype.interfaceResetPwd=function(){
+    openWhiteWin('register','修改密码',{temp:'sms_forget',title:'修改密码'});
   }
 
   Vue.prototype.interfaceBindMobile=function(){
@@ -596,6 +599,19 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
     }
   }
   Vue.prototype.openMq=function(userInfo){
+    // var navigationBar = {
+    //     background: '#fff',
+    //     color: '#000'
+    // }
+    //
+    // api.openTabLayout({
+    //     name: 'wdkf',
+    //     url: 'https://tb.53kf.com/code/client/e44602cc5a6e095966a409c8164e06da6/1?u_cust_id='+userInfo.id+'&u_cust_name='+userInfo.nickname+'&header=none',
+    //     useWKWebView: true,
+    //     bgColor: '#fff',
+    //     title: '在线客服',
+    //     navigationBar: navigationBar
+    // });
     var mq = api.require('meiQiaPlus');
     mq.setTitleColor({color:"#000"});
     mq.setLoginCustomizedId({id:userInfo.id});
@@ -609,6 +625,9 @@ Vue.prototype.fnOrderDelete=function(id,userdeleted){
       showTitle:true,
       updateClientInfo:true
     });
+  }
+  Vue.prototype.interfaceZx=function(){
+    openNotTabWin('zx');
   }
 
 }

@@ -15,8 +15,7 @@
     <div class="denglu" id="app" v-cloak>
       <div class="dengluk">
         <div class="register_hy">
-          <span v-if="temp=='sms_reg'">欢迎注册</span>
-          <span v-if="temp=='sms_forget'">找回密码</span>
+          <span>{{title}}</span>
         </div>
         <form class="login-form">
           <div class="input-content">
@@ -53,7 +52,8 @@
               getCoding:false,
               get_code_interval:0,
               time:60,
-              temp:api.pageParam.temp
+              temp:api.pageParam.temp,
+              title:api.pageParam.title
             }
           },
           methods:{
