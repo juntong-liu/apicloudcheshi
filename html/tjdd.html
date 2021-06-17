@@ -164,7 +164,7 @@
             this.select_ud=this.select_ud>0?0:this.allUd;
           },
           init:function(){
-            ajax('ud.orderCreate',this.param).then(res=>{
+            ajax('ud.orderCreate',this.param,'post').then(res=>{
               this.address=res.address;
               this.createInfo=res.createInfo;
               this.goods_list=res.goods_list;
@@ -213,7 +213,7 @@
                 'use_credit3':this.detail.use_credit3,
                 'lpk_code':this.lpk_code
             };
-            // _log(data);
+            _log(data);
 
             ajax('ud.orderCreate.submit',data,'post').then(res=>{
               api.sendEvent({

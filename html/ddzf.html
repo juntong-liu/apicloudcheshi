@@ -41,13 +41,21 @@
       <div class="zffs" style="margin-bottom:10px;" v-if="payInfo.can_js">
         <div class="zffs_nr gg">
           <ul>
-            <li @click="js=!js">
+            <li @click="js=0">
+              <p class="juzhong f28">
+                <div style="flex:1;font-size:16px;">
+                  自提
+                </div>
+              </p>
+              <div class="t_z2"><span :class="{xzzt:js==0}"></span></div>
+            </li>
+            <li @click="js=1">
               <p class="juzhong f28">
                 <div style="flex:1;font-size:16px;">
                   平台寄售
                 </div>
               </p>
-              <div class="t_z2"><span :class="{xzzt:js}"></span></div>
+              <div class="t_z2"><span :class="{xzzt:js==1}"></span></div>
             </li>
           </ul>
         </div>
@@ -116,7 +124,7 @@
               id:api.pageParam.id,
               payInfo:{},
               use_ug:0,
-              js:false
+              js:1
             }
           },
           methods:{
@@ -130,7 +138,11 @@
             },
 
             fnSelectPay:function(type){
-              ajax('ud.pay.orderPay',{id:this.id,type:type,ptjs:this.js?1:0}).then(res=>{
+              var param={id:this.id,type:type,ptjs:this.js};
+              if(!this.payInfo.can_js){
+                  param.ptjs=0;
+              }
+              ajax('ud.pay.orderPay',param).then(res=>{
                 if(type=='alipay'){
                   alipay(res,function(){
                     vm.fnSuccess();

@@ -55,7 +55,7 @@
       <div class="article-list">
         <div class="article-item" v-for="item in list" @click="interfaceArticle(item.id,item.article_title)">
           <div class="article-item-img" v-if="item.resp_img">
-            <img src="../image/dsptp.png">
+            <img :src="tImage(item.resp_img)">
           </div>
           <div class="article-item-right">
             <div class="article-item-title">

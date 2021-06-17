@@ -116,6 +116,7 @@
             }, function(ret, err){
                 this.init();
             }.bind(this));
+            refresh(function(){vm.init()});
 
           }
         });

@@ -143,7 +143,8 @@
           <div v-if="detail.has_city">
             <div class="hgx"></div>
             <div class="s_gg gg f22" @click="fnBox('#city-box')">
-                <div class="s_ggwz">不配送区域：</div>
+                <div class="s_ggwz" v-if="detail.onlysent==1">只配送区域：</div>
+                <div class="s_ggwz" v-else>不配送区域：</div>
                 <div class="s_ggnr title-line1">
                   <span v-for="city in detail.citys">{{city}},</span>
                 </div>
@@ -153,7 +154,10 @@
             </div>
             <div class="city-box" id="city-box" @touchmove.prevent @click="fnBox('#city-box')">
               <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;">
-                <div style="font-size:16px;text-align:center;padding:10px;">不配送区域</div>
+                <div style="font-size:16px;text-align:center;padding:10px;">
+                  <span v-if="detail.onlysent==1">只配送区域</span>
+                  <span v-else>不配送区域</span>
+                </div>
                 <div style="margin-top:10px;padding:10px;">
                   <i class="city" v-for="city in detail.citys">{{city}}</i>
                 </div>
