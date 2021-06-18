@@ -371,7 +371,12 @@ if(typeof(Vue)=="function"){
     openWhiteWin('zcjs','宗祠建设');
   }
   Vue.prototype.interfaceQb=function(){
-    openWhiteWin('qb','我的钱包',{},{text:'充值'});
+    if(getCache('is_ios')==1){
+      openWhiteWin('qb','我的钱包');
+    }else{
+      openWhiteWin('qb','我的钱包',{},{text:'充值'});
+    }
+
   }
   Vue.prototype.interfaceZz=function(id=""){
     openWhiteWin('zz','转账',{id:id},{iconPath:"widget://icon/hjl2.png"});
