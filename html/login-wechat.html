@@ -74,7 +74,8 @@
           successCallbackEvent:api.pageParam.successCallbackEvent,
           loading:false,
           mobile:'',
-          pwd:''
+          pwd:'',
+          is_ios:getCache('is_ios')
         }
       },
       methods:{
@@ -134,6 +135,9 @@
                 this.loginType='mobile';
               }
           }.bind(this));
+          if(this.is_ios==1){
+            this.loginType='mobile';
+          }
         }
       },
       mounted(){
