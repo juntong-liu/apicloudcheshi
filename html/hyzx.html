@@ -34,7 +34,25 @@
             <img class="my_gryjt" src="../image/bjt.png">
           </div>
         </div>
-        <div class="my_sj">
+        <div class="my_sj" v-if="is_ios==1">
+          <div class="my_sjli" @click="interfaceQb()">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit2)||0}}</div>
+            <div class="my_sjliwz f24">我的钱包</div>
+          </div>
+          <div class="my_sjli" @click="interfaceQcq()">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit3)||0}}</div>
+            <div class="my_sjliwz f24">七彩券</div>
+          </div>
+          <div class="my_sjli">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit1)||0}}</div>
+            <div class="my_sjliwz f24">积分</div>
+          </div>
+          <div class="my_sjli" @click="interfaceCredit4Log()">
+            <div class="my_sjlisz f36">{{parseFloat(userInfo.credit4)||0}}</div>
+            <div class="my_sjliwz f24">消费金</div>
+          </div>
+        </div>
+        <div class="my_sj" v-else>
           <div class="my_sjli" @click="interfaceQb()">
             <div class="my_sjlisz f36">{{parseFloat(userInfo.credit2)||0}}</div>
             <div class="my_sjliwz f24">我的钱包</div>
@@ -54,7 +72,7 @@
         </div>
       </div>
 
-      <div class="hy_fh gg">
+      <div class="hy_fh gg" v-if="is_ios!=1">
         <div class="hy_fhnr">
           <div class="hy_fhz" @click="interfaceTreeLog(0)">
             <div class="hy_fhzsz f30">{{parseInt(userInfo.my_tree_count)||0}}</div>
@@ -72,9 +90,9 @@
       </div>
 
       <div class="yxdd gg">
-        <div class="yxddbt">
+        <div class="yxddbt"  @click="interfaceWddd('')">
           <div class="yxddbtz f28">全部订单</div>
-          <div class="yxddbty f22 qhsz" @click="interfaceWddd('')">
+          <div class="yxddbty f22 qhsz">
             更多订单
             <img class="sc_tmhhjt" src="../image/hjt.png">
           </div>
@@ -138,7 +156,8 @@
           el:"#app",
           data(){
             return {
-              userInfo:{}
+              userInfo:{},
+              is_ios:getCache('is_ios')
             }
           },
           methods:{

@@ -298,6 +298,7 @@ function ajax(url, param = {},method="get",showProgress=true) {
         modal: false
     });
   }
+  param.is_ios=getCache('is_ios');
   return new Promise((resolve,reject)=>{
     api.ajax({
             url: root + url,

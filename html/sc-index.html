@@ -44,7 +44,7 @@
           </div>
         </div>
         <!--广告图-->
-        <div class="qcsc_adv gg" v-if="detail.mall_set" @click="jumpInterface(detail.mall_set.link)">
+        <div class="qcsc_adv gg" v-if="detail.mall_set&&is_ios!=1" @click="jumpInterface(detail.mall_set.link)">
           <img class="qcsc_advt" :src="tImage(detail.mall_set.ad_img)">
         </div>
         <!--商城产品-->
@@ -83,7 +83,8 @@
               page:1,
               isEnd:false,
               isLoading:false,
-              detail:{}
+              detail:{},
+              is_ios:getCache('is_ios')
 
             }
           },

@@ -125,7 +125,7 @@ if(typeof(Vue)=="function"){
       <div class="r_tit title-bar" :style="style">
         <status-bar ></status-bar>
         <div class="r_titnr s_titnr gg">
-          <slot name="left" class="r_titl" >
+          <slot name="left" class="r_titl" v-if="winName!='root'">
             <img class="r_titltp" src="../image/hfh.png" @click="leftClick()">
           </slot>
           <div class="r_titm f36">{{title}}</div>
@@ -155,7 +155,8 @@ if(typeof(Vue)=="function"){
     },
     data(){
       return {
-        height:0
+        height:0,
+        winName:api.winName
       }
     },
     computed:{
@@ -177,6 +178,7 @@ if(typeof(Vue)=="function"){
       }
     },
     mounted(){
+      // console.log(this.winName);
       this.height=$api.dom('.title-bar').offsetHeight+'px';
     }
   })

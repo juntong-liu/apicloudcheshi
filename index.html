@@ -28,6 +28,8 @@
 
 <script type="text/javascript">
   apiLoad=function(){
+    var is_ios=1;
+    setCache('is_ios',is_ios);
     var mq = api.require('meiQiaPlus');
     mq.initMeiQia({appkey: "b3be8492b8c5c390ebfcd189e0719dfd"}, function(ret, err) {})
     api.removeLaunchView({
@@ -58,15 +60,15 @@
       el:"#app",
       data(){
         return {
-          footer:indexFooter,
+          footer:is_ios==1?iosFooter:indexFooter,
           tab:0,
           group_name:'root'
         }
       },
       methods:{
         fnTab(tab){
-          if(tab==1){
-            this.interfaceQcsc();
+          if(this.footer[tab].interface){
+            this.jumpInterface(this.footer[tab].interface);
             return;
           }
           this.tab=tab;

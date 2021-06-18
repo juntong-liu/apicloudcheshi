@@ -22,7 +22,7 @@
       <div class="u_tit">
           <div class="m_titnr gg">
               <div class="skm">
-                  <div class="u_fh skmz" onclick="api.closeWin();">
+                  <div class="u_fh skmz" onclick="api.closeWin();" v-if="winName!='root'">
                     <img src="../icon/hfh.png">
                   </div>
                   <div class="u_bt">购物车</div>
@@ -103,7 +103,8 @@
               merch_user:[],
               totalprice:0,
               total:0,
-              showGl:false
+              showGl:false,
+              winName:api.winName
             }
           },
           methods:{

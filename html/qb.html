@@ -30,7 +30,7 @@
               <div class="qb_sxlis f24">可用积分</div>
               <div class="qb_sxlix f32">{{parseFloat(userInfo.credit1)||0}}</div>
             </div>
-            <div class="qb_sxli">
+            <div class="qb_sxli" v-if="is_ios!=1">
               <div class="qb_sxlis f24">可用果子</div>
               <div class="qb_sxlix f32">{{parseFloat(userInfo.credit6)||0}}</div>
             </div>
@@ -49,7 +49,7 @@
             <div class="qb_xliz f28">积分明细</div>
             <div class="qb_xliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
           </div>
-          <div class="qb_xli" @click="interfaceCredit6Log()">
+          <div class="qb_xli" @click="interfaceCredit6Log()" v-if="is_ios!=1">
             <div class="qb_xliz f28">果子明细</div>
             <div class="qb_xliy"><img class="sc_tmhhjt" src="../image/hjt.png"></div>
           </div>
@@ -76,7 +76,8 @@
           el:"#app",
           data(){
             return {
-              userInfo:{}
+              userInfo:{},
+              is_ios:getCache('is_ios')
             }
           },
           methods:{

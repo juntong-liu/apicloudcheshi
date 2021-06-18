@@ -9,7 +9,7 @@ let indexFooter=[
     name:'七彩生活',
     active_icon:'./image/qcshtbh.png',
     default_icon:'./image/qcshtb.png',
-    url:'widget://html/qcsc.html'
+    interface:'interfaceQcsc()'
   },
   {
     name:'尊享',
@@ -28,6 +28,32 @@ let indexFooter=[
     active_icon:'./image/fwdh.png',
     default_icon:'./image/fwd.png',
     url:'widget://html/wd.html'
+  }
+];
+let iosFooter=[
+  {
+    name:'首页',
+    active_icon:'./image/fsyh.png',
+    default_icon:'./image/fsy.png',
+    url:'widget://html/sc-index.html'
+  },
+  {
+    name:'分类',
+    active_icon:'./image/scflh.png',
+    default_icon:'./image/scfl.png',
+    url:'widget://html/sc-category.html'
+  },
+  {
+    name:'购物车',
+    active_icon:'./image/gwch.png',
+    default_icon:'./image/gwc.png',
+    url:'widget://html/gwc.html'
+  },
+  {
+    name:'个人中心',
+    active_icon:'./image/fwdh.png',
+    default_icon:'./image/fwd.png',
+    url:'widget://html/hyzx.html'
   }
 ];
 let scFooter=[
