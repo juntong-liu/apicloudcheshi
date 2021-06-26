@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>图片显示</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <script src="../script/common.js" charset="utf-8"></script>
+    <style>
+      html,body{
+        background: #000;
+      }
+      .imageshow-box{
+          z-index:10;
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+      }
+
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <div class="imageshow-box">
+    <div style="width: 100%;position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%);text-align: center;">
+        <img  :src="url" id="fd-img" :style="{'margin-top':c_top,'margin-left':c_left,width:c_width}" @touchstart="fnTouchStart($event)" @touchmove="fnTouchMove($event)">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+function getDistance(p1, p2) {
+    var x = p2.pageX - p1.pageX;
+    var y = p2.pageY - p1.pageY;
+    return Math.sqrt((x * x) + (y * y));
+}
+apiready=function(){
+  var vm=new Vue({
+    el:"#app",
+    data:function(){
+      return {
+        url:api.pageParam.url,
+        // url:'http://app.dongqichengcl.com/attachment/images/1/2021/06/J2H0JYdfj6Z9jAJ2dR7j9f6Ro2qYw0.jpg',
+        left:0,
+        top:0,
+        width:80,
+        start:null,
+        fd:false,
+        startPosition:[],
+        movePosition:[],
+        endPosition:[]
+      }
+    },
+    computed:{
+        c_left:function(){
+            return this.left+'px';
+        },
+        c_top:function(){
+            return this.top+'px';
+        },
+        c_width:function () {
+            return this.width+'%';
+        }
+
+    },
+    methods:{
+      fnTouchStart(e){
+        if(e.touches.length==2){
+            this.start = e.touches; //得到第一组两个点
+            this.fd=true;
+
+        }else if(e.touches.length==1){
+            this.fd=false;
+            this.startPosition = [e.touches[0].pageX, e.touches[0].pageY];
+        }
+      },
+      fnTouchMove(e){
+        if(e.touches.length==2){
+            var now = e.touches; //得到第二组两个点
+            var scale = getDistance(now[0], now[1])-getDistance(this.start[0], this.start[1]); //得到缩放比例
+            this.start=now;
+            this.width+=parseInt(scale/2);
+
+        }else if(e.touches.length==1){
+            if(this.fd)return;
+            this.movePosition = [e.touches[0].pageX, e.touches[0].pageY];
+            this.endPosition = this.movePosition;
+            this.movePosition = [this.movePosition[0] - this.startPosition[0], this.movePosition[1] - this.startPosition[1]];
+            this.startPosition = [e.touches[0].pageX, e.touches[0].pageY];
+            this.left+=Math.ceil(this.movePosition[0]*1.5);
+            this.top+=Math.ceil(this.movePosition[1]*1.5);
+        }
+      }
+    }
+
+  });
+}
+</script>
+</body>
+</html>

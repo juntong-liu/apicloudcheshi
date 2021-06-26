@@ -231,7 +231,7 @@
           <div class="hgx"></div>
           <div class="s_spxq">
               <div class="s_pxq_bt f30">商品详情</div>
-              <div class="s_pxq_nr gg f28" v-html="detail.content"></div>
+              <div id="detail_content" class="s_pxq_nr gg f28" v-html="detail.content"></div>
           </div>
       </section>
       <div class="dbql">
@@ -483,6 +483,14 @@
                   selects[this.info.specs[i].id]={};
                 }
                 this.selects=selects;
+                this.$nextTick(()=>{
+                  $("#detail_content img").each(function(){
+                    $(this).bind('click',function(){
+                      // console.log($(this).attr("src"));
+                      openImage($(this).attr("src"))
+                    })
+                  })
+                })
               })
 
             },

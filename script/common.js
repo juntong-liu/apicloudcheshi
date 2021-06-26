@@ -166,20 +166,11 @@ function openOrangeWin(html, title, param = {}, right_button = null) {
 }
 
 function openImage(url){
-  var navigationBar = {
-      background: '#000',
-      color: '#fff',
-      shadow: '#000',
-      leftButtons: [{
-          iconPath: 'widget://images/back-white.png'
-      }]
-  }
-
   api.openTabLayout({
       name: 'image',
       url: 'widget://html/image.html',
       useWKWebView: true,
-      navigationBar: navigationBar,
+      navigationBar: false,
       pageParam: {url:url},
       bgColor: "#000",
       title: '',
