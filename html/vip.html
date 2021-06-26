@@ -23,6 +23,18 @@
     .swiper-slide:nth-child(3n) {
       width: 90%;
     }
+    .vipsj2 {
+    	position: relative;
+    	color: #863d0d;
+    	height: 1.17rem;
+    	width: 8.83rem;
+    	background-image: linear-gradient(#f2d9bb, #ddb075);
+    	line-height: 1.17rem;
+    	text-align: center;
+    	border-radius: 0.67rem;
+    	z-index: 99999;
+      margin: 30px auto;
+    }
     </style>
   </head>
   <body>
@@ -74,7 +86,9 @@
                 <div class="vip_sjtjnry f28">去完成</div>
               </div>
             </div>
-
+            <div class="vipsj2 f30" v-if="level.level_interface" @click="jumpInterface(level.level_interface)">
+              立即升级
+            </div>
           </div>
 
         </div>
@@ -84,9 +98,7 @@
       <!-- Swiper JS -->
 
       <!-- Initialize Swiper -->
-      <div class="vipsj f30">
-        立即升级
-      </div>
+
     </div>
   </body>
   <script type="text/javascript">
