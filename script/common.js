@@ -1156,6 +1156,7 @@ function getCityList(){
       path: "widget://res/city.json",
       sync: true
   });
+
   return JSON.parse(cityList);
 }
 

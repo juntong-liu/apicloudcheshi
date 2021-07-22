@@ -145,6 +145,7 @@
         <p v-if="order.status>=1&&order.paytime>0">支付时间：{{date("Y-m-d H:i:s",order.paytime)}}</p>
         <p v-if="order.sendtime>0">发货时间：{{date("Y-m-d H:i:s",order.sendtime)}}</p>
         <p v-if="order.finishtime>0">完成时间：{{date("Y-m-d H:i:s",order.finishtime)}}</p>
+        <p v-if="order.js_finish_time>0">寄售完成时间：{{date("Y-m-d H:i:s",order.js_finish_time)}}</p>
       </div>
       <div style="height:100px;"></div>
       <div class="bt-bottom">
