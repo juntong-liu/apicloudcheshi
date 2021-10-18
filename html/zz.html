@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>转账</title>
+    <script src="../script/common.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style_ud.css" />
+    <style>
+    .zz-input{
+      margin-left: 0;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <section class="bsbj">
+
+        <div class="z_znr gg">
+          <ul>
+            <li>
+              <p style="width:1.8rem;" class="f28">
+                收款人ID
+                <br>
+                <span v-if="zzInfo.id" style="color:red;margin-top:10px;">{{zzInfo.realname||zzInfo.nickname}}</span>
+              </p>
+              <input class="zz-input" ref="id" type="number" v-model="id"  placeholder="收款人ID" @change="searchUser">
+            </li>
+            <li>
+              <p style="width:1.8rem;"  class="f28">转账金额</p>
+              <input class="zz-input" ref="count" type="number" v-model="count"  placeholder="请输入数量">
+
+            </li>
+            <li style="border:none;">
+              <p class="zje f28">可用金额 ¥<span>{{userInfo.credit4}}</span></p>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section class="gg">
+        <div class="tjan f30" @click="fnZhuangzhan">转账</div>
+      </section>
+    </div>
+    <script type="text/javascript">
+      apiLoad=function(callback){
+        var vm=new Vue({
+          el:"#app",
+          data:function(){
+            return {
+              id:'',
+              count:'',
+              userInfo:getUserInfo(),
+              zzInfo:{}
+            }
+          },
+          methods:{
+            searchUser(){
+              ajax('ud.searchUser',{id:this.id}).then(res=>{
+                this.zzInfo=res;
+              })
+            },
+            init:function(){
+              if(!this.userInfo.id){
+                ajax('ud.member')
+              }
+            },
+            fnSm:function(){
+
+            },
+            fnZhuangzhan:function(){
+              if(!this.id){
+                this.$refs.id.focus();
+                toast('请输入收款人ID');
+                return;
+              }
+              if(!parseInt(this.count)){
+                this.$refs.count.focus();
+                toast('请输入转账金额');
+                return;
+              }
+
+              ajax('ud.member.zhuanzhang',{id:this.id,count:this.count}).then(res=>{
+                toast(res);
+                reloadUserInfo();
+              })
+            }
+          },
+          created:function(){
+            this.init();
+            api.addEventListener({
+                name:'navitembtn'
+            },function(ret, err){
+              if(ret.type=='left'){
+                api.closeWin();
+              }
+              if(ret.type=='right'){
+                vm.interfaceCredit4Log();
+              }
+            });
+          }
+        });
+        callback(vm);
+      }
+    </script>
+  </body>
+</html>

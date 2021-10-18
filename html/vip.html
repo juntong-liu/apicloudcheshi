@@ -61,7 +61,13 @@
       <div class="swiper-container vipswiper">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(level,idx) in levels">
-            <img class="vip_sw" :src="tImage(level.level_icon)">
+            <div class="vip_sw" :style="bgStyle(level)">
+              <div class="vip_sw-title">
+                {{level.levelname}}
+              </div>
+              <img :src="tImage(level.level_icon2)" class="vip_sw-icon">
+            </div>
+            <!-- <img class="vip_sw" :src="tImage(level.level_icon)"> -->
             <div class="vip_qy">
               <div class="vip_sds"><img class="vip_sdst" src="../image/jsd1.png"></div>
 
@@ -112,6 +118,13 @@
           }
         },
         methods:{
+          bgStyle(item){
+            var url=this.tImage(item.level_icon);
+            return {
+              'background':'url('+url+') no-repeat',
+              'background-size':'100%'
+            }
+          },
           getWidth(fz,fm){
             var percent=(fz/fm)*100;
             return{

@@ -1535,6 +1535,20 @@ input[type="range"]::-webkit-slider-thumb {
 .wd_djlit {
 	width: 2.19rem;
 	height: 2.69rem;
+	background: url('../image/level_bg.png') no-repeat;
+	background-size: 100%;
+	position: relative;
+	text-align: center;
+}
+.wd_djlit img{
+	width: 1.2rem;
+	height: 1.2rem;
+	margin-top: 0.4rem;
+}
+.wd_djlit .wd_djlit_title{
+	text-align: center;
+	margin-top: 10px;
+	color: #fff;
 }
 
 .wd_dj {
@@ -1615,7 +1629,30 @@ input[type="range"]::-webkit-slider-thumb {
 
 .vip_sw {
 	width: 8.8rem !important;
+	height: 2.2rem;
+	border-radius: 5px;
+	position: relative;
 }
+.vip_sw .vip_sw-title{
+	position: absolute;
+	z-index: 1;
+	top: 50%;
+	left: 10px;
+	transform: translate(0,-50%);
+	font-size: 16px;
+	color: #fff;
+	font-weight: 700;
+}
+.vip_sw .vip_sw-icon{
+	width: 1.5rem;
+	height:1.5rem;
+	position: absolute;
+	z-index: 1;
+	top: 50%;
+	right: 10px;
+	transform: translate(0,-50%);
+}
+
 
 .vip_qy {
 	width: 8.81rem;

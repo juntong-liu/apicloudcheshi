@@ -140,7 +140,7 @@
 
       <div class="hgx"></div>
       <div class="ddxx f24 gg">
-        <p>订单编号：{{order.ordersn}}</p>
+        <p>订单编号：<span style="color:green" @click="Copy(order.ordersn)">{{order.ordersn}}</span></p>
         <p>下单时间：{{date("Y-m-d H:i:s",order.createtime)}}</p>
         <p v-if="order.status>=1&&order.paytime>0">支付时间：{{date("Y-m-d H:i:s",order.paytime)}}</p>
         <p v-if="order.sendtime>0">发货时间：{{date("Y-m-d H:i:s",order.sendtime)}}</p>
@@ -196,6 +196,7 @@
           },
           methods:{
             init:function(){
+
               ajax('ud.order.detail',{id:this.id}).then(res=>{
                 this.order=res.order;
                 this.refund=res.refund;

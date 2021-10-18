@@ -42,7 +42,7 @@ function _log(data) {
 
 
 
-function download(url, savePath, callback) {
+function download(url, savePath, callback,hideProgress=true) {
     api.showProgress({
         style: 'default',
         animationType: 'fade',
@@ -58,7 +58,7 @@ function download(url, savePath, callback) {
         cache: true,
         allowResume: true
     }, function(ret, err) {
-        api.hideProgress();
+        hideProgress&&api.hideProgress();
         callback(ret);
     });
 }
@@ -219,7 +219,11 @@ function cacheImage(url){
         save:{imgPath:thumb_dir,imgName:name}
         },function( ret, err ){
           if(ret.status){
-            resolve(thumb_dir+'/'+name);
+            resolve({
+              thumb:thumb_dir+'/'+name,
+              img:img_dir,
+              dir:api.fsDir+'/img/'+name
+            });
           }else{
             reject(err);
           }
@@ -230,7 +234,32 @@ function cacheImage(url){
   })
 
 }
+function compress(img_dir){
+  var imageFilter=api.require('imageFilter');
+  var name=img_dir.split('/').pop();
+  var thumb_dir='fs://thumb';
+  return new Promise((resolve,reject)=>{
+    imageFilter.compress({
+      img: img_dir,
+      scale: 0.1,
+      save:{imgPath:thumb_dir,imgName:name}
+      },function( ret, err ){
+        if(ret.status){
+          resolve({
+            thumb:thumb_dir+'/'+name,
+            dir:api.fsDir+'/thumb/'+name,
+            img:img_dir
+          });
+        }else{
+          reject(err);
+        }
 
+      }
+    );
+  })
+
+
+}
 function fnCopy(value){
   var clipBoard = api.require('clipBoard');
   clipBoard.set({
@@ -1365,9 +1394,9 @@ function shareWebpage(obj,callback){
       modal: false
   });
   if(obj.thumb){
-    cacheImage(Vue.prototype.tImage(obj.thumb)).then(url=>{
+    cacheImage(Vue.prototype.tImage(obj.thumb)).then(data=>{
       api.hideProgress();
-      shareObj.thumb=url;
+      shareObj.thumb=data.url;
       wxPlus.shareWebpage(shareObj,function(ret,err){
         api.hideProgress();
 

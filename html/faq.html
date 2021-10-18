@@ -7,15 +7,18 @@
     <title>发圈</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="../script/common.js"></script>
+    <script src="../script/qrCode.min.js"></script>
 
 
   </head>
   <body>
     <div class="hsbgk" id="app" v-cloak>
+
       <title-bar title='发圈' bg="#f04343">
         <img slot='left' class="r_titltp" src="../image/bfh.png" onclick="api.closeWin()" v-show="winName!='root'">
       </title-bar>
       <div class="gg">
+        <canvas id="canvas" width="300" height="300" style="display:none;"></canvas>
         <div class="faq_li" v-for="item in list">
           <div class="faq_lis">
             <div class="faq_lisz"><img class="faq_liszt" src="../icon/logo.png"></div>
@@ -77,23 +80,51 @@
                   text: '请稍后...',
                   modal: false
               });
-              cacheImage(this.tImage(obj.thumb)).then(url=>{
-                api.hideProgress();
-                shareObj.thumb=url;
-                wxPlus.shareWebpage(shareObj,function(ret,err){
-                  if (!ret.status) {
-                    fnAlert(err.code);
-                  }else{
-                    ajax('ud.task.shareSuccess',{id:obj.id,type:type}).then(res=>{
-                      toast(res);
-                      reloadUserInfo();
+              var url=this.tImage(obj.thumb);
+              var name=url.split('/').pop();
+              var thumb_dir='fs://thumb';
+              var img_dir='fs://img/'+name;
+              download(url,img_dir,function(res){
+                  var image=document.createElement('img');
+                  image.src=res.savePath;
+                  image.onload=function(){
+                    var bgCanvas=document.createElement('canvas');
+                    var bottom=0;
+                    var w=image.width,h=image.height+bottom;
+                    bgCanvas.width=w;
+                    bgCanvas.height=h;
+
+                    var bgCanvasContext=bgCanvas.getContext("2d");
+                    bgCanvasContext.fillStyle="rgba(255,255,255,255)";
+
+                    bgCanvasContext.drawImage(image ,0 ,0 , image.width , image.height);
+                    var ewm_canvas=document.getElementById('canvas');
+                    bgCanvasContext.drawImage(ewm_canvas ,image.width-160 ,image.height-160+bottom, 150 , 150);
+                    canvasToImage(bgCanvas,function(res){
+
+                      compress(res).then(data=>{
+                          wxPlus.shareImage({
+                            scene: type,
+                            thumb:data.thumb,
+                            contentUrl:res
+
+                          },function(ret,err){
+                              if (!ret.status) {
+                                fnAlert(err.code);
+                              }else{
+                                ajax('ud.task.shareSuccess',{id:obj.id,type:type}).then(res=>{
+                                  toast(res);
+                                  reloadUserInfo();
+                                })
+                              }
+                          })
+                      })
+
                     })
                   }
-                });
-              }).catch(err=>{
-                api.hideProgress();
-                fnAlert(err);
-              })
+
+              },false)
+
 
 
             }
@@ -115,6 +146,14 @@
               }
               this.page+=1;
               this.mid=res.mid;
+              var mid=this.mid;
+              this.$nextTick(()=>{
+                QrCodeWithLogo.toCanvas({
+                  canvas: document.getElementById('canvas'),
+                  content:root+'ud.account.download&mid='+this.mid,
+                  width: 300
+                })
+              })
             })
           }
         },

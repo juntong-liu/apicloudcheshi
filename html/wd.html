@@ -60,7 +60,7 @@
             </div>
             <div class="my_sjli">
                 <div class="my_sjlisz f36">{{userInfo.surprise_sy||0}}</div>
-                <div class="my_sjliwz f24">剩余惊喜</div>
+                <div class="my_sjliwz f24">剩余健康宝</div>
             </div>
         </div>
 
@@ -88,7 +88,7 @@
             </div>
             <div class="wd_ddli">
                 <img class="wd_ddlit" src="../image/wdwx.png">
-                <div class="my_cdliwz f24">导师微信</div>
+                <div class="my_cdliwz f24">用户案例</div>
             </div>
             <div class="wd_ddli" @click="interfaceNews(17,'新手教程')">
                 <img class="wd_ddlit" src="../image/wdxs.png">
@@ -117,19 +117,12 @@
         </div>
 
     </div>
-    <div class="wd_dj gg" @click="interfaceUpgrade()">
-        <div class="wd_djli">
-            <img class="wd_djlit" src="../image/hytb1.png">
+    <div class="wd_dj gg" @click="interfaceUpgrade()" v-if="userInfo.levels">
+        <div class="wd_djlit" v-for="l of userInfo.levels">
+            <img :src="tImage(l.level_icon2)">
+            <div class="wd_djlit_title">{{l.levelname}}</div>
         </div>
-        <div class="wd_djli">
-            <img class="wd_djlit" src="../image/hytb2.png">
-        </div>
-        <div class="wd_djli">
-            <img class="wd_djlit" src="../image/hytb3.png">
-        </div>
-        <div class="wd_djli">
-            <img class="wd_djlit" src="../image/hytb4.png">
-        </div>
+
     </div>
     <div class="qtrw gg">
         <div class="qtrwli" @click="interfaceRwzx()">

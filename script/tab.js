@@ -12,7 +12,7 @@ let indexFooter=[
     interface:'interfaceQcsc()'
   },
   {
-    name:'尊享',
+    name:'健康宝',
     active_icon:'./image/zxtbh.png',
     default_icon:'./image/zxtb.png',
     url:'widget://html/zx.html'
