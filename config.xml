@@ -1,67 +1,65 @@
-<widget id="A6175355840392" version="0.0.1">
+<widget id="A6189340097685" version="0.0.1">
 
-    <name>七彩</name>
+	<name>七彩</name>
 
-    <description>
+	<description>Example For APICloud.</description>
 
-        Example For APICloud.
+	<author email="developer@apicloud.com" href="http://www.apicloud.com">Sirius</author>
 
-    </description>
+	<content src="index.html"/>
 
-    <author email="developer@apicloud.com" href="http://www.apicloud.com">
+	<access origin="*"/>
 
-        Developer
+	<preference name="pageBounce" value="false"/>
 
-    </author>
+	<preference name="appBackground" value="rgba(0,0,0,0.0)"/>
 
-    <content src="index.html"/>
+	<preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
 
-    <access origin="*"/>
+	<preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
 
-    <preference name="pageBounce" value="false"/>
+	<preference name="hScrollBarEnabled" value="false"/>
 
-    <preference name="appBackground" value="rgba(0,0,0,0.0)"/>
+	<preference name="vScrollBarEnabled" value="false"/>
 
-    <preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
+	<preference name="autoLaunch" value="true"/>
 
-    <preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
+	<preference name="fullScreen" value="false"/>
 
-    <preference name="hScrollBarEnabled" value="false"/>
+	<preference name="autoUpdate" value="true"/>
 
-    <preference name="vScrollBarEnabled" value="false"/>
+	<preference name="smartUpdate" value="true"/>
 
-    <preference name="autoLaunch" value="true"/>
+	<preference name="debug" value="true"/>
 
-    <preference name="fullScreen" value="false"/>
+	<preference name="statusBarAppearance" value="true"/>
 
-    <preference name="autoUpdate" value="true"/>
+	<permission name="readPhoneState"/>
 
-    <preference name="smartUpdate" value="true"/>
+	<permission name="camera"/>
 
-    <preference name="debug" value="true"/>
+	<permission name="record"/>
 
-    <preference name="statusBarAppearance" value="true"/>
+	<permission name="location"/>
 
-    <permission name="readPhoneState"/>
+	<permission name="fileSystem"/>
 
-    <permission name="camera"/>
+	<permission name="internet"/>
 
-    <permission name="record"/>
+	<permission name="bootCompleted"/>
 
-    <permission name="location"/>
+	<permission name="hardware"/>
 
-    <permission name="fileSystem"/>
+	<feature name="wxPlus">
 
-    <permission name="internet"/>
+		<param name="urlScheme" value="wxa8588b3063e75731"/>
 
-    <permission name="bootCompleted"/>
+		<param name="apiKey" value="wxa8588b3063e75731"/>
 
-    <permission name="hardware"/>
-    <feature name="wxPlus">
-      <param name="urlScheme" value="wxa8588b3063e75731"/>
-      <param name="apiKey" value="wxa8588b3063e75731"/>
-      <param name="apiSecret" value="3f88830e256ac4fd267666788e09d95a"/>
-      <param name="universalLink" value="https://app.dongqichengcl.com"/>
-    </feature>
+		<param name="apiSecret" value="3f88830e256ac4fd267666788e09d95a"/>
+
+		<param name="universalLink" value="https://app.dongqichengcl.com"/>
+
+	</feature>
 
 </widget>
